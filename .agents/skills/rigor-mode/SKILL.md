@@ -41,9 +41,15 @@ discipline for every child you launch.
 |---|---|
 | Issue number/URL | fetch via `gh` (per repo's tracker doc); if the issue is untriaged or thin, run the `triage` wrapper first; else go to Phases |
 | Feature description | ambiguous or contested design → `grilling` or `grill-with-docs` wrapper first; clear reversible feature → Phases directly |
+| Something broken/throwing/failing/slow | `diagnosing-bugs` wrapper - diagnosis loop, not Phases; the fix it lands re-enters Phases at Verify |
+| "this module is a tangle / improve the architecture" | `improve-codebase-architecture` wrapper - scan, present deepening opportunities, grill the pick, then plan from it |
+| A long conversation that already decided something | `to-spec` wrapper to synthesize and publish, then `to-tickets` if it needs tickets |
 | Markdown file of work items | Batch playbook |
 | "review seams X-Y", "review since <ref>", PR range | Sweep playbook |
 | "what's left / catch me up" | read checkpoint file + tracker + plan dir; report, don't rebuild |
+
+Precondition: if the repo has no tracker doc or domain-doc layout, tell the
+user to run the `setup-matt-pocock-skills` wrapper first; don't guess.
 
 ## Size tiers - the L task is a queue, not a run
 
@@ -91,14 +97,21 @@ state from repo state alone - never from chat history.
 2. **Ground** - read `GLOSSARY.md`/ADRs, repo rules, relevant docs; run the
    `codebase-memory` skill (if the repo has one) or a scout child (read-only,
    ≤4) for unfamiliar subsystems; scout report format per orchestration
-   policy §5.
-3. **Plan gate** - plan with file ownership per writer, shared seams to one
-   owner or serial; red tests first if the user wants them. One-way door
-   involved? → blast-radius fork before any code. Escalate unapproved
+   policy §5. Unknown external territory (library, API, protocol)? Fire a
+   background child on the `research` wrapper and fold its brief in.
+3. **Plan gate** - design module interfaces and seams through the
+   `codebase-design` wrapper's vocabulary; a contested design fork that an
+   experiment can settle goes to the `prototype` wrapper instead of a
+   question to the user. Plan with file ownership per writer, shared seams
+   to one owner or serial; red tests first if the user wants them. As
+   domain terms and decisions crystallize, update `GLOSSARY.md`/ADRs inline
+   via the `domain-modeling` wrapper - never batch them for later. One-way
+   door involved? → blast-radius fork before any code. Escalate unapproved
    product/scope/architecture choices to the user.
-4. **Build** - worker children implement per the plan (S: one child; M: one
-   per ticket in worktrees, only with the user's explicit permission).
-   Each runs focused tests and reports changed
+4. **Build** - worker children build via the `implement` wrapper per
+   ticket/plan (it runs the `tdd` wrapper at pre-agreed seams) (S: one
+   child; M: one per ticket in worktrees, only with the user's explicit
+   permission). Each runs focused tests and reports changed
    files, commands, failures, remaining work. Principles apply inline:
    migrate callers and delete legacy in the same change, no floats for money,
    guards at boundaries, idempotent lifecycle operations.
@@ -119,7 +132,33 @@ state from repo state alone - never from chat history.
    checkpoint `done` row. When the run surfaced repeat mistakes, suggest a
    retrospective via the vendored `retro` skill
    (`vendors/mattpocock/skills/engineering/retro/SKILL.md`) and the
-   `correct` fork.
+   `correct` fork. When it surfaced architecture debt too big for this run,
+   suggest the `improve-codebase-architecture` wrapper as its own task.
+
+## Skill map - where every skill fires
+
+| Skill | Slot |
+|---|---|
+| `triage` | Intake: thin/untriaged issue |
+| `grilling`, `grill-with-docs` | Intake: ambiguous or contested plan |
+| `diagnosing-bugs` | Intake: broken/throwing/slow |
+| `improve-codebase-architecture` | Intake: architecture-level task; Close: debt too big for this run |
+| `to-spec` | Intake: conversation → spec |
+| `to-tickets` | M tier: spec → ticket graph |
+| `wayfinder` | L tier: map, frontier, fog |
+| `codebase-memory` (repo-local) | Ground: subsystem map |
+| `research` | Ground: unknown external territory, background child |
+| `codebase-design` | Plan gate: interfaces, seams, deletion test |
+| `prototype` | Plan gate: experiment settles a design fork |
+| `domain-modeling` | Plan gate + Build: terms/decisions crystallize → GLOSSARY/ADR inline |
+| `implement` | Build: per-ticket execution |
+| `tdd` | Build: red-green at pre-agreed seams (via `implement`) |
+| `benchmark-checklist` | Verify: any measured number |
+| `code-review` + `interrogate` + `blast-radius` | Review: the lenses |
+| `show-me-your-work` | Checkpoint trail: M/L, batch, sweep runs |
+| `retro` (vendored) + `correct` | Close: repeat mistakes → environment/repo fixes |
+| `setup-matt-pocock-skills` | Precondition: repo unconfigured |
+| `unslop` | Prose surfaces: docs, PR bodies, issue text |
 
 ## Batch playbook (a file of work items)
 
