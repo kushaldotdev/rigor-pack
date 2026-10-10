@@ -115,21 +115,62 @@ pi          # skills in .agents/skills/ auto-load for this cwd
 
 ## Installing into a repo (e.g. my-app)
 
-1. **Delete the target repo's stale `.agents/skills/` content** that this pack
-   supersedes (No-Legacy: replace = delete — a consumer repo's old `tdd`, `code-review`,
-   `domain-modeling`, ... copies must go, not merge).
-2. Copy `.agents/skills/` in as a whole — that is the entire install.
-3. Delete the global `~/.pi/agent/skills/grilling/` duplicate — the repo copy
-   supersedes it; two same-named skills must never advertise together.
-4. Rename `CONTEXT.md` → `GLOSSARY.md` in the repo (the pack's skills speak
-   GLOSSARY).
-5. Repo-specific skills that stay (not from this pack): `codebase-memory`,
-   `postgres-query`, `redis-inspect`.
+### Placement — which skills live where
 
-| Destination | Skills |
-|---|---|
-| Repo `.agents/skills/` | this pack, whole |
-| Global `~/.pi/agent/skills/` | `handoff` (existing global skill), `subagent-orchestration-policy` only |
+One rule first: **a skill lives in exactly one place.** The same skill name
+in repo `.agents/skills/` and global `~/.pi/agent/skills/` double-advertises
+to the agent — install-time deletions below are part of the install, not
+optional cleanup.
+
+| Location | Skills | Why |
+|---|---|---|
+| Repo `.agents/skills/` | **the whole pack, as-is** | skills resolve in-pack cross-references (`.agents/skills/<name>/SKILL.md`) and act on that repo's surfaces; self-contained means nothing else is needed |
+| Global `~/.pi/agent/skills/` | `handoff`, `subagent-orchestration-policy` | harness-level, repo-agnostic; `rigor-mode` is pi-coupled (pi `subagent` tool) and belongs here only if you want it everywhere |
+| Global, optional (pack-less repos only) | `grilling`, `unslop` | pure conversation/prose skills that work with no repo pack; if a repo with the full pack also sees the global copy, delete one side |
+| Repo-specific, stays in the target repo | `codebase-memory`, `postgres-query`, `redis-inspect`, generated `verify-<app>` | written against that repo, not part of this pack |
+
+### Install steps
+
+```bash
+# 1. delete the target repo's stale skills this pack supersedes
+#    (No-Legacy: replace = delete — a consumer repo's old tdd/code-review/domain-modeling
+#    copies must go, not merge)
+rm -rf <repo>/.agents/skills/<stale-names>
+# 2. copy the pack — this is the entire install
+rsync -a --delete .agents/skills/ <repo>/.agents/skills/
+# 3. if the repo name also exists globally (e.g. grilling), delete the global copy
+rm -rf ~/.pi/agent/skills/grilling
+# 4. rename the domain doc the pack's skills speak
+(cd <repo> && git mv CONTEXT.md GLOSSARY.md)   # if the repo still has CONTEXT.md
+# 5. expose the same skills to other harnesses
+bash scripts/link-harnesses.sh repo
+```
+
+### Harness symlinks (OpenAI / Claude / Cursor / others)
+
+Canonical stores stay where they are — other harnesses get a symlink, never a
+copy, so there is one source of truth to upgrade:
+
+```bash
+bash scripts/link-harnesses.sh repo    # .claude/skills .codex/skills .cursor/skills -> .agents/skills
+bash scripts/link-harnesses.sh global  # ~/.claude/skills ~/.codex/skills ~/.cursor/skills -> ~/.pi/agent/skills
+bash scripts/link-harnesses.sh all     # both
+```
+
+The script is idempotent (`ln -sfn`), and refuses to replace an existing
+**real** directory (prints SKIP) — resolve that manually, keeping the
+single-owner rule. Verify with `ls -la <target>` (readlink should show the
+canonical store). If a harness does not follow symlinked skill dirs, fall
+back to per-skill links:
+
+```bash
+for d in .agents/skills/*/; do ln -sfn "$PWD/$d" ".claude/skills/$(basename "$d")"; done
+```
+
+Global-vs-repo duplicates then apply inside those harnesses exactly as for pi:
+when a repo carries the full pack, the global symlink's shared names are
+shadowed by convention — keep global to `handoff` + policy unless you accept
+the duplicate.
 
 ## Upgrading upstream
 
