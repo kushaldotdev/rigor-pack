@@ -1,14 +1,26 @@
 ---
 name: implement
 description: "Implement a piece of work based on a spec or set of tickets."
+disable-model-invocation: true
 ---
+Implement the work described by the user in the spec or tickets.
 
-# implement (wrapper)
+If the user passes a ticket reference, fetch it from the issue tracker and state its title before starting. If the reference is ambiguous, ask.
 
-Read and follow `vendors/mattpocock/skills/engineering/implement/SKILL.md` in full, then work under these overrides:
+read and follow .agents/skills/tdd/SKILL.md where possible, at pre-agreed seams.
 
-- Where the upstream skill tells the agent to invoke another skill via the Skill tool (any phrasing: "Call the Skill tool with `X`", "call the Skill tool twice, for `X` and `Y`", "call the Skill tool for whichever skills ..."), instead read and follow the vendored copy of each named skill: `vendors/mattpocock/skills/<bucket>/<name>/SKILL.md` - check whether `<name>` lives under `engineering/` or `productivity/`.
-- Where it references subagents or background agents, use the pi `subagent` tool under the ceilings in the `subagent-orchestration-policy` skill.
-- Upstream may tell the user to run a slash command such as `/setup-matt-pocock-skills`; pi has no slash commands - tell the user to ask for that skill by name instead.
+Run typechecking regularly, single test files regularly, and the full test suite once at the end.
+
+Once done, read and follow .agents/skills/code-review/SKILL.md to review the work.
+
+Commit your work to the current branch.
+
+
+<!-- materialized from vendors/mattpocock/skills@49dd158; do not hand-edit - rebuild: node scripts/build-pack.mjs; deviations: CHANGES.md -->
+
+## pi adaptations
+
+- Subagent or background-agent work: use the pi `subagent` tool under the ceilings in `~/.pi/agent/skills/subagent-orchestration-policy/SKILL.md`.
+- Upstream slash commands (e.g. `/setup-matt-pocock-skills`): pi has none - the user asks for the skill by name.
+- Skills referenced above live in this repo's `.agents/skills/<name>/SKILL.md`.
 - Issue-tracker operations use the repo's configured tracker (see the repo's agent docs for which CLI and workflow).
-Anything not listed here: upstream text is authoritative. Deviations are logged in `CHANGES.md`; add any new one you notice there.

@@ -41,4 +41,4 @@ Run its own instructions end to end once: launch, doctor, drive ONE mapped featu
 
 ## 5. Offer the maintenance loop
 
-Point the user at the vendored reference for the maintenance loop, `vendors/poteto/pstack/skills/maintain-verification-skill/SKILL.md`, for keeping the map honest as the app changes; it is kept for reference only, not ported. Suggest a cadence only if they ask.
+Re-run this skill periodically (or after meaningful app changes) to keep the feature map honest as the app changes.

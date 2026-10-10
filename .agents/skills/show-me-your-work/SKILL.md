@@ -50,7 +50,7 @@ Commit it only when the work is ambitious enough that a reviewer needs the trail
 ## Rules
 
 - Append-only. A wrong call gets a new row that supersedes it. Never edit or delete history.
-- Prefer evidence produced by committed scripts over hand-made one-offs (the vendored **encode-lessons-in-structure** principle: `vendors/poteto/pstack/skills/principle-encode-lessons-in-structure/SKILL.md`).
+- Prefer evidence produced by committed scripts over hand-made one-offs: encode the lesson in structure - a lint, a type, a check whose failure names the fix - not a docs note.
 
 ## Audit the log against the transcript
 

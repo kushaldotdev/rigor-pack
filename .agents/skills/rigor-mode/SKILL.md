@@ -29,19 +29,32 @@ report evidence back instead.
 ## Non-negotiables
 
 - Read this repo's `AGENTS.md` (or `CLAUDE.md`) before touching code. Its
-  rules override this skill.
+  rules override this skill. One-way doors come from there first: whatever
+  the repo marks as irreversible or dangerous (its migrations, its delete
+  endpoints, its external calls), plus the universal set - schema
+  migrations, irreversible deletes, external side effects (email, payment,
+  send), auth changes. A repo's listed examples (e.g. money or broker
+  integrations in a trading app) apply only where they match the domain - a
+  plain CRUD app is gated by the universal set alone.
+- **Merit gate - stop before planning.** During Ground, before the plan:
+  ask whether this work should be built at all and whether it pays off in
+  the long run. Does it exist already in the codebase? Is there a one-line,
+  stdlib, or already-installed-dependency shape? Does the premise survive
+  the evidence the scout found? If the honest answer is "questionable",
+  STOP: surface the concern, the simpler alternative, and the right
+  direction in a few lines, and yield to the user - before any plan, any
+  tickets, any estimate. This gate runs during scouting, at the cheapest
+  possible moment to prevent wasted work.
 - Before building or reviewing anything: read `GLOSSARY.md` (or `CONTEXT.md`)
-  and the ADRs in the area. Read the vendored skills you route to, not from
-  memory.
+  and the ADRs in the area. Read the skills you route to, not from memory.
 - Every gate a principle covers, run the principle: proof before "done"
   (prove-it-works posture), measurement discipline (benchmark-checklist
-  wrapper), beyond-diff check (blast-radius fork), adversarial pass on
+  skill), beyond-diff check (blast-radius fork), adversarial pass on
   contested designs (interrogate fork).
-- Money, migrations, broker/exchange integrations, auth, and irreversible
-  operations are one-way doors: stop and ask. Everything reversible:
-  proceed, present, let the human course-correct after the fact. Never ask a
-  question an experiment can answer - run the repro, query the DB, curl the
-  endpoint, and let the result decide.
+- One-way doors: stop and ask. Everything reversible: proceed, present, let
+  the human course-correct after the fact. Never ask a question an
+  experiment can answer - run the repro, query the DB, curl the endpoint,
+  and let the result decide.
 - Commit authority is granted per run: ask for it once at the plan gate of any
   run that will cross a checkpoint barrier; without it, work stays in the
   working tree and the checkpoint records that state. Verify per side:
@@ -141,11 +154,12 @@ state from repo state alone - never from chat history.
    acceptance criteria met, evidence exact-head, no scratch in the repo.
    Then: tracker update if one exists, issue comment with a summary (never
    commit SHAs - reference work by issue number or distinctive subject),
-   checkpoint `done` row. When the run surfaced repeat mistakes, suggest a
-   retrospective via the vendored `retro` skill
-   (`vendors/mattpocock/skills/engineering/retro/SKILL.md`) and the
-   `correct` fork. When it surfaced architecture debt too big for this run,
-   suggest the `improve-codebase-architecture` wrapper as its own task.
+   checkpoint `done` row. When the run surfaced repeat mistakes, run the
+   `retro` skill (or suggest it) and the `correct` fork. When it surfaced
+   architecture debt too big for this run, suggest the
+   `improve-codebase-architecture` skill as its own task. Cross-session L
+   work at a barrier: write a `handoff` document (the global handoff skill)
+   and end the reply with its absolute path.
 
 ## Skill map - where every skill fires
 
@@ -183,7 +197,13 @@ state from repo state alone - never from chat history.
 4. Execute per batch: worker children in parallel within a batch, batches
    sequential; each item is a full S pass (build → verify → review-lite) and
    a checkpoint row.
-5. Aggregate: done / not-done / why, per-item summary, check status, items
+5. **Failure rule - stop and yield.** Any item that errors, goes sideways,
+   or fails its checks halts the whole batch: revert the failed item to its
+   pre-item state, checkpoint it `blocked` with the reason, and yield
+   control to the user with the state so far. Never silently skip, never
+   continue past a failure. At a completed barrier, ask: handoff document
+   needed, or continue to the next batch?
+6. Aggregate: done / not-done / why, per-item summary, check status, items
    that grew past the estimate.
 
 ## Sweep playbook (review range)
