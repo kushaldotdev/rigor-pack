@@ -100,16 +100,17 @@ Copy what the target repo needs from `.agents/skills/` into the repo's
 | Destination | Skills |
 |---|---|
 | Repo `.agents/skills/` | `rigor-mode`, all wrappers, forks that touch repo surfaces |
-| Global `~/.pi/agent/skills/` | `grilling`, `handoff` (existing fork), `subagent-orchestration-policy`; plus generic wrappers if shared across projects |
+| Global `~/.pi/agent/skills/` | `grilling`, `handoff` (existing global skill), `subagent-orchestration-policy`; plus generic wrappers if shared across projects |
 | Repo-only, project-specific | `codebase-memory`, `postgres-query`, `redis-inspect` (stay in the consumer repo, not here) |
 
 ## Upgrading upstream
 
 ```bash
-# refresh a vendor to latest
-git -C vendors/mattpocock/skills pull --ff-only
-# then: diff vendors against CHANGES.md — verify each logged override still
-# applies to the new upstream text; wrappers make this a small check.
+# refresh a vendor (no .git kept, so re-clone and diff)
+git clone --depth 1 https://github.com/mattpocock/skills /tmp/mp-fresh
+diff -r /tmp/mp-fresh/skills/engineering vendors/mattpocock/skills/engineering
+# then: copy the new subset in, and re-verify every CHANGES.md row against
+# the new upstream text; wrappers make this a small check.
 ```
 
 ## Vendor contents
@@ -119,7 +120,7 @@ Verbatim skill copies, trimmed to used buckets; `.git` stripped, upstream
 
 | Vendor | Kept | Dropped |
 |---|---|---|
-| mattpocock/skills | `skills/engineering/` (21), `skills/productivity/` (8), `LICENSE` | `deprecated/`, `in-progress/`, `misc/`, docs, scripts, CI, plugin manifests |
+| mattpocock/skills | `skills/engineering/` (20 skills), `skills/productivity/` (7 skills), bucket READMEs, `LICENSE` | `deprecated/`, `in-progress/`, `misc/`, docs, scripts, CI, plugin manifests |
 | poteto/pstack | `skills/` (51), `LICENSE` | `README.md`, docs, `.gitignore` |
 
 | Vendor | Ref | Date |

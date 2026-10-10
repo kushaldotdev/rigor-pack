@@ -1,6 +1,6 @@
 ---
 name: rigor-mode
-description: Conductor for engineering work. Point it at a GitHub issue, a feature description, a markdown file of work items, or a seam/PR review range, and it runs the full chain - ground, plan, build, verify, review, close - through the wrapped skills and parallel subagents. Use for "rigor this", "rigor: <issue>", "finish the issues in <file>", "review seams X-Y".
+description: "Conductor for engineering work. Point it at a GitHub issue, a feature description, a markdown file of work items, or a seam/PR review range, and it runs the full chain - ground, plan, build, verify, review, close - through the wrapped skills and parallel subagents. Use for 'rigor this', 'rigor on issue 142', 'finish the issues in <file>', 'review seams X-Y'."
 disable-model-invocation: true
 ---
 
@@ -30,8 +30,10 @@ discipline for every child you launch.
   proceed, present, let the human course-correct after the fact. Never ask a
   question an experiment can answer - run the repro, query the DB, curl the
   endpoint, and let the result decide.
-- Never commit unless the user asked. Verify per side: lint/typecheck/tests
-  for the touched language only, then broaden.
+- Commit authority is granted per run: ask for it once at the plan gate of any
+  run that will cross a checkpoint barrier; without it, work stays in the
+  working tree and the checkpoint records that state. Verify per side:
+  lint/typecheck/tests for the touched language only, then broaden.
 
 ## Intake router
 
@@ -50,7 +52,8 @@ plan file.
 
 - **S** - one worker child, one pass through Phases.
 - **M** - spec/ticket-sized: run the `to-tickets` wrapper if no tickets exist,
-  then fan out worker children per ready ticket in isolated worktrees onto one
+  then fan out worker children per ready ticket in isolated worktrees (only
+  with the user's explicit permission - orchestration policy §3) onto one
   integration branch (implement-spec shape), review once at the end.
 - **L** - more than one session can hold: run the `wayfinder` wrapper to build
   the map and tickets, or reuse the repo's plan dir (`PLAN.md` +
@@ -64,12 +67,15 @@ or more S units before starting.
 
 Every unit ends with ALL of the following before the next unit starts:
 
-1. Commits land on the phase branch (code never lives only in a session).
+1. Commit authority was granted at the plan gate: commits land on the phase
+   branch (code never lives only in a session). Without authority, the
+   working-tree diff is the checkpoint's evidence and no new unit starts.
 2. Checks green for the touched side, evidence saved under `tmp/`.
-3. Checkpoint updated: `tmp/checkpoints/<task-slug>.tsv` via the
-   `show-me-your-work` fork's format - one row per unit: phase, decision,
-   why, evidence (commit + check output path), result (`done` / `blocked` /
-   `partial`).
+3. Checkpoint updated: `tmp/checkpoints/<task-slug>.tsv` in the
+   `show-me-your-work` fork's format - columns `ts`, `phase`, `decision`,
+   `why`, `evidence`, `result`; the run's first row has phase `start`; log
+   rows with its `scripts/log.sh` helper. `result` per unit: `done` /
+   `blocked` / `partial`.
 4. The run never straddles an unknown budget: cap each `subagent` workflow
    run at 3-5 units, then stop at the barrier and report. The user fires the
    next run.
@@ -91,7 +97,8 @@ state from repo state alone - never from chat history.
    involved? → blast-radius fork before any code. Escalate unapproved
    product/scope/architecture choices to the user.
 4. **Build** - worker children implement per the plan (S: one child; M: one
-   per ticket in worktrees). Each runs focused tests and reports changed
+   per ticket in worktrees, only with the user's explicit permission).
+   Each runs focused tests and reports changed
    files, commands, failures, remaining work. Principles apply inline:
    migrate callers and delete legacy in the same change, no floats for money,
    guards at boundaries, idempotent lifecycle operations.
@@ -109,8 +116,10 @@ state from repo state alone - never from chat history.
    acceptance criteria met, evidence exact-head, no scratch in the repo.
    Then: tracker update if one exists, issue comment with a summary (never
    commit SHAs - reference work by issue number or distinctive subject),
-   checkpoint `done` row. Suggest the `retro`/`correct` wrappers when the run
-   surfaced repeat mistakes.
+   checkpoint `done` row. When the run surfaced repeat mistakes, suggest a
+   retrospective via the vendored `retro` skill
+   (`vendors/mattpocock/skills/engineering/retro/SKILL.md`) and the
+   `correct` fork.
 
 ## Batch playbook (a file of work items)
 
@@ -131,8 +140,9 @@ state from repo state alone - never from chat history.
 1. Scope: list the units (seam files, PR list, or diff range); checkpoint
    file says where to resume - "start from X" skips earlier units.
 2. Cheap-first: one light triage pass ranks units by risk (size, one-way
-   doors, shared seams); full four-lens review only on risky units, lighter
-   pass on the rest. Cap concurrency at 2-3 children.
+   doors, shared seams); risky units get the full review (both `code-review`
+   axes plus `interrogate` and `blast-radius`), the rest a lighter pass. Cap
+   concurrency at 2-3 children.
 3. Per unit: `code-review` wrapper's standards + spec axes as two parallel
    read-only children, plus cross-seam sweep (grep every caller of the unit's
    exports; check seams don't fight over shared models or duplicated logic).

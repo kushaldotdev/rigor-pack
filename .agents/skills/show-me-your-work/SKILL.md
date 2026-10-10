@@ -50,7 +50,7 @@ Commit it only when the work is ambitious enough that a reviewer needs the trail
 ## Rules
 
 - Append-only. A wrong call gets a new row that supersedes it. Never edit or delete history.
-- Prefer evidence produced by committed scripts over hand-made one-offs (the **encode-lessons-in-structure** principle skill).
+- Prefer evidence produced by committed scripts over hand-made one-offs (the vendored **encode-lessons-in-structure** principle: `vendors/poteto/pstack/skills/principle-encode-lessons-in-structure/SKILL.md`).
 
 ## Audit the log against the transcript
 
@@ -62,7 +62,7 @@ At the end of the run, before handing back, check the log told the truth. pi has
 
 Correct the log, not the story. The audit never edits or removes a row, even an invented one. When a row records neither a real decision nor a real action, or its claim or evidence is wrong, add a row that supersedes it with what actually happened and a pointer that resolves. This audit does not check rows outside this run's stretches. If this run's own work shows one of them is wrong, supersede it like any wrong call.
 
-## Cross-model review of the trail
+## Fresh-context review of the trail
 
 Before handing back, spawn a fresh read-only subagent on the audit trail. pi runs one model per session, so the value is fresh context, not a different model: the reviewer child has never seen the work and reads the trail cold, then flags what the user should pay attention to. Not a redo of the work, a scan for what's suboptimal or risky.
 

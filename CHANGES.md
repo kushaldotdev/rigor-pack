@@ -15,9 +15,10 @@ new text.
 
 ## Global pi-only conventions (apply to every wrapper)
 
-1. "Call the Skill tool with `X`" → "read and follow `vendors/mattpocock/skills/skills/<bucket>/X/SKILL.md`" (pi loads skills by reading their SKILL.md; no Skill tool).
+1. Any upstream invocation of another skill via "the Skill tool" (phrasings seen upstream: "Call the Skill tool with `X`", "call the Skill tool twice, for `X` and `Y`", "calling the Skill tool", "call the Skill tool for whichever skills ...") → read and follow `vendors/mattpocock/skills/<bucket>/<name>/SKILL.md` for each named skill, checking whether it lives under `engineering/` or `productivity/` (pi has no Skill tool; skills load by reading their SKILL.md).
 2. Cross-skill references to user-invoked skills stay "tell the human to run it" (upstream rule, unchanged).
 3. `GLOSSARY.md` naming kept as upstream; a consumer repo does the `CONTEXT.md` → `GLOSSARY.md` repo rename at install time (tracked as repo work, not a skill deviation).
+4. Upstream slash commands (`/setup-matt-pocock-skills`, `/triage`, ...) → pi has no slash commands; the wrapper tells the user to ask for the skill by name. "Tell the human to run it" posture kept.
 
 ## Matt skills → wrappers (all built)
 
@@ -45,10 +46,10 @@ new text.
 | Skill | Type | Deviations |
 |---|---|---|
 | blast-radius | fork | dropped companion refs to unported `how`/`why` (plain-language replacements); step 1 pulls diff via `git diff <base>...HEAD`; step 6 arena/multi-model → two parallel reviewer children with different attack angles |
-| interrogate | fork | Task tool + model-panel config (`~/.cursor/rules/pstack-models.mdc`) → pi `subagent` workflow, 4 default adversarial personas (skeptic / bug hunter / contract breaker / simplifier) instead of model diversity; synthesis wording models → personas; references/ kept verbatim |
+| interrogate | fork | Task tool + model-panel config (`~/.cursor/rules/pstack-models.mdc`) → pi `subagent` workflow, 4 default adversarial personas (skeptic / bug hunter / contract breaker / simplifier) instead of model diversity; description de-"multi-model"-ed; `references/lead-judgment.md` model-consensus wording → reviewer wording; `references/rubric.md` tool names → pi tools (read, bash, ffgrep, fffind); references/ otherwise verbatim |
 | correct | fork | none — verbatim copy, no Cursor-isms found on audit |
-| benchmark-checklist | fork | none — verbatim copy, no Cursor-isms found on audit |
-| show-me-your-work | fork | transcript audit reads `git log`/`git status` + session evidence instead of Cursor `agent-transcripts/` paths; cross-model review → fresh-context read-only subagent (pi is single-model per session); output location → repo `tmp/` convention at use sites |
+| benchmark-checklist | fork | verbatim otherwise; relative link to `principle-explain-the-number` and refs to the Opening-a-PR / Perf-issue / Hillclimb playbooks point at vendored paths |
+| show-me-your-work | fork | transcript audit reads `git log`/`git status` + session evidence instead of Cursor `agent-transcripts/` paths; cross-model review → fresh-context read-only subagent (pi is single-model per session; heading renamed); encode-lessons-in-structure pointer → vendored path; output location → repo `tmp/` convention at use sites |
 | create-verification-skill | fork | generated skill location `.cursor/skills/verify-<app>/` → `.agents/skills/verify-<app>/`; Drive section: pi has bash not computer use — headless Playwright + curl + DB CLI + screenshot saved to `tmp/` and read back; maintenance pointer → vendored `maintain-verification-skill` (reference only) |
 | unslop | fork | none — verbatim copy, no Cursor-isms found on audit |
 
