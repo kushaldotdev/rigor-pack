@@ -1,0 +1,3 @@
+interface:
+  display_name: "Create Verification Skill"
+  short_description: "Generate a repo-local app-verification skill"

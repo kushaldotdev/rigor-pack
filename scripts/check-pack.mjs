@@ -23,6 +23,10 @@ const skills = readdirSync(packDir).filter((d) => statSync(join(packDir, d)).isD
 for (const s of skills) {
   const p = join(packDir, s, "SKILL.md");
   if (!existsSync(p)) { die(`${s}: no SKILL.md`); continue; }
+  if (!existsSync(join(packDir, s, "agents", "openai.yaml")))
+    die(`${s}: no agents/openai.yaml (OpenAI-format interface file)`);
+  else try { YAML.parse(readFileSync(join(packDir, s, "agents", "openai.yaml"), "utf8")); }
+  catch (e) { die(`${s}: openai.yaml YAML: ${e.message.split("\n")[0]}`); }
   const t = readFileSync(p, "utf8");
   const m = t.match(/^---\n([\s\S]*?)\n---\n/);
   if (!m) { die(`${s}: no frontmatter`); continue; }
