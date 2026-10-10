@@ -12,7 +12,13 @@ the wrapped skills in this directory and fan out children via the pi
 this run: first read
 `~/.pi/agent/skills/subagent-orchestration-policy/SKILL.md` and obey its
 ceilings, child packets, review lenses, disposition rules, and async
-discipline for every child you launch.
+discipline for every child you launch. Children are cold-start: they inherit
+nothing and auto-load no skills. Every child that must work under a skill
+gets it by one of: the `skill: "<name>"` option on that child's subagent
+call (preferred), or the packet inlining "read and follow
+`.agents/skills/<name>/SKILL.md`" plus the operative rules in full - packet
+paths resolve only because children run in this repo's cwd/worktree. Never
+rely on a child discovering skills on its own.
 
 ## Non-negotiables
 
