@@ -24,7 +24,11 @@ happens: worker/reviewer/research children get their working skill (`tdd`,
 `benchmark-checklist`); the parent keeps planning, trail, and shared-state
 skills (`domain-modeling`, `show-me-your-work`, `to-spec`/`to-tickets`,
 `wayfinder`) - single-writer artifacts are never opened to children, who
-report evidence back instead.
+report evidence back instead. Child model tiers come from the agent
+definitions (`agentOverrides.model`/`thinking`), configured once - the run
+never picks models at run time and never asks the user about models: an
+unattended run that needs a model question is a configuration gap to note in
+the report, not a prompt to interrupt with.
 
 ## Non-negotiables
 

@@ -33,7 +33,7 @@ Write one clear paragraph. If you're unsure about the intent, ask the user befor
 
 ## Step 3, Spawn Reviewers
 
-Model tiering: the adversarial pass is exactly where the strongest reasoning tier pays (orchestration-policy: reviews live on the strong reviewer tier at high thinking). Run all four personas on the strongest model available. If two or more strong models are available in this setup, assign a different model per persona via the child's `model:` option - that recovers the model diversity the upstream design had (it ran different models per reviewer), with personas on top.
+Model tiering: **model choice is configuration, not a runtime decision.** This run is unattended - reviewers run on the reviewer tier configured in the agent definitions (`agentOverrides.model`/`thinking`); the conductor never picks a model at run time and never asks the user which model to use. Per-persona model diversity (the upstream design) is recovered the same way: configure different models per persona agent, once, in settings - not by reasoning about "strongest available" mid-run. If no reviewer tier is configured, run on the default model and note that in the verdict; it is a limitation to report, not a question to ask.
 
 Launch all reviewers in one pi `subagent` workflow, parallel, read-only (no edit/write tools), under the ceilings in the `subagent-orchestration-policy` skill. Default four personas; shrink or extend to fit the change:
 
