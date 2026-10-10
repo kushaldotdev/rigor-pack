@@ -26,9 +26,10 @@ skills (`domain-modeling`, `show-me-your-work`, `to-spec`/`to-tickets`,
 `wayfinder`) - single-writer artifacts are never opened to children, who
 report evidence back instead. Child model tiers come from the agent
 definitions (`agentOverrides.model`/`thinking`), configured once - the run
-never picks models at run time and never asks the user about models: an
-unattended run that needs a model question is a configuration gap to note in
-the report, not a prompt to interrupt with.
+never picks models at run time and never asks the user about models. No tier
+configured for a child agent? That child's own default model stands - do not
+handpick the root agent's model as a stand-in. A missing tier is a
+configuration gap to note in the report, not a prompt to interrupt with.
 
 ## Non-negotiables
 
