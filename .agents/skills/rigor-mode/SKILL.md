@@ -18,7 +18,13 @@ gets it by one of: the `skill: "<name>"` option on that child's subagent
 call (preferred), or the packet inlining "read and follow
 `.agents/skills/<name>/SKILL.md`" plus the operative rules in full - packet
 paths resolve only because children run in this repo's cwd/worktree. Never
-rely on a child discovering skills on its own.
+rely on a child discovering skills on its own. Split by where the judgment
+happens: worker/reviewer/research children get their working skill (`tdd`,
+`code-review`/`interrogate`, `verify-<app>`, `research`,
+`benchmark-checklist`); the parent keeps planning, trail, and shared-state
+skills (`domain-modeling`, `show-me-your-work`, `to-spec`/`to-tickets`,
+`wayfinder`) - single-writer artifacts are never opened to children, who
+report evidence back instead.
 
 ## Non-negotiables
 
