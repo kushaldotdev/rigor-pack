@@ -5,11 +5,11 @@ description: Test-driven development. Use when the user wants to build features 
 
 # TDD (wrapper)
 
-Read and follow `vendors/mattpocock/skills/skills/engineering/tdd/SKILL.md` in
+Read and follow `vendors/mattpocock/skills/engineering/tdd/SKILL.md` in
 full, then work under these overrides:
 
 - Where the upstream skill says "Call the Skill tool with `X`", read and follow
-  `vendors/mattpocock/skills/skills/engineering/X/SKILL.md` instead (pi has no
+  `vendors/mattpocock/skills/engineering/X/SKILL.md` instead (pi has no
   Skill tool; skills load by reading their SKILL.md).
 - When it references subagents, use the pi `subagent` tool under the ceilings
   in the `subagent-orchestration-policy` skill.

@@ -24,6 +24,49 @@ rigor), orchestrated by a new `rigor-mode` conductor skill.
 - Every deviation from upstream — override or fork edit — is logged in
   [`CHANGES.md`](./CHANGES.md). If it isn't logged, it doesn't exist.
 
+## The pack (24 finalized skills)
+
+All live in `.agents/skills/`; every one traces to a vendor row in `CHANGES.md`.
+
+### New — ours
+
+| Skill | Purpose |
+|---|---|
+| `rigor-mode` | The conductor. Point it at a GitHub issue, a feature description, a markdown file of work items, or a seam/PR review range; it routes through the skills below, fans out pi `subagent` children, enforces size tiers (S/M/L), checkpoint barriers, and one-way-door autonomy gates. Tracker-optional. |
+
+### Wrappers — thin delegation to vendored Matt Pocock skills
+
+| Skill | Purpose |
+|---|---|
+| `tdd` | Test-driven red-green-refactor loop; seam questions before code. |
+| `code-review` | Review a diff on two axes (standards + spec) via two parallel read-only reviewer children. |
+| `diagnosing-bugs` | Diagnosis loop for hard bugs and perf regressions: reproduce, isolate, root-cause, prove the fix. |
+| `domain-modeling` | Build and sharpen `GLOSSARY.md` and ADRs as the domain model crystallizes. |
+| `grill-with-docs` | Relentless interview to sharpen a plan, writing ADRs/glossary as it goes. |
+| `implement` | Implement a spec or ticket set end to end (tdd at seams, code-review at close). |
+| `improve-codebase-architecture` | Scan for deep-module opportunities, present as visual report, grill the pick. |
+| `prototype` | Throwaway prototype to answer a design question before committing. |
+| `research` | Investigate a question against primary sources, capture findings as a repo doc. |
+| `to-spec` | Synthesize the current conversation into a spec published to the tracker. |
+| `to-tickets` | Break a plan/spec into tracer-bullet tickets with blocking edges on the tracker. |
+| `triage` | Move issues/PRs through triage roles; verify, grill, write agent-ready briefs. |
+| `wayfinder` | Plan multi-session work as a map of decision tickets; resolve the frontier one at a time. |
+| `codebase-design` | Deep-module vocabulary: interfaces, seams, deletion tests. |
+| `setup-matt-pocock-skills` | One-time repo config: tracker, triage labels, domain doc layout. |
+| `grilling` | Stress-test a plan or decision with rounds of yes-shaped questions. |
+
+### Forks — pstack skills edited for pi
+
+| Skill | Purpose |
+|---|---|
+| `interrogate` | Adversarial review: 4 persona reviewers (skeptic, bug hunter, contract breaker, simplifier) attack the change; synthesized verdict. |
+| `blast-radius` | Find what a change breaks beyond the diff; prove the one safety fact by running real code. |
+| `correct` | Mine the repo's repeated agent mistakes and make each one impossible (architecture > types > lint > test). |
+| `benchmark-checklist` | 7-question vetting before trusting any perf number you measured. |
+| `show-me-your-work` | TSV decision trail for long/unattended runs; audit against git evidence; fresh-context reviewer flags. |
+| `create-verification-skill` | Generate a repo-local `verify-<app>` skill that drives the real app: Playwright + curl + DB CLI + screenshots read back as images. |
+| `unslop` | Strip AI-writing tells from prose surfaces. |
+
 ## Layout
 
 ```
@@ -56,9 +99,9 @@ Copy what the target repo needs from `.agents/skills/` into the repo's
 
 | Destination | Skills |
 |---|---|
-| Repo `.agents/skills/` | rigor-mode, all wrappers, forks that touch repo surfaces |
-| Global `~/.pi/agent/skills/` | grilling, handoff (existing fork), subagent-orchestration-policy, plus generic wrappers if shared across projects |
-| Repo-only, project-specific | codebase-memory, postgres-query, redis-inspect (stay in the consumer repo, not here) |
+| Repo `.agents/skills/` | `rigor-mode`, all wrappers, forks that touch repo surfaces |
+| Global `~/.pi/agent/skills/` | `grilling`, `handoff` (existing fork), `subagent-orchestration-policy`; plus generic wrappers if shared across projects |
+| Repo-only, project-specific | `codebase-memory`, `postgres-query`, `redis-inspect` (stay in the consumer repo, not here) |
 
 ## Upgrading upstream
 
