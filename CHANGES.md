@@ -24,19 +24,43 @@ Port log: 2026-10-10 d73344b → 978ca6e9 (#538 distill prompts — behavior-neu
 1. Any upstream invocation of another skill via "the Skill tool" (phrasings
    seen upstream: "Call the Skill tool with `X`", "call the Skill tool twice,
    for `X` and `Y`", "calling the Skill tool", "call the Skill tool for
-   whichever skills ...") → "read and follow `.agents/skills/<name>/SKILL.md`"
-   (pi has no Skill tool; skills load by reading their SKILL.md).
-2. Cross-skill references to user-invoked skills stay "tell the human to run
+   whichever skills ...") → the hybrid form
+   "read and follow the `X` skill (`<skills-root>/X/SKILL.md`)" (pi has no Skill
+   tool; skills load by reading their SKILL.md). Upstream quotes the skill name
+   with `"..."` in some files and `` `...` `` in others; the transform matches both.
+   - **Name first** because pi injects each model-invocable skill's absolute
+     location into the prompt (`docs/skills.md`: "Pi tells the model where the
+     skill lives so it can resolve those paths"), so the name always resolves.
+     Every cross-reference target in this pack is model-invocable, so none of
+     them falls outside the catalog. `pi-subagents` takes a skill by bare name
+     too (`skill: "<name>"`).
+   - **The path is the fallback**: a greppable anchor for `scripts/check-pack.mjs`,
+     and what a non-pi harness reads.
+   - **`<skills-root>` is NOT a pi token.** pi has no root placeholder - verified
+     by grep across pi's docs and source. It is this pack's own hint, defined once
+     in `ask-pack`, never a contract: repo `.agents/skills/`, global
+     `~/.pi/agent/skills/`, or `~/.agents/skills/`, whichever holds the target.
+     A hardcoded `.agents/skills/` path was measurably wrong: it failed 4 of 6
+     install layouts, including a real consumer repo's `triage` → `grilling` case, where
+     the target is global-only.
+2. A materialized wrapper never points at a skill left out of the pack. A
+   surviving backticked dropped-skill name fails both the build and
+   `scripts/check-pack.mjs`. `teach` and `pr` are excluded from the guard on
+   purpose - they are ordinary prose/CLI tokens ("gh pr ...") with no mechanical
+   discriminator. When upstream does name a dropped skill, the preferred fix is
+   to bring that skill into the pack (see the `writing-for-agents` row below);
+   deleting the reference is the fallback, not the default.
+3. Cross-skill references to user-invoked skills stay "tell the human to run
    it" (upstream rule, unchanged).
-3. `GLOSSARY.md` naming kept as upstream; a consumer repo does the `CONTEXT.md` →
+4. `GLOSSARY.md` naming kept as upstream; a consumer repo does the `CONTEXT.md` →
    `GLOSSARY.md` repo rename at install time (tracked as repo work, not a
    skill deviation).
-4. Upstream slash commands (`/setup-matt-pocock-skills`, `/triage`, ...) →
+5. Upstream slash commands (`/setup-matt-pocock-skills`, `/triage`, ...) →
    pi's skill command form `/skill:<name>`. "Tell the human to run it"
    posture kept.
-5. Whole upstream skill folder is copied (support files: references, formats,
+6. Whole upstream skill folder is copied (support files: references, formats,
    scripts) so relative links resolve in the installed repo.
-6. Wrappers carry NO in-file provenance marker: the wrapper list is the
+7. Wrappers carry NO in-file provenance marker: the wrapper list is the
    `WRAPPERS` map in `scripts/build-pack.mjs` and every row below, and the pin
    is the vendor table above. A skill-specific `## pi notes` section is
    appended only where that skill's own pi behavior differs (the `extra`
@@ -62,11 +86,12 @@ Port log: 2026-10-10 d73344b → 978ca6e9 (#538 distill prompts — behavior-neu
 | triage | wrapper | none |
 | wayfinder | wrapper | parallel research children run as one pi `subagent` workflow, each resolving its ticket via the research skill |
 | codebase-design | wrapper | none |
-| retro | wrapper | none — added in the self-contained rebuild so rigor's close phase points at an installed skill, not a vendored path |
+| retro | wrapper | none — upstream text kept intact: step 1's writing-style-guide reference resolves to the pack's own `writing-for-agents`; added in the self-contained rebuild so rigor's close phase points at an installed skill, not a vendored path |
 | setup-matt-pocock-skills | wrapper | none |
 | grilling | wrapper | none — upstream v1.3.1 already carries the yes-shaped-question line a consumer repo's old local copy lacked; wrapper supersedes that stale copy |
 | wait-what | wrapper | none |
-| handoff | fork | upstream v1.3.1 writes to the OS temp dir and drops the reply-trailing path; fork keeps the pi-native behaviour: saves to `tmp/<timestamp>-<slug>.md` in the cwd, timestamp + kebab-slug filename rules, untracked + gitignore warning, reply ends with the absolute path in a code block; `call the Skill tool` → in-pack path phrasing |
+| writing-for-agents | wrapper | none — promoted into the pack (2026-10-12) so `retro`'s writing-style-guide step resolves to an installed skill; previously dropped, which left `retro` pointing at a skill the pack did not ship |
+| handoff | fork | upstream v1.3.1 writes to the OS temp dir and drops the reply-trailing path; fork keeps the pi-native behaviour: saves to `tmp/<timestamp>-<slug>.md` in the cwd, timestamp + kebab-slug filename rules, untracked + gitignore warning, reply ends with the absolute path in a code block; `call the Skill tool` → scope-agnostic `<skills-root>/<name>/SKILL.md` phrasing |
 
 ## poteto skills → forks (hand-maintained)
 
@@ -84,7 +109,7 @@ Port log: 2026-10-10 d73344b → 978ca6e9 (#538 distill prompts — behavior-neu
 
 | Skill | Type | Deviations |
 |---|---|---|
-| ask-pack | fork | fork of upstream `ask-matt`, renamed: the router is remapped from Matt's 20-skill engineering flow onto this pack's 28 skills — main flow gains a conductor step (`rigor` replaces implement-spec-style whole-spec orchestration; per-ticket `implement` kept for hand-driving), new "Per-task rigor checks" section covers the pstack forks (interrogate, blast-radius, benchmark-checklist, correct, show-me-your-work, create-verification-skill, unslop); upstream skills not in the pack dropped (grill-me, to-questionnaire, wizard, teach, writing-for-agents, implement-spec, pr); `wait-what` and `handoff` are pack members (handoff ships in the pack but is installed globally); phase-boundary section pi-adapted (pi's `/new` and `/compact`; support file PHASE-BOUNDARIES.md carried with the same adaptations); standalone section lists pack contents (grilling, prototype, research, wait-what) |
+| ask-pack | fork | fork of upstream `ask-matt`, renamed: the router is remapped from Matt's 20-skill engineering flow onto this pack's 29 skills — main flow gains a conductor step (`rigor` replaces implement-spec-style whole-spec orchestration; per-ticket `implement` kept for hand-driving), new "Per-task rigor checks" section covers the pstack forks (interrogate, blast-radius, benchmark-checklist, correct, show-me-your-work, create-verification-skill, unslop); upstream skills not in the pack dropped (grill-me, to-questionnaire, wizard, teach, implement-spec, pr); `wait-what`, `handoff`, and `writing-for-agents` are pack members (`handoff` ships in the pack but is installed globally); `writing-for-agents` appears in the "Vocabulary underneath" section (three model-invoked references, not two); phase-boundary section pi-adapted (pi's `/new` and `/compact`; support file PHASE-BOUNDARIES.md carried with the same adaptations); standalone section lists pack contents (grilling, prototype, research, wait-what) |
 
 ## New skills (ours)
 
@@ -100,9 +125,50 @@ Port log: 2026-10-10 d73344b → 978ca6e9 (#538 distill prompts — behavior-neu
   `## pi notes` + whole-folder copy). Forks, `ask-pack`, and `rigor` are
   hand-maintained and untouched by the build.
 - `scripts/check-pack.mjs` — validates the pack: frontmatter parses (pi's own
-  yaml lib), in-pack cross-references resolve, no `vendors/` references outside
-  the `vendors/` self-contained rule, no Cursor-isms, relative links resolve.
+  yaml lib), in-pack cross-references resolve (both the repo `.agents/skills/`
+  and the scope-agnostic `<skills-root>/` forms), no `vendors/` references,
+  no Cursor-isms, relative links resolve, and no reference to a dropped skill.
   Run after any rebuild or re-vendor.
+
+## Upstream defect fixes (2026-10-12)
+
+Defects found auditing the materialized pack; all fixed at the source
+(generator / validator / hand-maintained forks), never by hand-editing build
+output.
+
+1. **`retro` pointed at a dropped skill.** Vendor `retro` step 1 fetches
+   `writing-for-agents` for the writing style guide, but that skill had been
+   left out of the pack, so the reference materialized as a dead path (the
+   `§Files` bullet named it too). Fixed by **promoting `writing-for-agents` into
+   the pack** rather than deleting the references: it is added to the
+   `WRAPPERS` map (`productivity` bucket), appears in ask-pack's "Vocabulary
+   underneath" section, and `retro` now resolves to it through the normal
+   transform. This keeps the upstream `retro` text intact. Files:
+   `scripts/build-pack.mjs`, `.agents/skills/writing-for-agents/`,
+   `.agents/skills/ask-pack/SKILL.md`, `.agents/skills/retro/SKILL.md`.
+2. **`rigor` named a dropped skill in prose.** "integration branch
+   (implement-spec shape)" referenced an upstream skill the pack drops; reworded
+   to "whole-spec orchestration shape". File: `.agents/skills/rigor/SKILL.md`.
+3. **Cross-skill paths were scope-hardcoded.** The transform emitted
+   `.agents/skills/<name>/SKILL.md`, which is dead for the skills the pack ships
+   global-only (`handoff`, `grilling`, `code-review`) and wrong whenever a
+   consumer installs a subset globally - exactly what a consumer repo does. A read-only
+   experiment (`tmp/review-root-form.md`, 4 cold-start pi processes per form plus
+   a deterministic resolution matrix) measured 4 of 6 layouts failing for the
+   hardcoded form, including a real consumer repo's `triage` → `grilling` case; the model
+   recovered every time only by burning an extra search call, which a weaker model
+   or a read-only child cannot do. The same experiment established that
+   `<skills-root>` is not a pi token, so the pack now emits the hybrid form
+   (skill name + path) and defines `<skills-root>` once in `ask-pack`. The two
+   hand-maintained files that carried the hardcoded form (`rigor`, `handoff`) were
+   updated to match. The validator resolves both path forms. Files:
+   `scripts/build-pack.mjs`, `scripts/check-pack.mjs`, `.agents/skills/rigor/SKILL.md`,
+   `.agents/skills/handoff/SKILL.md`, `.agents/skills/ask-pack/SKILL.md`, and the
+   rebuilt wrappers.
+
+Note: this changes the installed pack's skill count (28 → 29) and its
+cross-reference form, so any repo that installed an earlier build should
+re-copy `.agents/skills/` to pick both up.
 
 ## Explicitly not ported
 

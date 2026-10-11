@@ -17,6 +17,12 @@ const YAML = require("/home/kushal/.nvm/versions/node/v24.16.0/lib/node_modules/
 let fail = 0;
 const die = (msg) => { console.log(`FAIL ${msg}`); fail = 1; };
 
+// Skills deliberately absent from the pack (see CHANGES.md); a pack file must not
+// point at one. Omitted on purpose: `teach` and `pr` are ordinary prose/CLI tokens
+// ("gh pr ..."), so they are not guardable mechanically.
+const DROPPED_SKILLS = ["grill-me", "to-questionnaire", "wizard", "implement-spec"];
+const DROPPED_RE = new RegExp("`(" + DROPPED_SKILLS.join("|") + ")`", "i");
+
 const skills = readdirSync(packDir).filter((d) => statSync(join(packDir, d)).isDirectory());
 
 for (const s of skills) {
@@ -52,13 +58,25 @@ for (const s of skills) {
     if (/vendors\//.test(t2)) die(`${rel}: references vendors/ (not self-contained)`);
     if (/task tool|askquestion|~\/\.cursor|team-kit|deslop|agent-transcripts|multi-model/i.test(t2))
       die(`${rel}: Cursor-ism present`);
+    const dropped2 = t2.match(DROPPED_RE);
+    if (dropped2) die(`${rel}: references dropped skill \`${dropped2[1]}\``);
     // ponytail: relative links in support files are unchecked - upstream examples
     // (e.g. domain-modeling GLOSSARY-FORMAT.md) use illustrative ./src/ paths
   }
-  // in-pack cross references resolve
-  for (const ref of t.matchAll(/\.agents\/skills\/([a-z0-9-]+)\/SKILL\.md/g)) {
+  // in-pack cross references resolve (either scope form: repo `.agents/skills/` or
+  // the scope-agnostic `<skills-root>/` form used for globally-installed copies).
+  // This is the hybrid form's real validator: name and path are emitted as a pair,
+  // so a resolvable path implies a correct name. A standalone "is the named skill in
+  // the pack" check is deliberately NOT done - legitimately names externals
+  // (`pi-subagents`) and consumer-local skills (`codebase-memory`).
+  for (const ref of t.matchAll(/(?:\.agents\/skills|<skills-root>)\/([a-z0-9-]+)\/SKILL\.md/g)) {
+    if (ref[1] === "name") continue; // the `<skills-root>/<name>/SKILL.md` template itself
     if (!existsSync(join(packDir, ref[1], "SKILL.md"))) die(`${s}: dangling ref -> ${ref[1]}`);
   }
+  // no reference to a skill deliberately left out of the pack (backtick-anchored so
+  // ordinary prose words like "teach" or "pr" never trip it)
+  const dropped = t.match(DROPPED_RE);
+  if (dropped) die(`${s}: references dropped skill \`${dropped[1]}\``);
   // support files: any reference to a local file that must exist
   for (const ref of t.matchAll(/\]\((\.{1,2}\/[^)]+\.md)\)/g)) {
     const target = join(packDir, s, ref[1]);

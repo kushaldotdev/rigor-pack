@@ -7,7 +7,7 @@ The user has asked for a **retrospective**. You are suggesting improvements to t
 
 ## Steps
 
-1. read and follow the named skill under .agents/skills/<name>/SKILL.md with `writing-for-agents` for the writing style guide.
+1. read and follow the `writing-for-agents` skill (<skills-root>/writing-for-agents/SKILL.md) for the writing style guide.
 
 2. Read the primary sources for the session the user specifies. This may mean searching through session logs on this machine. If the user doesn't specify a session, default to the current one.
 

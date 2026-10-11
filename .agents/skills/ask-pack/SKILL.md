@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 You don't remember every skill, so ask.
 
-Before stating what a skill does or recommending a step be skipped, read that skill's SKILL.md - the pack may be installed in a repo's `.agents/skills/` or globally in `~/.pi/agent/skills/`; resolve `<skills-root>/<name>/SKILL.md` wherever this pack is installed. The summaries here are for orientation only.
+Before stating what a skill does or recommending a step be skipped, read that skill's SKILL.md - the pack may be installed in a repo's `.agents/skills/`, globally in `~/.pi/agent/skills/`, or at `~/.agents/skills/`. A cross-reference is written as the skill's name plus its path: read and follow the `<name>` skill (`<skills-root>/<name>/SKILL.md`), where `<skills-root>` means whichever of those roots holds the target. The bare name normally resolves on its own, since pi lists every installed skill with its absolute path. The summaries here are for orientation only.
 
 One skill sits **above** this whole map: **`rigor`**, the conductor. When you want a unit of work run end to end - ground, plan, build, verify, review, close - through orchestrated subagents, you don't pick the steps yourself; you point `rigor` at the issue, the feature description, a markdown file of work items, or a review range, and it routes. This map is for when you're driving the skills yourself, or choosing what to hand to `rigor`.
 
@@ -55,10 +55,11 @@ Not feature work, just upkeep.
 
 ## Vocabulary underneath
 
-Two model-invoked references that run *beneath* the other skills, each the single source of truth for its vocabulary. Reach for them directly when the **words**, not the process, are the problem; or let the skills above pull them in.
+Three model-invoked references that run *beneath* the other skills, each the single source of truth for its vocabulary. Reach for them directly when the **words**, not the process, are the problem; or let the skills above pull them in.
 
 - **`domain-modeling`**: sharpen the project's *domain* language: challenge a fuzzy term, resolve an overloaded word, record a hard-to-reverse decision as an ADR. It's the active discipline `grill-with-docs` drives to keep `GLOSSARY.md` a clean glossary.
 - **`codebase-design`**: the deep-module vocabulary (module, interface, depth, seam, adapter, leverage, locality) for designing a module's *shape*: a lot of behaviour behind a small interface at a clean seam. `tdd` and `improve-codebase-architecture` both speak it.
+- **`writing-for-agents`**: the vocabulary for writing any document an agent consumes - a skill, `AGENTS.md`/`CLAUDE.md`, or a doc reached by a pointer - and the context-pointer wording that decides when the agent reaches it. `retro` drives it when turning a session's findings into steering-file edits.
 
 ## Phase boundaries
 

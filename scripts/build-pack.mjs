@@ -32,30 +32,51 @@ const WRAPPERS = {
   "setup-matt-pocock-skills": { bucket: "engineering" },
   "grilling": { bucket: "productivity" },
   "wait-what": { bucket: "productivity" },
+  "writing-for-agents": { bucket: "productivity" },
 };
 
-// Content transforms: upstream harness assumptions -> in-repo, self-contained forms.
+// Cross-skill references use the hybrid form:
+//   read and follow the `<name>` skill (<skills-root>/<name>/SKILL.md)
+// Name-first because pi resolves a model-invocable skill by the absolute `<location>`
+// it injects into the prompt - every cross-reference target in this pack is
+// model-invocable, so the name always resolves. The path is kept as fallback, as a
+// greppable anchor for scripts/check-pack.mjs, and for non-pi harnesses.
+//
+// `<skills-root>` is NOT a pi token - pi has no root placeholder. It is this pack's
+// own hint (defined in CHANGES.md), never a contract: the repo's `.agents/skills/`,
+// the global `~/.pi/agent/skills/`, or `~/.agents/skills/`, whichever holds the
+// target. A hardcoded `.agents/skills/` path is dead for a globally-installed target.
+const SKILLS_ROOT = "<skills-root>";
+
+// Upstream quotes a skill name with either "..." or `...`, depending on the file.
+const NAME = '["`]([a-z-]+)["`]';
+const REF = (a) => `read and follow the \`${a}\` skill (${SKILLS_ROOT}/${a}/SKILL.md)`;
+const REF_ING = (a) => `reading and following the \`${a}\` skill (${SKILLS_ROOT}/${a}/SKILL.md)`;
+
+// Content transforms: upstream harness assumptions -> self-contained, pi-native forms.
 function transform(src) {
   let t = src;
-  t = t.replace(/Call the Skill tool twice, for "([a-z-]+)" and "([a-z-]+)"/gi,
-    (_m, a, b) => `read and follow .agents/skills/${a}/SKILL.md and .agents/skills/${b}/SKILL.md`);
-  t = t.replace(/\b[Cc]alls? the Skill tool with "([a-z-]+)"/g,
-    (_m, a) => `read and follow .agents/skills/${a}/SKILL.md`);
-  t = t.replace(/\b[Cc]alls? the Skill tool with "([a-z-]+)"/g,
-    (_m, a) => `read and follow .agents/skills/${a}/SKILL.md`);
-  t = t.replace(/calling the Skill tool with "([a-z-]+)"/gi,
-    (_m, a) => `reading and following .agents/skills/${a}/SKILL.md`);
-  t = t.replace(/call the Skill tool twice, for "([a-z-]+)" and "([a-z-]+)"/gi,
-    (_m, a, b) => `read and follow .agents/skills/${a}/SKILL.md and .agents/skills/${b}/SKILL.md`);
+  t = t.replace(new RegExp(`[Cc]all the Skill tool twice, for ${NAME} and ${NAME}`, "g"),
+    (_m, a, b) => `${REF(a)} and ${REF(b)}`);
+  t = t.replace(new RegExp(`\\b[Cc]alls? the Skill tool with ${NAME}`, "g"),
+    (_m, a) => REF(a));
+  t = t.replace(new RegExp(`calling the Skill tool with ${NAME}`, "gi"),
+    (_m, a) => REF_ING(a));
   t = t.replace(/call the Skill tool for whichever skills ([^,.]+)/gi,
-    (_m, rest) => `read and follow the SKILL.md of whichever skills ${rest} (under .agents/skills/<name>/)`);
-  t = t.replace(/call the Skill tool/gi, "read and follow the named skill under .agents/skills/<name>/SKILL.md");
-  t = t.replace(/Call the Skill tool/gi, "Read and follow the named skill under .agents/skills/<name>/SKILL.md");
-  t = t.replace(/calling the Skill tool/gi, "reading and following the named skill under .agents/skills/<name>/SKILL.md");
+    (_m, rest) => `read and follow the SKILL.md of whichever skills ${rest} (each \`<name>\` skill, file under ${SKILLS_ROOT}/<name>/SKILL.md)`);
+  t = t.replace(/call the Skill tool/gi, `read and follow the named skill (file under ${SKILLS_ROOT}/<name>/SKILL.md)`);
+  t = t.replace(/calling the Skill tool/gi, `reading and following the named skill (file under ${SKILLS_ROOT}/<name>/SKILL.md)`);
   t = t.replace(/run `\/setup-matt-pocock-skills`/g, "run `/skill:setup-matt-pocock-skills`");
   t = t.replace(/run `\/([a-z-]+)`/g, (_m, a) => `run \`/skill:${a}\``);
   return t;
 }
+
+// Skills deliberately absent from the pack (see CHANGES.md). A generated wrapper
+// must not point at one, or the build fails at the guard. Omitted on purpose:
+// `teach` and `pr` are ordinary prose/CLI tokens ("gh pr ..."), so they stay out
+// of the mechanical guard.
+const DROPPED_SKILLS = ["grill-me", "to-questionnaire", "wizard", "implement-spec"];
+const DROPPED_RE = new RegExp("`(" + DROPPED_SKILLS.join("|") + ")`", "i");
 
 const ADAPT = (extra) => (extra ? `\n## pi notes\n\n${extra}\n` : "");
 
@@ -70,6 +91,8 @@ for (const [name, { bucket, extra }] of Object.entries(WRAPPERS)) {
   let [, fm, body] = m;
   // description mentioning another skill's trigger is fine; keep upstream fm verbatim
   const materialized = `---\n${fm}\n---\n${transform(body).trimStart()}${ADAPT(extra)}`;
+  const dropped = materialized.match(DROPPED_RE);
+  if (dropped) { console.error(`DROPPED SKILL REF ${name}: \`${dropped[1]}\` is not in the pack`); process.exit(1); }
   mkdirSync(out(name), { recursive: true });
   // carry the whole upstream skill folder (support files: references, formats, scripts)
   cpSync(vend("mattpocock", "skills", bucket, name), out(name), { recursive: true });

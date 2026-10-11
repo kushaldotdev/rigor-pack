@@ -41,7 +41,7 @@ rigor), orchestrated by the `rigor` conductor skill and routed by the
   down. Workers/reviewers/research children get working skills; the parent
   keeps planning and single-writer skills.
 
-## The pack (28 skills)
+## The pack (29 skills)
 
 All live in `.agents/skills/`; every one traces to a vendor row in `CHANGES.md`.
 
@@ -74,6 +74,7 @@ All live in `.agents/skills/`; every one traces to a vendor row in `CHANGES.md`.
 | `setup-matt-pocock-skills` | One-time repo config: tracker, triage labels, domain doc layout. |
 | `grilling` | Stress-test a plan or decision with rounds of yes-shaped questions. |
 | `wait-what` | "That last message didn't land" reset: re-pitch it in plain language using `GLOSSARY.md` vocabulary. |
+| `writing-for-agents` | Reference for writing any document an agent consumes - a skill, `AGENTS.md`/`CLAUDE.md`, or a pointed-at doc - and the context-pointer wording that decides when the agent reaches it. |
 
 ### Forks — upstream skills edited for pi
 
@@ -114,7 +115,7 @@ skills-harness/
 
 ```bash
 node scripts/build-pack.mjs   # rebuild wrappers from vendors/ (never hand-edit them)
-node scripts/check-pack.mjs   # must pass before any commit: 28/28 skills
+node scripts/check-pack.mjs   # must pass before any commit: 29/29 skills
 ```
 
 ## Testing

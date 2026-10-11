@@ -20,7 +20,7 @@ End your reply with the handoff file's absolute path on its own line, in a plain
 /absolute/path/to/handoff.md
 ```
 
-Include a "suggested skills" section in the document, naming which skills the next agent should read and follow under `.agents/skills/<name>/SKILL.md`.
+Include a "suggested skills" section in the document, naming which skills the next agent should read and follow - by skill name, with each one's file under `<skills-root>/<name>/SKILL.md`.
 
 Do not duplicate content already captured in other artifacts (specs, plans, ADRs, issues, commits, diffs). Reference them by path or URL instead.
 

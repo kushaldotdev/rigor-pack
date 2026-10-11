@@ -16,9 +16,9 @@ non-rigor delegated work; if it auto-loads during a rigor run anyway, the
 inlined section wins on every conflict. Children are cold-start: they inherit
 nothing and auto-load no skills. Every child that must work under a skill
 gets it by one of: the `skill: "<name>"` option on that child's subagent
-call (preferred), or the packet inlining "read and follow
-`.agents/skills/<name>/SKILL.md`" plus the operative rules in full - packet
-paths resolve only because children run in this repo's cwd/worktree. Never
+call (preferred), or the packet inlining "read and follow the
+`<name>` skill (`<skills-root>/<name>/SKILL.md`)" plus the operative rules in full -
+packet paths resolve only because children run in this repo's cwd/worktree. Never
 rely on a child discovering skills on its own. Skills carry no shared
 pi-adaptations block, so every packet restates the pi facts a child cannot
 infer: pi has no `Skill` tool - only each skill's name, description, and path
@@ -127,7 +127,7 @@ plan file.
 - **M** - spec/ticket-sized: run the `to-tickets` wrapper if no tickets exist,
   then fan out worker children per ready ticket in isolated worktrees
   (writer rules per the mechanics section) onto one
-  integration branch (implement-spec shape), review once at the end.
+  integration branch (whole-spec orchestration shape), review once at the end.
 - **L** - more than one session can hold: run the `wayfinder` wrapper to build
   the map and tickets, or reuse the repo's plan dir (`PLAN.md` +
   `NN_<Seam>.md`). Then drain the frontier: each run pulls only the ready
