@@ -56,7 +56,7 @@ Each smell reads *what it is* → *how to fix*; match it against the diff:
 
 ### 4. Spawn both sub-agents in parallel
 
-Issue both sub-agent calls together, in the foreground, and aggregate the reports they return.
+Issue both sub-agent calls together as async children, and aggregate the reports they return.
 
 **Standards sub-agent prompt** should include:
 
@@ -89,4 +89,4 @@ Reporting them separately stops one axis from masking the other.
 
 ## pi notes
 
-- The two review axes run as two parallel read-only reviewer children in one pi `subagent` workflow; the parent aggregates their reports (see `subagent-orchestration-policy` §6 for lenses and disposition).
+- The two review axes run as two parallel read-only reviewer children in one pi `subagent` workflow, launched async; the parent aggregates their reports (see `subagent-orchestration-policy` §6 for lenses and disposition).

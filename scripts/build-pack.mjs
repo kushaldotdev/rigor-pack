@@ -15,7 +15,7 @@ const PIN = "49dd158"; // mattpocock/skills v1.3.1
 // name -> {bucket, extra}
 const WRAPPERS = {
   "tdd": { bucket: "engineering" },
-  "code-review": { bucket: "engineering", extra: "- The two review axes run as two parallel read-only reviewer children in one pi `subagent` workflow; the parent aggregates their reports (see `subagent-orchestration-policy` §6 for lenses and disposition)." },
+  "code-review": { bucket: "engineering", extra: "- The two review axes run as two parallel read-only reviewer children in one pi `subagent` workflow, launched async; the parent aggregates their reports (see `subagent-orchestration-policy` §6 for lenses and disposition)." },
   "diagnosing-bugs": { bucket: "engineering" },
   "domain-modeling": { bucket: "engineering" },
   "grill-with-docs": { bucket: "engineering" },
@@ -66,6 +66,7 @@ function transform(src) {
     (_m, rest) => `read and follow the SKILL.md of whichever skills ${rest} (each \`<name>\` skill, file under ${SKILLS_ROOT}/<name>/SKILL.md)`);
   t = t.replace(/call the Skill tool/gi, `read and follow the named skill (file under ${SKILLS_ROOT}/<name>/SKILL.md)`);
   t = t.replace(/calling the Skill tool/gi, `reading and following the named skill (file under ${SKILLS_ROOT}/<name>/SKILL.md)`);
+  t = t.replace(/together, in the foreground, and aggregate/g, "together as async children, and aggregate");
   t = t.replace(/run `\/setup-matt-pocock-skills`/g, "run `/skill:setup-matt-pocock-skills`");
   t = t.replace(/run `\/([a-z-]+)`/g, (_m, a) => `run \`/skill:${a}\``);
   return t;

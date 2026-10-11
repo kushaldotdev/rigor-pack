@@ -67,6 +67,13 @@ Port log: 2026-10-10 d73344b → 978ca6e9 (#538 distill prompts — behavior-neu
    column below); shared pi facts (invocation is `/skill:<name>`, subagent
    ceilings live in `subagent-orchestration-policy`) live in these docs and in
    the parent's child packet, never duplicated into every file.
+8. Children run async by default - pi-subagents' own rule is to set
+   `async: false` only when the parent must block, and to keep final reviews,
+   validation gates, and publication checks async. Upstream `code-review` broke
+   that rule: "Issue both sub-agent calls together, in the foreground, and
+   aggregate the reports they return." The transform rewrites "together, in the
+   foreground, and aggregate" to "together as async children, and aggregate",
+   and the wrapper's pi note records that the children launch async.
 
 ## Matt skills → materialized wrappers
 

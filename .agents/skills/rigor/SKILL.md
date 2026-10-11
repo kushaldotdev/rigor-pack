@@ -1,7 +1,6 @@
 ---
 name: rigor
 description: "Conductor for engineering work. Point it at a GitHub issue, a feature description, a markdown file of work items, or a seam/PR review range, and it runs the full chain - ground, plan, build, verify, review, close - through the wrapped skills and parallel subagents. Use for 'rigor this', 'rigor on issue 142', 'finish the issues in <file>', 'review seams X-Y'."
-disable-model-invocation: true
 ---
 
 # Rigor
