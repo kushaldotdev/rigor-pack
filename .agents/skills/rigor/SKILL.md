@@ -9,10 +9,11 @@ disable-model-invocation: true
 You are the conductor. You do not implement yourself; you route work through
 the wrapped skills in this directory and fan out children via the pi
 `subagent` tool. Loading this skill authorizes the orchestration pipeline for
-this run: first read
-`~/.pi/agent/skills/subagent-orchestration-policy/SKILL.md` and obey its
-ceilings, child packets, review lenses, disposition rules, and async
-discipline for every child you launch. Children are cold-start: they inherit
+this run and makes you the Orchestrator. The delegation mechanics are
+inlined below (`Delegation mechanics`), so rigor runs never load
+`subagent-orchestration-policy` - that skill stays the default for
+non-rigor delegated work; if it auto-loads during a rigor run anyway, the
+inlined section wins on every conflict. Children are cold-start: they inherit
 nothing and auto-load no skills. Every child that must work under a skill
 gets it by one of: the `skill: "<name>"` option on that child's subagent
 call (preferred), or the packet inlining "read and follow
@@ -79,10 +80,18 @@ The phases below are the contract; this diagram is the map.
   the human course-correct after the fact. Never ask a question an
   experiment can answer - run the repro, query the DB, curl the endpoint,
   and let the result decide.
-- Commit authority is granted per run: ask for it once at the plan gate of any
-  run that will cross a checkpoint barrier; without it, work stays in the
-  working tree and the checkpoint records that state. Verify per side:
+- Commit authority defaults to granted: if the repo is a git repo and the user
+  has not explicitly said no (no "don't commit", no "no commits"), commit.
+  A decline or later revocation of authority means work stays in the working
+  tree and the checkpoint records that state - never commit against an
+  explicit no. Verify per side:
   lint/typecheck/tests for the touched language only, then broaden.
+- Commit granularity follows checkpoints, not files: one commit per unit
+  (checkpoint), sized so related units fold together when a run's units are
+  trivially small - a run that would produce many tiny commits condenses into
+  a few at phase boundaries. Not per file, not one mega-commit per phase;
+  each commit is a coherent unit that passes its checks and reads as one
+  change. Conventional Commits with a real body.
 
 ## Intake router
 
@@ -107,8 +116,8 @@ plan file.
 
 - **S** - one worker child, one pass through Phases.
 - **M** - spec/ticket-sized: run the `to-tickets` wrapper if no tickets exist,
-  then fan out worker children per ready ticket in isolated worktrees (only
-  with the user's explicit permission - orchestration policy §3) onto one
+  then fan out worker children per ready ticket in isolated worktrees
+  (writer rules per the mechanics section) onto one
   integration branch (implement-spec shape), review once at the end.
 - **L** - more than one session can hold: run the `wayfinder` wrapper to build
   the map and tickets, or reuse the repo's plan dir (`PLAN.md` +
@@ -122,9 +131,11 @@ or more S units before starting.
 
 Every unit ends with ALL of the following before the next unit starts:
 
-1. Commit authority was granted at the plan gate: commits land on the phase
-   branch (code never lives only in a session). Without authority, the
+1. Commit authority holds (default: granted when the repo is a git repo and
+   the user has not explicitly said no): commits land on the phase branch
+   (code never lives only in a session). Without authority, the
    working-tree diff is the checkpoint's evidence and no new unit starts.
+   Commits are local only - pushing to a remote is the user's job.
 2. Checks green for the touched side, evidence saved under `tmp/`.
 3. Checkpoint updated: `tmp/checkpoints/<task-slug>.tsv` in the
    `show-me-your-work` fork's format - columns `ts`, `phase`, `decision`,
@@ -145,8 +156,8 @@ state from repo state alone - never from chat history.
    definition of done as a falsifiable predicate before building.
 2. **Ground** - read `GLOSSARY.md`/ADRs, repo rules, relevant docs; run the
    `codebase-memory` skill (if the repo has one) or a scout child (read-only,
-   ≤4) for unfamiliar subsystems; scout report format per orchestration
-   policy §5. Unknown external territory (library, API, protocol)? Fire a
+   ≤4) for unfamiliar subsystems; scout report format per the inlined
+   mechanics below. Unknown external territory (library, API, protocol)? Fire a
    background child on the `research` wrapper and fold its brief in.
 3. **Plan gate** - design module interfaces and seams through the
    `codebase-design` wrapper's vocabulary; a contested design fork that an
@@ -164,12 +175,17 @@ state from repo state alone - never from chat history.
    candidates, and an approved pick either folds into this plan (small,
    reversible) or becomes a follow-up - never a silent scope expansion.
    One-way
-   door involved? → blast-radius fork before any code. Escalate unapproved
+   door inventory: at this gate, list every anticipated one-way door the
+   plan will cross (schema migrations, irreversible deletes, external side
+   effects, auth changes) and get the user's approval for all of them in
+   one batch, each with its blast radius in one line. Mid-build one-way
+   stops are then reserved for doors *discovered after* the plan - stopping
+   for a genuinely unplanned door is correct. Escalate unapproved
    product/scope/architecture choices to the user.
 4. **Build** - worker children build via the `implement` wrapper per
    ticket/plan (it runs the `tdd` wrapper at pre-agreed seams) (S: one
-   child; M: one per ticket in worktrees, only with the user's explicit
-   permission). Each runs focused tests and reports changed files,
+   child; M: one per ticket in isolated worktrees, per the mechanics
+   section's writer rules). Each runs focused tests and reports changed files,
    commands, failures, remaining work. Report evidence, not claims: paste
    the actual passing command output (test summary lines, exit status, curl
    response body) for anything reported as done - a bare "tests pass" is
@@ -184,9 +200,10 @@ state from repo state alone - never from chat history.
 6. **Review** - fresh read-only reviewer children, one lens each:
    `code-review` wrapper's two axes (standards + spec) plus the
    `interrogate` fork's adversarial pass; blast-radius fork on anything wide.
-   Triage findings per orchestration policy §6; fixers get only the curated
-   accepted list, max 2 review→fix rounds.
-7. **Close** - parent final review (orchestration policy §8): full diff read,
+   Triage findings per the disposition rules in the mechanics section;
+   fixers get only the curated accepted list, max 2 review→fix rounds.
+7. **Close** - parent final review (mechanics section, Parent final
+   review): full diff read,
    acceptance criteria met, evidence exact-head, no scratch in the repo.
    Then: tracker update if one exists, issue comment with a summary (never
    commit SHAs - reference work by issue number or distinctive subject),
@@ -197,6 +214,93 @@ state from repo state alone - never from chat history.
    the user to invoke. Cross-session L
    work at a barrier: write a `handoff` document (the global handoff skill)
    and end the reply with its absolute path.
+
+## Delegation mechanics (inlined)
+
+Inlined from `subagent-orchestration-policy` so rigor never loads it. For
+non-rigor delegated work, that skill still governs.
+
+**Ceilings and writer rules.** Scouts/researchers: as needed, ≤4, read-only,
+parallel. Workers: default 2, ≤4; 1 when the split is unclear or overlaps.
+Reviewers: 1 when scope is a single module, no public surface, low risk;
+otherwise up to 5, one lens each. Fixers: 1–2, fresh agents - never the
+original workers. Concurrent writers in one checkout only when the plan
+assigns each writer an explicit, non-overlapping file set; shared seams
+(barrels, config, lockfiles, migrations, shared types) belong to one owner
+or a serial step. Overlap not ruled out before launch → 1 writer, or ask
+the user for worktrees. Never `worktree: true` without explicit user
+permission. Writers in a shared checkout run focused tests only; the broad
+suite runs after all writers finish.
+
+**Async discipline.** Never call `bg_wait()` for ordinary async children -
+they wake you natively on completion, failure, timeout, and
+needs-attention. After launching: do other safe orchestration work, or end
+the turn and let the wake land. No busy-wait, polling, sleeping, or
+`async: false`. "Continue until done" = keep the board moving while a safe
+immediate action remains; only async children running → record the revisit
+trigger and yield. Children survive parent idleness - no missions,
+schedules, or wait loops as heartbeats; give every child `timeoutMs` with
+margin. Do not edit a checkout while a writer is changing it.
+`needs_attention` is a control signal, not failure; `paused` ≠ `failed`.
+
+**Child packets.** Every child task is cold-start complete: (1) objective
+in one line; (2) repo/cwd/ref; (3) authority and edit boundary; (4)
+relevant files, contracts, decisions made, constraints; (5)
+success/acceptance criteria; (6) validation to run; (7) expected output
+shape, scratch output via relative `output` path; (8) stop/ask conditions
++ `timeoutMs`. Parallel prompts differ by seam, evidence, and decision -
+never clones with item numbers swapped. No hard `toolBudget` for
+mutation-capable children. An interrupted mutation child checkpoints with
+changed files, build/test state, commit state.
+
+**Scout reports** (≈40 lines, read-only): objective restated in one line;
+findings as `path:line` bullets each with a one-sentence "why it matters";
+verbatim snippets only where exact text is the decision; how the pieces
+connect; open questions; proposed work split (file sets per writer, shared
+seams, serial steps); recommended next step.
+
+**Review children.** Reviewers are fresh, read-only at the tool level
+(`edit`/`write` excluded), and get the exact cwd/worktree plus a baseline:
+diffable change (baseline commit) or the packet carries exact before/after.
+Findings are evidence-backed with `path:line`, labeled P0/P1/P2, only
+concrete current issues caused or made reachable by the change, ending
+with `Merge verdict: BLOCK | OK | OK with notes`. Lenses come from the
+wrapped review skills (Review phase); when a target warrants a lens no
+wrapper covers, add a plain reviewer child for it (architecture/contracts,
+concurrency/state, failure modes, security, test fidelity).
+
+**Disposition** (triage each finding against current HEAD): valid blocker
+(concrete failure/repro/security/contract mismatch) → fix now; valid
+non-blocker (real, outside the slice) → present to the user and file as a
+tracker issue only on explicit go-ahead (batch playbook step 5-6 shows the
+findings table first; never file silently); stale (already
+fixed) → cite evidence; invalid (contradicted by source/tests/scope) →
+cite the contradiction; out of policy/scope → escalate; speculative → do
+not block. A clean review is evidence, not publication authority.
+
+**Launch shape.** Single child: one subagent call. Multi-child wave:
+stable keys, plain JS, top-level `await` only, no nested async helpers;
+write the workflow script block in the same reply, then call
+`subagent({ workflow: true })` in that reply. Inline blocks are throwaway
+only: ≤10 lines, one-shot, no substantive packets. Everything else -
+multi-child waves, real task packets, anything resumable - is a gitignored
+scratch file (`tmp/<name>.js`) launched as `workflow: "./tmp/<name>.js"`,
+so a failed launch or resumed child re-launches by path. Do not shadow the
+`runs` global in workflow scripts. Full call options and controls: the
+`pi-subagents` skill.
+
+**Escalation.** Never launch `oracle`, `advisor`, `gpt-pro`, or a council
+on your own; recommend the escalation and proceed only on explicit user
+approval. Advice never approves a direction; you decide.
+
+**Parent final review** (Close phase): read the full final diff - only
+intended files changed; check the result against acceptance criteria and
+the user's stated intent; confirm verification evidence is exact-head and
+covers changed behavior; confirm accepted findings are fixed and
+revalidated, and residuals/skipped validation/blocked decisions are
+explicit; no scratch reports in the repo (`tmp/` handoff documents are
+intentional); publication authority exists before
+push/comment/close/merge/deploy; close with a concise summary.
 
 ## Skill map - where every skill fires
 
