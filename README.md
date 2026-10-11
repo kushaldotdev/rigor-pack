@@ -71,7 +71,7 @@ All live in `.agents/skills/`; every one traces to a vendor row in `CHANGES.md`.
 
 | Skill | Purpose |
 |---|---|
-| `interrogate` | Adversarial review: 4 persona reviewers (skeptic, bug hunter, contract breaker, simplifier) attack the change; synthesized verdict; strongest reasoning model, one model per persona when available. |
+| `interrogate` | Adversarial review: 4 persona reviewers (skeptic, bug hunter, contract breaker, simplifier) attack the change; synthesized verdict; reviewers run on the reviewer tier configured in agent definitions (missing tier = child's own default, never the root model). |
 | `blast-radius` | Find what a change breaks beyond the diff; prove the one safety fact by running real code. |
 | `correct` | Mine the repo's repeated agent mistakes and make each one impossible (architecture > types > lint > test). |
 | `benchmark-checklist` | 7-question vetting before trusting any perf number you measured. |
@@ -90,7 +90,7 @@ skills-harness/
 │   └── check-pack.mjs         ← validates the pack (frontmatter, refs, self-contained, Cursor-isms)
 ├── vendors/                   ← pristine upstream, NEVER edit; upgrade diffs only
 │   ├── mattpocock/skills/     ← engineering/ + productivity/ only @ 49dd158 (v1.3.1)
-│   └── poteto/pstack/         ← skills/ only @ d73344b (51 skills)
+│   └── poteto/pstack/         ← skills/ only @ 978ca6e9 (52 skills)
 ├── .agents/skills/            ← the deliverable; pi auto-loads these when cwd = this folder
 │   ├── rigor-mode/            ← NEW: conductor (phases, batch/sweep playbooks,
 │   │                             merit gate, autonomy gates, checkpoint barriers)
@@ -196,4 +196,4 @@ Verbatim skill copies, trimmed to used buckets; `.git` stripped, upstream
 | Vendor | Ref | Date |
 |---|---|---|
 | mattpocock/skills | `49dd158d1076134a641b33efb035946536778336` (v1.3.1) | 2026-10-09 |
-| cursor/plugins (pstack) | `d73344bee8cf22e53b9d5f4cf5749d38ba38c174` | 2026-10-09 |
+| cursor/plugins (pstack) | `978ca6e9c0e012047cd5058b8e829240336e704e` | 2026-10-10 |

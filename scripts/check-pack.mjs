@@ -41,6 +41,22 @@ for (const s of skills) {
   // cursor-isms
   if (/task tool|askquestion|~\/\.cursor|team-kit|deslop|agent-transcripts|multi-model/i.test(tNoMarker))
     die(`${s}: Cursor-ism present`);
+  // support .md files (references/, playbooks/, scripts/ docs): same
+  // self-contained / Cursor-ism / relative-link rules as SKILL.md
+  const walk = (d) => readdirSync(d, { withFileTypes: true }).flatMap((e) => {
+    const f = join(d, e.name);
+    return e.isDirectory() ? walk(f) : f.endsWith(".md") ? [f] : [];
+  });
+  for (const f of walk(join(packDir, s))) {
+    if (f === p) continue;
+    const rel = relative(packDir, f);
+    const t2 = readFileSync(f, "utf8").replace(/<!-- materialized[^>]*-->/g, "");
+    if (/vendors\//.test(t2)) die(`${rel}: references vendors/ (not self-contained)`);
+    if (/task tool|askquestion|~\/\.cursor|team-kit|deslop|agent-transcripts|multi-model/i.test(t2))
+      die(`${rel}: Cursor-ism present`);
+    // ponytail: relative links in support files are unchecked - upstream examples
+    // (e.g. domain-modeling GLOSSARY-FORMAT.md) use illustrative ./src/ paths
+  }
   // in-pack cross references resolve
   for (const ref of t.matchAll(/\.agents\/skills\/([a-z0-9-]+)\/SKILL\.md/g)) {
     if (!existsSync(join(packDir, ref[1], "SKILL.md"))) die(`${s}: dangling ref -> ${ref[1]}`);

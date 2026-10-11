@@ -15,7 +15,9 @@ against the new text.
 | Vendor | Pinned ref | Notes |
 |---|---|---|
 | mattpocock/skills | `49dd158d1076134a641b33efb035946536778336` (v1.3.1) | trimmed verbatim: `skills/engineering/` + `skills/productivity/` + `LICENSE` only; `.git` stripped — upgrade = re-clone at pin, copy subset, diff |
-| cursor/plugins (pstack) | `d73344bee8cf22e53b9d5f4cf5749d38ba38c174` | trimmed verbatim: `skills/` + `LICENSE` only; `.git` stripped — upgrade = re-clone at pin, copy subset, diff | pstack is Cursor-native: multi-model panels, `AskQuestion`, `~/.cursor` transcript paths, team-kit plugin deps |
+| cursor/plugins (pstack) | `978ca6e9c0e012047cd5058b8e829240336e704e` | trimmed verbatim: `skills/` + `LICENSE` only; `.git` stripped — upgrade = re-clone at pin, copy subset, diff | pstack is Cursor-native: multi-model panels, `AskQuestion`, `~/.cursor` transcript paths, team-kit plugin deps |
+
+Port log: 2026-10-10 d73344b → 978ca6e9 (#538 distill prompts — behavior-neutral compression, ported into unslop/benchmark-checklist/interrogate; #539 adds ketchup — source only, not wrapped). Accepted upstream deletions, not restored: reviewer-prompt "explains WHY something is a problem" clause (covered by the Evidence finding field), rubric "Three lines of duplication beat a premature abstraction" and "Use judgment." sentences (covered by neighboring rules).
 
 ## Global pi conventions (applied at build time to every wrapper)
 
@@ -65,7 +67,7 @@ against the new text.
 | Skill | Type | Deviations |
 |---|---|---|
 | blast-radius | fork | dropped companion refs to unported `how`/`why` (plain-language replacements); step 1 pulls diff via `git diff <base>...HEAD`; step 6 arena/multi-model → two parallel reviewer children with different attack angles |
-| interrogate | fork | Task tool + model-panel config (`~/.cursor/rules/pstack-models.mdc`) → pi `subagent` workflow, 4 default adversarial personas (skeptic / bug hunter / contract breaker / simplifier) instead of model diversity; personas run on the strongest reasoning model, one model per persona when 2+ strong models are available (per-child `model:` option); description de-"multi-model"-ed; `references/lead-judgment.md` model-consensus wording → reviewer wording; `references/rubric.md` tool names → pi tools (read, bash, ffgrep, fffind); references/ otherwise verbatim |
+| interrogate | fork | Task tool + model-panel config (`~/.cursor/rules/pstack-models.mdc`) → pi `subagent` workflow, 4 default adversarial personas (skeptic / bug hunter / contract breaker / simplifier) instead of model diversity; personas run on the reviewer tier configured in agent definitions (`agentOverrides.model`/`thinking`) — model choice is configuration, never a runtime decision; a missing reviewer tier means each reviewer runs on its own configured default, never the root agent's model, and the gap is noted in the verdict; description de-"multi-model"-ed; `references/lead-judgment.md` model-consensus wording → reviewer wording; `references/rubric.md` tool names → pi tools (read, bash, ffgrep, fffind); references/ otherwise verbatim |
 | correct | fork | none — verbatim copy, no Cursor-isms found on audit |
 | benchmark-checklist | fork | verbatim otherwise; `principle-explain-the-number` link and the Opening-a-PR / Perf-issue / Hillclimb playbook refs replaced with plain-language equivalents inlined in the text (self-contained rule) |
 | show-me-your-work | fork | transcript audit reads `git log`/`git status` + session evidence instead of Cursor `agent-transcripts/` paths; cross-model review → fresh-context read-only subagent (pi is single-model per session; heading renamed); encode-lessons-in-structure pointer → inlined plain-language principle; output location → repo `tmp/` convention at use sites |
