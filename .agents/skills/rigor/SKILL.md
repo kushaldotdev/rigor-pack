@@ -152,7 +152,11 @@ state from repo state alone - never from chat history.
    `codebase-design` wrapper's vocabulary; a contested design fork that an
    experiment can settle goes to the `prototype` wrapper instead of a
    question to the user. Plan with file ownership per writer, shared seams
-   to one owner or serial; red tests first if the user wants them. As
+   to one owner or serial. Red tests are the default for behavior changes,
+   not an option: every behavior change gets failing tests written and
+   watched red first - existing test cases serve as the red tests when they
+   fit; new ones get written when they don't. Skip red tests only when the
+   user explicitly opts out of tests for the change. As
    domain terms and decisions crystallize, update `GLOSSARY.md`/ADRs inline
    via the `domain-modeling` wrapper - never batch them for later. If the
    user asks for an architecture scan of the touched module, run the
@@ -165,8 +169,11 @@ state from repo state alone - never from chat history.
 4. **Build** - worker children build via the `implement` wrapper per
    ticket/plan (it runs the `tdd` wrapper at pre-agreed seams) (S: one
    child; M: one per ticket in worktrees, only with the user's explicit
-   permission). Each runs focused tests and reports changed
-   files, commands, failures, remaining work. Principles apply inline:
+   permission). Each runs focused tests and reports changed files,
+   commands, failures, remaining work. Report evidence, not claims: paste
+   the actual passing command output (test summary lines, exit status, curl
+   response body) for anything reported as done - a bare "tests pass" is
+   not a report. Principles apply inline:
    migrate callers and delete legacy in the same change, no floats for money,
    guards at boundaries, idempotent lifecycle operations.
 5. **Verify** - prove it works on the real app. Backend default: start the
