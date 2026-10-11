@@ -44,7 +44,7 @@ All live in `.agents/skills/`; every one traces to a vendor row in `CHANGES.md`.
 
 | Skill | Purpose |
 |---|---|
-| `rigor` | The conductor. Point it at a GitHub issue, a feature description, a markdown file of work items, or a seam/PR review range; it routes through the skills below, fans out pi `subagent` children, enforces size tiers (S/M/L), a merit gate (stop before planning if the work's long-run benefit is questionable), checkpoint barriers, batch failure stop-and-yield, and repo-derived one-way-door autonomy gates. Tracker-optional. |
+| `rigor` | The conductor. Point it at a GitHub issue, a feature description, a markdown file of work items, or a seam/PR review range; it routes through the skills below, fans out pi `subagent` children, enforces size tiers (S/M/L), a merit gate (stop before planning if the work's long-run benefit is questionable), checkpoint barriers, batch failure stop-and-yield, and repo-derived one-way-door autonomy gates. Tracker-optional. Phase diagram at the top of its SKILL.md. |
 | `ask-pack` | "Which skill fits?" router over the pack: main flow, on-ramps, per-task rigor checks, standalone skills. Fork of Matt's `ask-matt`, remapped to this pack. |
 
 ### Materialized wrappers — Matt Pocock skills, inlined + adapted

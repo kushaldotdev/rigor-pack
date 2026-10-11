@@ -31,6 +31,25 @@ configured for a child agent? That child's own default model stands - do not
 handpick the root agent's model as a stand-in. A missing tier is a
 configuration gap to note in the report, not a prompt to interrupt with.
 
+## The pipeline, at a glance
+
+```mermaid
+flowchart LR
+  I[intake] --> MG{"merit gate:\nworth building?"}
+  MG -- no --> X[stop & yield]
+  MG -- yes --> G[ground] --> P{"plan gate"}
+  P -- "one-way door" --> BR[blast-radius first]
+  P -- contested design --> PR[prototype]
+  P --> B[build\nimplement + tdd] --> V[verify\nreal app:\ncurl / psql / playwright\nbenchmark-checklist] --> R[review\ncode-review + interrogate\n+ blast-radius] --> C[close\nretro + correct\ntracker update]
+  S["S: one child, one pass"] -. sized into .-> B
+  M["M: to-tickets → worker child per ticket\nworktrees → one integration branch"] -.-> B
+  L["L: wayfinder map → queue of S/M units\n3-5 units per run, then stop"] -.-> B
+  B -. checkpoint barrier .-> CP["commits + checks green +\ncheckpoint row under tmp/checkpoints/\nbatch failure → revert, block, yield"]
+  CP -. next unit .-> B
+```
+
+The phases below are the contract; this diagram is the map.
+
 ## Non-negotiables
 
 - Read this repo's `AGENTS.md` (or `CLAUDE.md`) before touching code. Its
