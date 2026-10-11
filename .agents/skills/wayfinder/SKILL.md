@@ -21,7 +21,7 @@ The map is a single issue on this repo's issue tracker, labelled `wayfinder:map`
 
 The map is an **index**, not a store. It lists the decisions made and points at the tickets that hold their detail; a decision lives in exactly one place, its ticket, so the map never restates it, only gists it and links.
 
-**Where the map, its child tickets, blocking, and frontier queries physically live is tracker-specific.** The issue tracker should have been provided to you. If not, tell the user to ask for the setup-matt-pocock-skills skill. Consult the tracker doc's "Wayfinding operations" section for how _this_ repo expresses them. If no tracker has been provided, default to the local-markdown tracker.
+**Where the map, its child tickets, blocking, and frontier queries physically live is tracker-specific.** The issue tracker should have been provided to you. If not, tell the user to run `/skill:setup-matt-pocock-skills`. Consult the tracker doc's "Wayfinding operations" section for how _this_ repo expresses them. If no tracker has been provided, default to the local-markdown tracker.
 
 ### The map body
 
@@ -126,12 +126,6 @@ User invokes with a map (URL or number). A ticket is **optional**: without one, 
 
 The user may run unblocked tickets in parallel, so expect other sessions to be editing the tracker concurrently.
 
+## pi notes
 
-<!-- materialized from vendors/mattpocock/skills@49dd158; do not hand-edit - rebuild: node scripts/build-pack.mjs; deviations: CHANGES.md -->
-
-## pi adaptations
-
-- Subagent or background-agent work: use the pi `subagent` tool under the ceilings in `~/.pi/agent/skills/subagent-orchestration-policy/SKILL.md`.
-- Upstream slash commands (e.g. `/setup-matt-pocock-skills`): pi has none - the user asks for the skill by name.
-- Skills referenced above live in this repo's `.agents/skills/<name>/SKILL.md`.
 - Parallel research children run as one pi `subagent` workflow, each resolving its ticket via the `research` skill.

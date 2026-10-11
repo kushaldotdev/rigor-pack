@@ -19,7 +19,16 @@ gets it by one of: the `skill: "<name>"` option on that child's subagent
 call (preferred), or the packet inlining "read and follow
 `.agents/skills/<name>/SKILL.md`" plus the operative rules in full - packet
 paths resolve only because children run in this repo's cwd/worktree. Never
-rely on a child discovering skills on its own. Split by where the judgment
+rely on a child discovering skills on its own. Skills carry no shared
+pi-adaptations block, so every packet restates the pi facts a child cannot
+infer: pi has no `Skill` tool - only each skill's name, description, and path
+reach the prompt at startup, so the child reads the `SKILL.md` file itself and
+the user forces one with `/skill:<name>` - and subagent ceilings live in
+`subagent-orchestration-policy`. A child that may launch its own children
+gets this delivery rule verbatim - delegation rules do not inherit, so the
+parent hands down the instruction to pass it down; level-2+ children are
+read-only scouts/reviewers unless the plan assigns a writer explicitly.
+Split by where the judgment
 happens: worker/reviewer/research children get their working skill (`tdd`,
 `code-review`/`interrogate`, `verify-<app>`, `research`,
 `benchmark-checklist`); the parent keeps planning, trail, and shared-state
@@ -248,7 +257,11 @@ in one line; (2) repo/cwd/ref; (3) authority and edit boundary; (4)
 relevant files, contracts, decisions made, constraints; (5)
 success/acceptance criteria; (6) validation to run; (7) expected output
 shape, scratch output via relative `output` path; (8) stop/ask conditions
-+ `timeoutMs`. Parallel prompts differ by seam, evidence, and decision -
++ `timeoutMs`; (9) skills to load - exact `SKILL.md` path(s), the
+`skill:` option where available, and the pi facts above (no `Skill` tool -
+read the file; `/skill:<name>` to force; ceilings in
+`subagent-orchestration-policy`) -
+plus the same rule restated if the child may delegate further. Parallel prompts differ by seam, evidence, and decision -
 never clones with item numbers swapped. No hard `toolBudget` for
 mutation-capable children. An interrupted mutation child checkpoints with
 changed files, build/test state, commit state.

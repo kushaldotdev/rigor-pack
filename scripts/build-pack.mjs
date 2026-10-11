@@ -31,6 +31,7 @@ const WRAPPERS = {
   "retro": { bucket: "engineering" },
   "setup-matt-pocock-skills": { bucket: "engineering" },
   "grilling": { bucket: "productivity" },
+  "wait-what": { bucket: "productivity" },
 };
 
 // Content transforms: upstream harness assumptions -> in-repo, self-contained forms.
@@ -51,22 +52,12 @@ function transform(src) {
   t = t.replace(/call the Skill tool/gi, "read and follow the named skill under .agents/skills/<name>/SKILL.md");
   t = t.replace(/Call the Skill tool/gi, "Read and follow the named skill under .agents/skills/<name>/SKILL.md");
   t = t.replace(/calling the Skill tool/gi, "reading and following the named skill under .agents/skills/<name>/SKILL.md");
-  t = t.replace(/run `\/setup-matt-pocock-skills`/g, "ask for the setup-matt-pocock-skills skill");
-  t = t.replace(/run `\/([a-z-]+)`/g, (_m, a) => `ask for the ${a} skill`);
-  t = t.replace(/run `\/([a-z-]+)`/g, (_m, a) => `ask for the ${a} skill`);
+  t = t.replace(/run `\/setup-matt-pocock-skills`/g, "run `/skill:setup-matt-pocock-skills`");
+  t = t.replace(/run `\/([a-z-]+)`/g, (_m, a) => `run \`/skill:${a}\``);
   return t;
 }
 
-const ADAPT = (extra) => `
-
-<!-- materialized from vendors/mattpocock/skills@${PIN}; do not hand-edit - rebuild: node scripts/build-pack.mjs; deviations: CHANGES.md -->
-
-## pi adaptations
-
-- Subagent or background-agent work: use the pi \`subagent\` tool under the ceilings in \`~/.pi/agent/skills/subagent-orchestration-policy/SKILL.md\`.
-- Upstream slash commands (e.g. \`/setup-matt-pocock-skills\`): pi has none - the user asks for the skill by name.
-- Skills referenced above live in this repo's \`.agents/skills/<name>/SKILL.md\`.
-${extra ?? ""}`;
+const ADAPT = (extra) => (extra ? `\n## pi notes\n\n${extra}\n` : "");
 
 let built = 0;
 for (const [name, { bucket, extra }] of Object.entries(WRAPPERS)) {

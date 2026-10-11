@@ -39,7 +39,7 @@ For a PR, the same states read against the attached code: `ready-for-agent` mean
 
 Every triaged issue should carry exactly one category role and one state role. If state roles conflict, flag it and ask the maintainer before doing anything else.
 
-These are canonical role names. The actual label strings used in the issue tracker may differ. The mapping should have been provided to you. If not, tell the user to ask for the setup-matt-pocock-skills skill.
+These are canonical role names. The actual label strings used in the issue tracker may differ. The mapping should have been provided to you. If not, tell the user to run `/skill:setup-matt-pocock-skills`.
 
 State transitions: an unlabeled issue normally goes to `needs-triage` first; from there it moves to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `needs-info` returns to `needs-triage` once the reporter replies. The maintainer can override at any time; flag transitions that look unusual and ask before proceeding.
 
@@ -109,12 +109,3 @@ Capture everything resolved during grilling under "established so far" so the wo
 ## Resuming a previous session
 
 If prior triage notes exist on the issue or PR, read them, check whether the reporter has answered any outstanding questions, and present an updated picture before continuing. Don't re-ask resolved questions.
-
-
-<!-- materialized from vendors/mattpocock/skills@49dd158; do not hand-edit - rebuild: node scripts/build-pack.mjs; deviations: CHANGES.md -->
-
-## pi adaptations
-
-- Subagent or background-agent work: use the pi `subagent` tool under the ceilings in `~/.pi/agent/skills/subagent-orchestration-policy/SKILL.md`.
-- Upstream slash commands (e.g. `/setup-matt-pocock-skills`): pi has none - the user asks for the skill by name.
-- Skills referenced above live in this repo's `.agents/skills/<name>/SKILL.md`.

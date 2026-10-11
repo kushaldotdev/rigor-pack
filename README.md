@@ -22,8 +22,9 @@ rigor), orchestrated by the `rigor` conductor skill and routed by the
   - **Materialized wrapper** (the Matt skills): build output of
     `scripts/build-pack.mjs` — the upstream SKILL.md content is inlined with
     mechanical transforms (Skill-tool phrasings → in-pack skill paths, slash
-    commands → "ask for the skill by name"), the whole upstream folder
-    (support files) is copied, and a "pi adaptations" block is appended.
+    commands → `/skill:<name>`), the whole upstream folder
+    (support files) is copied, plus a short "pi notes" section only where
+    that skill needs one.
     Never hand-edit a wrapper — rebuild instead.
   - **Fork** (poteto ports that assume Cursor): hand-maintained content
     genuinely edited for pi. Every deviation logged in `CHANGES.md`.
@@ -32,11 +33,15 @@ rigor), orchestrated by the `rigor` conductor skill and routed by the
   [`CHANGES.md`](./CHANGES.md). If it isn't logged, it doesn't exist.
 - Skill delivery to subagents: pi-subagents children are cold-start and load
   no skills on their own; the parent delivers each child's skill via the
-  `skill:` option or by packet-inlining the operative SKILL.md path + rules.
-  Workers/reviewers/research children get working skills; the parent keeps
-  planning and single-writer skills.
+  `skill:` option or by packet-inlining the operative SKILL.md path + rules,
+  plus the pi facts (no `Skill` tool - the child reads the SKILL.md file,
+  the user forces one with `/skill:<name>`; ceilings in
+  `subagent-orchestration-policy`) since skills carry no shared adaptations
+  block. A child that may delegate further gets the same delivery rule to pass
+  down. Workers/reviewers/research children get working skills; the parent
+  keeps planning and single-writer skills.
 
-## The pack (26 skills)
+## The pack (28 skills)
 
 All live in `.agents/skills/`; every one traces to a vendor row in `CHANGES.md`.
 
@@ -68,8 +73,9 @@ All live in `.agents/skills/`; every one traces to a vendor row in `CHANGES.md`.
 | `retro` | Structured retrospective on a completed unit of work. |
 | `setup-matt-pocock-skills` | One-time repo config: tracker, triage labels, domain doc layout. |
 | `grilling` | Stress-test a plan or decision with rounds of yes-shaped questions. |
+| `wait-what` | "That last message didn't land" reset: re-pitch it in plain language using `GLOSSARY.md` vocabulary. |
 
-### Forks — pstack skills edited for pi
+### Forks — upstream skills edited for pi
 
 | Skill | Purpose |
 |---|---|
@@ -80,6 +86,8 @@ All live in `.agents/skills/`; every one traces to a vendor row in `CHANGES.md`.
 | `show-me-your-work` | TSV decision trail for long/unattended runs; audit against git evidence; fresh-context reviewer flags. |
 | `create-verification-skill` | Generate a repo-local `verify-<app>` skill that drives the real app: Playwright + curl + DB CLI + screenshots read back as images. |
 | `unslop` | Strip AI-writing tells from prose surfaces. |
+| `handoff` (Matt: productivity) | Compact the conversation into a `tmp/<timestamp>-<slug>.md` handoff doc for the next agent; ships in the pack but is always installed globally, never into a repo. |
+| `ask-pack` (Matt: engineering) | Router over the whole pack: main flow, on-ramps, per-task checks, standalone skills. |
 
 ## Layout
 
@@ -106,7 +114,7 @@ skills-harness/
 
 ```bash
 node scripts/build-pack.mjs   # rebuild wrappers from vendors/ (never hand-edit them)
-node scripts/check-pack.mjs   # must pass before any commit: 25/25 skills
+node scripts/check-pack.mjs   # must pass before any commit: 28/28 skills
 ```
 
 ## Testing
@@ -128,8 +136,8 @@ optional cleanup.
 | Location | Skills | Why |
 |---|---|---|
 | Repo `.agents/skills/` | **the whole pack, as-is** | skills resolve in-pack cross-references (`.agents/skills/<name>/SKILL.md`) and act on that repo's surfaces; self-contained means nothing else is needed |
-| Global `~/.pi/agent/skills/` | `handoff`, `subagent-orchestration-policy` | harness-level, repo-agnostic; `rigor` is pi-coupled (pi `subagent` tool) and belongs here only if you want it everywhere |
-| Global, optional (pack-less repos only) | `grilling`, `unslop` | pure conversation/prose skills that work with no repo pack; if a repo with the full pack also sees the global copy, delete one side |
+| Global `~/.pi/agent/skills/` | `handoff` (pack member), `subagent-orchestration-policy` | harness-level, repo-agnostic; `handoff` ships in the pack but is always installed globally, never into a repo |
+| Global, optional (pack-less repos only) | `grilling`, `unslop`, `code-review`, `diagnosing-bugs` | standalone, universal skills that work with no repo pack; if a repo with the full pack also sees the global copy, delete one side |
 | Repo-specific, stays in the target repo | `codebase-memory`, `postgres-query`, `redis-inspect`, generated `verify-<app>` | written against that repo, not part of this pack |
 
 ### Install steps
@@ -141,8 +149,8 @@ optional cleanup.
 rm -rf <repo>/.agents/skills/<stale-names>
 # 2. copy the pack — this is the entire install
 rsync -a --delete .agents/skills/ <repo>/.agents/skills/
-# 3. if the repo name also exists globally (e.g. grilling), delete the global copy
-rm -rf ~/.pi/agent/skills/grilling
+# 3. delete any global copy of a skill the repo pack now carries (double-advertise)
+rm -rf ~/.pi/agent/skills/{grilling,unslop,code-review,diagnosing-bugs}
 # 4. rename the domain doc the pack's skills speak
 (cd <repo> && git mv CONTEXT.md GLOSSARY.md)   # if the repo still has CONTEXT.md
 # 5. expose the same skills to other harnesses
@@ -172,8 +180,8 @@ for d in .agents/skills/*/; do ln -sfn "$PWD/$d" ".claude/skills/$(basename "$d"
 
 Global-vs-repo duplicates then apply inside those harnesses exactly as for pi:
 when a repo carries the full pack, the global symlink's shared names are
-shadowed by convention — keep global to `handoff` + policy unless you accept
-the duplicate.
+shadowed by convention — keep global to `handoff` + `subagent-orchestration-policy`
+(plus the optional four for pack-less repos) unless you accept the duplicate.
 
 ## Upgrading upstream
 
@@ -194,7 +202,7 @@ Verbatim skill copies, trimmed to used buckets; `.git` stripped, upstream
 | Vendor | Kept | Dropped |
 |---|---|---|
 | mattpocock/skills | `skills/engineering/` (20 skills), `skills/productivity/` (7 skills), bucket READMEs, `LICENSE` | `deprecated/`, `in-progress/`, `misc/`, docs, scripts, CI, plugin manifests |
-| poteto/pstack | `skills/` (51), `LICENSE` | `README.md`, docs, `.gitignore` |
+| poteto/pstack | `skills/` (52), `LICENSE` | `README.md`, docs, `.gitignore` |
 
 | Vendor | Ref | Date |
 |---|---|---|

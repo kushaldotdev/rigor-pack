@@ -9,7 +9,7 @@ Two-axis review of the diff between `HEAD` and a fixed point the user supplies:
 
 Both axes run as **parallel sub-agents** so they don't pollute each other's context, then this skill aggregates their findings.
 
-The issue tracker should have been provided to you. If not, tell the user to ask for the setup-matt-pocock-skills skill.
+The issue tracker should have been provided to you. If not, tell the user to run `/skill:setup-matt-pocock-skills`.
 
 ## Process
 
@@ -87,12 +87,6 @@ A change can pass one axis and fail the other:
 
 Reporting them separately stops one axis from masking the other.
 
+## pi notes
 
-<!-- materialized from vendors/mattpocock/skills@49dd158; do not hand-edit - rebuild: node scripts/build-pack.mjs; deviations: CHANGES.md -->
-
-## pi adaptations
-
-- Subagent or background-agent work: use the pi `subagent` tool under the ceilings in `~/.pi/agent/skills/subagent-orchestration-policy/SKILL.md`.
-- Upstream slash commands (e.g. `/setup-matt-pocock-skills`): pi has none - the user asks for the skill by name.
-- Skills referenced above live in this repo's `.agents/skills/<name>/SKILL.md`.
 - The two review axes run as two parallel read-only reviewer children in one pi `subagent` workflow; the parent aggregates their reports (see `subagent-orchestration-policy` §6 for lenses and disposition).

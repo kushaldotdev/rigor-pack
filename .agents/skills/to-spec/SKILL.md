@@ -5,7 +5,7 @@ disable-model-invocation: true
 ---
 This skill takes the current conversation context and codebase understanding and produces a spec. Do NOT interview the user; just synthesize what you already know.
 
-The issue tracker and triage label vocabulary should have been provided to you. If not, tell the user to ask for the setup-matt-pocock-skills skill.
+The issue tracker and triage label vocabulary should have been provided to you. If not, tell the user to run `/skill:setup-matt-pocock-skills`.
 
 ## Process
 
@@ -72,12 +72,3 @@ A description of the things that are out of scope for this spec.
 Any further notes about the feature.
 
 </spec-template>
-
-
-<!-- materialized from vendors/mattpocock/skills@49dd158; do not hand-edit - rebuild: node scripts/build-pack.mjs; deviations: CHANGES.md -->
-
-## pi adaptations
-
-- Subagent or background-agent work: use the pi `subagent` tool under the ceilings in `~/.pi/agent/skills/subagent-orchestration-policy/SKILL.md`.
-- Upstream slash commands (e.g. `/setup-matt-pocock-skills`): pi has none - the user asks for the skill by name.
-- Skills referenced above live in this repo's `.agents/skills/<name>/SKILL.md`.

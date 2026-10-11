@@ -15,12 +15,6 @@ Once done, read and follow .agents/skills/code-review/SKILL.md to review the wor
 
 Commit your work to the current branch.
 
+## pi notes
 
-<!-- materialized from vendors/mattpocock/skills@49dd158; do not hand-edit - rebuild: node scripts/build-pack.mjs; deviations: CHANGES.md -->
-
-## pi adaptations
-
-- Subagent or background-agent work: use the pi `subagent` tool under the ceilings in `~/.pi/agent/skills/subagent-orchestration-policy/SKILL.md`.
-- Upstream slash commands (e.g. `/setup-matt-pocock-skills`): pi has none - the user asks for the skill by name.
-- Skills referenced above live in this repo's `.agents/skills/<name>/SKILL.md`.
 - Issue-tracker operations use the repo's configured tracker (see the repo's agent docs for which CLI and workflow).

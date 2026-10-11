@@ -14,7 +14,7 @@ The **phase boundary** is the gap between two phases, and it is the only place t
 | **Subagent** | Send the task to its own context window and get a report back. |
 | **Compact** | Compress this context and seed a fresh session with the summary. |
 
-pi has no `/clear` or `/compact` slash commands: "new session" means starting a fresh pi session (the old one stays resumable), and **compact** is pi's built-in context compression.
+pi spells these `/new` (start a fresh session; the old one stays resumable) and `/compact`.
 
 ## The tree
 
@@ -26,7 +26,7 @@ Work top to bottom at the boundary. The first **yes** wins.
 
 The cost of getting this wrong is one-way. Discard a *relevant* context and you lose the **why** behind what you built, and no amount of reading the diff back gets it returned.
 
-**3. Do you need to hand off?** `handoff` (a global pi skill, not part of this pack) is narrow. You need it only when you are:
+**3. Do you need to hand off?** `handoff` is narrow. You need it only when you are:
 
 - swapping to a **new harness** (pi → Claude Code, Codex, Cursor),
 - moving to a **new directory** or repo,

@@ -19,7 +19,7 @@ A **flow** is a path through the skills. Most paths run along one **main flow**,
 The route most work travels. You have an idea and want it built.
 
 1. **`grill-with-docs`** sharpens the idea by interview. Start here whenever you are **working in a working directory**: it's stateful, retaining what it learns in `GLOSSARY.md` and ADRs. It runs the `grilling` interview primitive underneath (see Standalone) and leaves a paper trail.
-2. **Branch: can you settle every question in conversation?** If a question needs a runnable answer (state, business logic, a UI you have to see), detour through **`prototype`**: a small throwaway program that answers the one design question. The answer folds into the real code; the prototype itself is kept as a primary source on a `prototype/<name>` branch, pointed at from the implementation issue. (Bridging a prototype into a fresh session is the `handoff` skill's job - it's a global pi skill, not part of this pack.)
+2. **Branch: can you settle every question in conversation?** If a question needs a runnable answer (state, business logic, a UI you have to see), detour through **`prototype`**: a small throwaway program that answers the one design question. The answer folds into the real code; the prototype itself is kept as a primary source on a `prototype/<name>` branch, pointed at from the implementation issue. (Bridging a prototype into a fresh session is the `handoff` skill's job.)
 3. **Branch: is this a multi-session build?**
    - **Yes** → **`to-spec`** (turn the thread into a spec published to the tracker), then **`to-tickets`** to split it into tracer-bullet tickets with blocking edges. From there, hand the ticket queue to **`rigor`** - its M tier drains ready tickets in parallel worker children onto one integration branch, and its close phase runs the review - or drive **`implement`** per ticket yourself if you want to stay in the loop.
    - **No** → **`implement`** right here, in the same context window, or hand the single task to **`rigor`** (S tier) if you want it run hands-off with verification and review included.
@@ -66,7 +66,7 @@ A **phase** is a chunk of work inside a session: the grilling, the implementatio
 
 - **Continue**: stay put. Costs nothing, loses nothing.
 - **New session**: empty the window and start from nothing, when nothing here matters to what's next.
-- **`handoff`** (global pi skill, not in this pack) writes a portable markdown file. Narrow: only for a **new harness**, a **new directory**, a **colleague**, or forking a side task **mid-phase**. What it buys is portability.
+- **`handoff`** writes a portable markdown file. Narrow: only for a **new harness**, a **new directory**, a **colleague**, or forking a side task **mid-phase**. What it buys is portability.
 - **Subagent**: send a tightly-scoped task to its own window and get a report back. In pi this is the `subagent` tool under the ceilings in `~/.pi/agent/skills/subagent-orchestration-policy/SKILL.md`.
 - **Compact** (pi's context compression): compresses this context and seeds a fresh session with it. The **default**, at the bottom of the tree rather than the first reach.
 
@@ -79,6 +79,7 @@ Off the main flow entirely.
 - **`grilling`** is the interview primitive itself: rounds, the frontier, facts are the agent's job and decisions are yours. `grill-with-docs` is its stateful wrapper, and `triage`, `wayfinder` and `improve-codebase-architecture` all run it internally. Reach for it directly when you want the interview with no wrapper around it - sharpening a plan, a decision, or a piece of writing with no repo state to keep.
 - **`prototype`**: see step 2 of the main flow; reach for it any time a design question is hard to settle on paper.
 - **`research`**: delegate reading legwork to a **background agent**: it investigates a question against **primary sources**, then leaves a cited Markdown file in the repo. Keep working while it reads. The file it produces feeds the main flow at `grill-with-docs` - research feeds the thinking rather than replacing it.
+- **`wait-what`**: the "that didn't land" reset. When a message, plan, or explanation misses you, it re-pitches the same thing in plain language using `GLOSSARY.md` vocabulary instead of repeating itself louder.
 
 ## Precondition
 

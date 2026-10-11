@@ -31,14 +31,18 @@ Port log: 2026-10-10 d73344b → 978ca6e9 (#538 distill prompts — behavior-neu
 3. `GLOSSARY.md` naming kept as upstream; a consumer repo does the `CONTEXT.md` →
    `GLOSSARY.md` repo rename at install time (tracked as repo work, not a
    skill deviation).
-4. Upstream slash commands (`/setup-matt-pocock-skills`, `/triage`, ...) → pi
-   has no slash commands; the text tells the user to ask for the skill by
-   name. "Tell the human to run it" posture kept.
+4. Upstream slash commands (`/setup-matt-pocock-skills`, `/triage`, ...) →
+   pi's skill command form `/skill:<name>`. "Tell the human to run it"
+   posture kept.
 5. Whole upstream skill folder is copied (support files: references, formats,
    scripts) so relative links resolve in the installed repo.
-6. Each wrapper ends with a "pi adaptations" block (pi `subagent` tool +
-   orchestration policy, no-slash-commands note, in-pack skill paths) and a
-   provenance marker naming the vendored pin.
+6. Wrappers carry NO in-file provenance marker: the wrapper list is the
+   `WRAPPERS` map in `scripts/build-pack.mjs` and every row below, and the pin
+   is the vendor table above. A skill-specific `## pi notes` section is
+   appended only where that skill's own pi behavior differs (the `extra`
+   column below); shared pi facts (invocation is `/skill:<name>`, subagent
+   ceilings live in `subagent-orchestration-policy`) live in these docs and in
+   the parent's child packet, never duplicated into every file.
 
 ## Matt skills → materialized wrappers
 
@@ -61,6 +65,8 @@ Port log: 2026-10-10 d73344b → 978ca6e9 (#538 distill prompts — behavior-neu
 | retro | wrapper | none — added in the self-contained rebuild so rigor's close phase points at an installed skill, not a vendored path |
 | setup-matt-pocock-skills | wrapper | none |
 | grilling | wrapper | none — upstream v1.3.1 already carries the yes-shaped-question line a consumer repo's old local copy lacked; wrapper supersedes that stale copy |
+| wait-what | wrapper | none |
+| handoff | fork | upstream v1.3.1 writes to the OS temp dir and drops the reply-trailing path; fork keeps the pi-native behaviour: saves to `tmp/<timestamp>-<slug>.md` in the cwd, timestamp + kebab-slug filename rules, untracked + gitignore warning, reply ends with the absolute path in a code block; `call the Skill tool` → in-pack path phrasing |
 
 ## poteto skills → forks (hand-maintained)
 
@@ -78,25 +84,25 @@ Port log: 2026-10-10 d73344b → 978ca6e9 (#538 distill prompts — behavior-neu
 
 | Skill | Type | Deviations |
 |---|---|---|
-| ask-pack | fork | fork of upstream `ask-matt`, renamed: the router is remapped from Matt's 20-skill engineering flow onto this pack's 26 skills — main flow gains a conductor step (`rigor` replaces implement-spec-style whole-spec orchestration; per-ticket `implement` kept for hand-driving), new "Per-task rigor checks" section covers the pstack forks (interrogate, blast-radius, benchmark-checklist, correct, show-me-your-work, create-verification-skill, unslop); upstream skills not in the pack dropped (grill-me, to-questionnaire, wizard, wait-what, teach, writing-for-agents, implement-spec, pr, handoff — handoff is a global pi skill, referenced as such); phase-boundary section pi-adapted (no /clear or /compact slash commands — "start a new session" and pi's compact; support file PHASE-BOUNDARIES.md carried with the same adaptations); standalone section trimmed to pack contents (grilling, prototype, research, unslop) |
+| ask-pack | fork | fork of upstream `ask-matt`, renamed: the router is remapped from Matt's 20-skill engineering flow onto this pack's 28 skills — main flow gains a conductor step (`rigor` replaces implement-spec-style whole-spec orchestration; per-ticket `implement` kept for hand-driving), new "Per-task rigor checks" section covers the pstack forks (interrogate, blast-radius, benchmark-checklist, correct, show-me-your-work, create-verification-skill, unslop); upstream skills not in the pack dropped (grill-me, to-questionnaire, wizard, teach, writing-for-agents, implement-spec, pr); `wait-what` and `handoff` are pack members (handoff ships in the pack but is installed globally); phase-boundary section pi-adapted (pi's `/new` and `/compact`; support file PHASE-BOUNDARIES.md carried with the same adaptations); standalone section lists pack contents (grilling, prototype, research, wait-what) |
 
 ## New skills (ours)
 
 | Skill | Type | Notes |
 |---|---|---|
-| rigor | new (renamed from rigor-mode) | conductor: intake router (issue / feature / md-file batch / seam sweep / diagnosing-bugs / improve-codebase-architecture / to-spec routes), merit gate (stop before planning if long-run benefit is questionable), S/M/L size tiers with L = queue of S/M units, phases (intake → ground → plan gate → build → verify → review → close), batch + sweep playbooks, batch failure rule (halt, revert failed item, checkpoint blocked, yield), checkpoint barrier (`tmp/checkpoints/<slug>.tsv`, show-me-your-work format), run budget 3-5 units per workflow, repo-derived one-way doors (from AGENTS.md + universal set; domain examples apply only where they match), tracker-optional, handoff doc at L-run barriers, skill-map table, cold-start child delivery rules (skill: option or packet-inlined SKILL.md; workers/reviewers/research children get working skills, parent keeps planning + single-writer skills); inlines child mechanics (Delegation mechanics section distilled from subagent-orchestration-policy) so rigor never loads it; that skill remains the default for non-rigor delegated work. Rename 2026-10-12: "mode" was redundant — triggers ("rigor this", "rigor on issue 142") unchanged; body self-references, skill-map retro row wording (vendored → wrapper), and openai.yaml display_name updated in the same change | intake router (issue / feature / md-file batch / seam sweep / diagnosing-bugs / improve-codebase-architecture / to-spec routes), merit gate (stop before planning if long-run benefit is questionable), S/M/L size tiers with L = queue of S/M units, phases (intake → ground → plan gate → build → verify → review → close), batch + sweep playbooks, batch failure rule (halt, revert failed item, checkpoint blocked, yield), checkpoint barrier (`tmp/checkpoints/<slug>.tsv`, show-me-your-work format), run budget 3-5 units per workflow, repo-derived one-way doors (from AGENTS.md + universal set; domain examples apply only where they match), tracker-optional, handoff doc at L-run barriers, skill-map table, cold-start child delivery rules (skill: option or packet-inlined SKILL.md; workers/reviewers/research children get working skills, parent keeps planning + single-writer skills); inlines child mechanics (Delegation mechanics section distilled from subagent-orchestration-policy) so rigor never loads it; that skill remains the default for non-rigor delegated work |
+| rigor | new (renamed from rigor-mode) | conductor: intake router (issue / feature / md-file batch / seam sweep / diagnosing-bugs / improve-codebase-architecture / to-spec routes), merit gate (stop before planning if long-run benefit is questionable), S/M/L size tiers with L = queue of S/M units, phases (intake → ground → plan gate → build → verify → review → close), batch + sweep playbooks, batch failure rule (halt, revert failed item, checkpoint blocked, yield), checkpoint barrier (`tmp/checkpoints/<slug>.tsv`, show-me-your-work format), run budget 3-5 units per workflow, repo-derived one-way doors (from AGENTS.md + universal set; domain examples apply only where they match), tracker-optional, handoff doc at L-run barriers, skill-map table, cold-start child delivery rules (skill: option or packet-inlined SKILL.md + the pi facts restated per packet - no Skill tool (only name/description/path reach the prompt; the child reads the file), /skill:<name> to force, ceilings in subagent-orchestration-policy; recursive: a child that may delegate gets the same rule to pass down; workers/reviewers/research children get working skills, parent keeps planning + single-writer skills); inlines child mechanics (Delegation mechanics section distilled from subagent-orchestration-policy) so rigor never loads it; that skill remains the default for non-rigor delegated work. Rename 2026-10-12: "mode" was redundant — triggers ("rigor this", "rigor on issue 142") unchanged; body self-references, skill-map retro row wording (vendored → wrapper), and openai.yaml display_name updated in the same change | intake router (issue / feature / md-file batch / seam sweep / diagnosing-bugs / improve-codebase-architecture / to-spec routes), merit gate (stop before planning if long-run benefit is questionable), S/M/L size tiers with L = queue of S/M units, phases (intake → ground → plan gate → build → verify → review → close), batch + sweep playbooks, batch failure rule (halt, revert failed item, checkpoint blocked, yield), checkpoint barrier (`tmp/checkpoints/<slug>.tsv`, show-me-your-work format), run budget 3-5 units per workflow, repo-derived one-way doors (from AGENTS.md + universal set; domain examples apply only where they match), tracker-optional, handoff doc at L-run barriers, skill-map table, cold-start child delivery rules (skill: option or packet-inlined SKILL.md + the pi facts restated per packet - no Skill tool (only name/description/path reach the prompt; the child reads the file), /skill:<name> to force, ceilings in subagent-orchestration-policy; recursive: a child that may delegate gets the same rule to pass down; workers/reviewers/research children get working skills, parent keeps planning + single-writer skills); inlines child mechanics (Delegation mechanics section distilled from subagent-orchestration-policy) so rigor never loads it; that skill remains the default for non-rigor delegated work |
 | verify-<app> | new (generated) | output of running the create-verification-skill fork against a consumer repo; lives in that repo, not here |
 
 ## Build & validation scripts
 
-- `scripts/build-pack.mjs` — materializes the 17 Matt wrappers from
-  `vendors/mattpocock/skills/` into `.agents/skills/` (transforms + adaptations
-  block + provenance marker + whole-folder copy). Forks, `ask-pack`, and
-  `rigor` are hand-maintained and untouched by the build.
+- `scripts/build-pack.mjs` — materializes the Matt wrappers from
+  `vendors/mattpocock/skills/` into `.agents/skills/` (transforms + optional
+  `## pi notes` + whole-folder copy). Forks, `ask-pack`, and `rigor` are
+  hand-maintained and untouched by the build.
 - `scripts/check-pack.mjs` — validates the pack: frontmatter parses (pi's own
   yaml lib), in-pack cross-references resolve, no `vendors/` references outside
-  provenance markers, no Cursor-isms, provenance markers correct, relative
-  links resolve. Run after any rebuild or re-vendor.
+  the `vendors/` self-contained rule, no Cursor-isms, relative links resolve.
+  Run after any rebuild or re-vendor.
 
 ## Explicitly not ported
 
