@@ -62,7 +62,7 @@ for (const s of skills) {
     if (!existsSync(join(packDir, ref[1], "SKILL.md"))) die(`${s}: dangling ref -> ${ref[1]}`);
   }
   // wrapper provenance (forks/new are hand-maintained; they must NOT claim materialization)
-  const handMade = ["rigor-mode", "interrogate", "blast-radius", "correct", "benchmark-checklist", "show-me-your-work", "create-verification-skill", "unslop"];
+  const handMade = ["rigor", "ask-pack", "interrogate", "blast-radius", "correct", "benchmark-checklist", "show-me-your-work", "create-verification-skill", "unslop"];
   if (handMade.includes(s)) {
     if (/materialized from/.test(t)) die(`${s}: claims materialization but is hand-maintained`);
   } else if (!/materialized from/.test(t)) {

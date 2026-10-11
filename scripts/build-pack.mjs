@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // Materialize Matt Pocock wrappers into self-contained .agents/skills/ entries.
 // .agents/skills/ must work with NO vendors/ present (install = copy .agents/skills/).
-// Sources stay pristine under vendors/ for upgrade diffs. Forks and rigor-mode are
-// hand-maintained and NOT touched by this script.
+// Sources stay pristine under vendors/ for upgrade diffs. Forks, ask-pack, and
+// rigor are hand-maintained and NOT touched by this script.
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, cpSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";

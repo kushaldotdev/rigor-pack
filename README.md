@@ -4,7 +4,8 @@ Testbed for a vendored, materialized agent-skills pack on pi: Matt Pocock's
 [mattpocock/skills](https://github.com/mattpocock/skills) (engineering
 lifecycle) combined with poteto's
 [pstack](https://github.com/cursor/plugins/tree/main/pstack/skills) (per-task
-rigor), orchestrated by the `rigor-mode` conductor skill.
+rigor), orchestrated by the `rigor` conductor skill and routed by the
+`ask-pack` finder.
 
 ## Design rule: self-contained pack
 
@@ -26,7 +27,7 @@ rigor), orchestrated by the `rigor-mode` conductor skill.
     Never hand-edit a wrapper — rebuild instead.
   - **Fork** (poteto ports that assume Cursor): hand-maintained content
     genuinely edited for pi. Every deviation logged in `CHANGES.md`.
-  - **New** (ours): `rigor-mode` conductor, generated verification skills.
+  - **New** (ours): `rigor` conductor, generated verification skills.
 - Every deviation from upstream — transform or fork edit — is logged in
   [`CHANGES.md`](./CHANGES.md). If it isn't logged, it doesn't exist.
 - Skill delivery to subagents: pi-subagents children are cold-start and load
@@ -35,7 +36,7 @@ rigor), orchestrated by the `rigor-mode` conductor skill.
   Workers/reviewers/research children get working skills; the parent keeps
   planning and single-writer skills.
 
-## The pack (25 skills)
+## The pack (26 skills)
 
 All live in `.agents/skills/`; every one traces to a vendor row in `CHANGES.md`.
 
@@ -43,7 +44,8 @@ All live in `.agents/skills/`; every one traces to a vendor row in `CHANGES.md`.
 
 | Skill | Purpose |
 |---|---|
-| `rigor-mode` | The conductor. Point it at a GitHub issue, a feature description, a markdown file of work items, or a seam/PR review range; it routes through the skills below, fans out pi `subagent` children, enforces size tiers (S/M/L), a merit gate (stop before planning if the work's long-run benefit is questionable), checkpoint barriers, batch failure stop-and-yield, and repo-derived one-way-door autonomy gates. Tracker-optional. |
+| `rigor` | The conductor. Point it at a GitHub issue, a feature description, a markdown file of work items, or a seam/PR review range; it routes through the skills below, fans out pi `subagent` children, enforces size tiers (S/M/L), a merit gate (stop before planning if the work's long-run benefit is questionable), checkpoint barriers, batch failure stop-and-yield, and repo-derived one-way-door autonomy gates. Tracker-optional. |
+| `ask-pack` | "Which skill fits?" router over the pack: main flow, on-ramps, per-task rigor checks, standalone skills. Fork of Matt's `ask-matt`, remapped to this pack. |
 
 ### Materialized wrappers — Matt Pocock skills, inlined + adapted
 
@@ -92,8 +94,9 @@ skills-harness/
 │   ├── mattpocock/skills/     ← engineering/ + productivity/ only @ 49dd158 (v1.3.1)
 │   └── poteto/pstack/         ← skills/ only @ 978ca6e9 (52 skills)
 ├── .agents/skills/            ← the deliverable; pi auto-loads these when cwd = this folder
-│   ├── rigor-mode/            ← NEW: conductor (phases, batch/sweep playbooks,
+│   ├── rigor/                 ← NEW: conductor (phases, batch/sweep playbooks,
 │   │                             merit gate, autonomy gates, checkpoint barriers)
+│   ├── ask-pack/              ← FORK of ask-matt: pack-wide skill router
 │   ├── <matt-name>/           ← MATERIALIZED WRAPPERS: tdd, code-review, retro, ...
 │   └── <poteto-name>/         ← FORKS: blast-radius, interrogate, correct, ...
 └── tmp/                       ← scratch, never committed
@@ -125,7 +128,7 @@ optional cleanup.
 | Location | Skills | Why |
 |---|---|---|
 | Repo `.agents/skills/` | **the whole pack, as-is** | skills resolve in-pack cross-references (`.agents/skills/<name>/SKILL.md`) and act on that repo's surfaces; self-contained means nothing else is needed |
-| Global `~/.pi/agent/skills/` | `handoff`, `subagent-orchestration-policy` | harness-level, repo-agnostic; `rigor-mode` is pi-coupled (pi `subagent` tool) and belongs here only if you want it everywhere |
+| Global `~/.pi/agent/skills/` | `handoff`, `subagent-orchestration-policy` | harness-level, repo-agnostic; `rigor` is pi-coupled (pi `subagent` tool) and belongs here only if you want it everywhere |
 | Global, optional (pack-less repos only) | `grilling`, `unslop` | pure conversation/prose skills that work with no repo pack; if a repo with the full pack also sees the global copy, delete one side |
 | Repo-specific, stays in the target repo | `codebase-memory`, `postgres-query`, `redis-inspect`, generated `verify-<app>` | written against that repo, not part of this pack |
 

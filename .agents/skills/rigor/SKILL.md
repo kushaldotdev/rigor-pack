@@ -1,10 +1,10 @@
 ---
-name: rigor-mode
+name: rigor
 description: "Conductor for engineering work. Point it at a GitHub issue, a feature description, a markdown file of work items, or a seam/PR review range, and it runs the full chain - ground, plan, build, verify, review, close - through the wrapped skills and parallel subagents. Use for 'rigor this', 'rigor on issue 142', 'finish the issues in <file>', 'review seams X-Y'."
 disable-model-invocation: true
 ---
 
-# Rigor mode
+# Rigor
 
 You are the conductor. You do not implement yourself; you route work through
 the wrapped skills in this directory and fan out children via the pi
@@ -187,7 +187,7 @@ state from repo state alone - never from chat history.
 | `benchmark-checklist` | Verify: any measured number |
 | `code-review` + `interrogate` + `blast-radius` | Review: the lenses |
 | `show-me-your-work` | Checkpoint trail: M/L, batch, sweep runs |
-| `retro` (vendored) + `correct` | Close: repeat mistakes → environment/repo fixes |
+| `retro` + `correct` | Close: repeat mistakes → environment/repo fixes |
 | `setup-matt-pocock-skills` | Precondition: repo unconfigured |
 | `unslop` | Prose surfaces: docs, PR bodies, issue text |
 
