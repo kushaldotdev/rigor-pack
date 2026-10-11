@@ -40,7 +40,7 @@ flowchart LR
   MG -- yes --> G[ground] --> P{"plan gate"}
   P -- "one-way door" --> BR[blast-radius first]
   P -- contested design --> PR[prototype]
-  P --> B[build\nimplement + tdd] --> V[verify\nreal app:\ncurl / psql / playwright\nbenchmark-checklist] --> R[review\ncode-review + interrogate\n+ blast-radius] --> C[close\nretro + correct\ntracker update]
+  P --> B[build\nimplement + tdd] --> V[verify\nreal app:\ncurl / psql / playwright\nbenchmark-checklist] --> R[review\ncode-review + interrogate\n+ blast-radius] --> C[close\ntracker update]
   S["S: one child, one pass"] -. sized into .-> B
   M["M: to-tickets → worker child per ticket\nworktrees → one integration branch"] -.-> B
   L["L: wayfinder map → queue of S/M units\n3-5 units per run, then stop"] -.-> B
@@ -154,7 +154,12 @@ state from repo state alone - never from chat history.
    question to the user. Plan with file ownership per writer, shared seams
    to one owner or serial; red tests first if the user wants them. As
    domain terms and decisions crystallize, update `GLOSSARY.md`/ADRs inline
-   via the `domain-modeling` wrapper - never batch them for later. One-way
+   via the `domain-modeling` wrapper - never batch them for later. If the
+   user asks for an architecture scan of the touched module, run the
+   `improve-codebase-architecture` wrapper here, read-only: present the
+   candidates, and an approved pick either folds into this plan (small,
+   reversible) or becomes a follow-up - never a silent scope expansion.
+   One-way
    door involved? → blast-radius fork before any code. Escalate unapproved
    product/scope/architecture choices to the user.
 4. **Build** - worker children build via the `implement` wrapper per
@@ -178,10 +183,11 @@ state from repo state alone - never from chat history.
    acceptance criteria met, evidence exact-head, no scratch in the repo.
    Then: tracker update if one exists, issue comment with a summary (never
    commit SHAs - reference work by issue number or distinctive subject),
-   checkpoint `done` row. When the run surfaced repeat mistakes, run the
-   `retro` skill (or suggest it) and the `correct` fork. When it surfaced
-   architecture debt too big for this run, suggest the
-   `improve-codebase-architecture` skill as its own task. Cross-session L
+   checkpoint `done` row. Process-improvement follow-ups are never
+   auto-run: when the run surfaced repeat mistakes or architecture debt
+   too big for this run, name the follow-up in one line - `retro`,
+   `correct`, or `improve-codebase-architecture` as its own task - for
+   the user to invoke. Cross-session L
    work at a barrier: write a `handoff` document (the global handoff skill)
    and end the reply with its absolute path.
 
@@ -192,7 +198,7 @@ state from repo state alone - never from chat history.
 | `triage` | Intake: thin/untriaged issue |
 | `grilling`, `grill-with-docs` | Intake: ambiguous or contested plan |
 | `diagnosing-bugs` | Intake: broken/throwing/slow |
-| `improve-codebase-architecture` | Intake: architecture-level task; Close: debt too big for this run |
+| `improve-codebase-architecture` | Intake: architecture-level task; Plan gate: on user request, read-only scan of the touched module; Close: debt too big for this run |
 | `to-spec` | Intake: conversation → spec |
 | `to-tickets` | M tier: spec → ticket graph |
 | `wayfinder` | L tier: map, frontier, fog |
@@ -206,9 +212,9 @@ state from repo state alone - never from chat history.
 | `benchmark-checklist` | Verify: any measured number |
 | `code-review` + `interrogate` + `blast-radius` | Review: the lenses |
 | `show-me-your-work` | Checkpoint trail: M/L, batch, sweep runs |
-| `retro` + `correct` | Close: repeat mistakes → environment/repo fixes |
+| `retro` + `correct` | Close: repeat mistakes → name as a follow-up for the user to invoke; never auto-run |
 | `setup-matt-pocock-skills` | Precondition: repo unconfigured |
-| `unslop` | Prose surfaces: docs, PR bodies, issue text |
+| `unslop` | Only when the user asks for it explicitly; never fired on its own, not even on prose-shaped tasks |
 
 ## Batch playbook (a file of work items)
 
@@ -260,4 +266,7 @@ tracker unless the task itself is tracker-shaped or the user asks.
 
 End every run with: what changed, what was verified and how, what is blocked
 or unproven, the checkpoint state, and the next ready unit if the queue
-isn't drained.
+isn't drained. Also end with suggested follow-ups as their own item -
+phrased as explicit questions ("want a `retro`? want an architecture scan
+of this module?") per the close phase's findings, or the word "none" - so
+the user chooses; the run itself never executes them.
