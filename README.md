@@ -101,7 +101,7 @@ skills-harness/
 │   └── check-pack.mjs         ← validates the pack (frontmatter, refs, self-contained, Cursor-isms)
 ├── vendors/                   ← pristine upstream, NEVER edit; upgrade diffs only
 │   ├── mattpocock/skills/     ← engineering/ + productivity/ only @ 49dd158 (v1.3.1)
-│   └── poteto/pstack/         ← skills/ only @ 978ca6e9 (52 skills)
+│   └── poteto/pstack/         ← skills/ only @ d457567 (56 skills)
 ├── .agents/skills/            ← the deliverable; pi auto-loads these when cwd = this folder
 │   ├── rigor/                 ← NEW: conductor (phases, batch/sweep playbooks,
 │   │                             merit gate, autonomy gates, checkpoint barriers)
@@ -203,9 +203,9 @@ Verbatim skill copies, trimmed to used buckets; `.git` stripped, upstream
 | Vendor | Kept | Dropped |
 |---|---|---|
 | mattpocock/skills | `skills/engineering/` (20 skills), `skills/productivity/` (7 skills), bucket READMEs, `LICENSE` | `deprecated/`, `in-progress/`, `misc/`, docs, scripts, CI, plugin manifests |
-| poteto/pstack | `skills/` (52), `LICENSE` | `README.md`, docs, `.gitignore` |
+| poteto/pstack | `skills/` (56), `LICENSE` | `README.md`, docs, `.gitignore` |
 
 | Vendor | Ref | Date |
 |---|---|---|
 | mattpocock/skills | `49dd158d1076134a641b33efb035946536778336` (v1.3.1) | 2026-10-09 |
-| cursor/plugins (pstack) | `978ca6e9c0e012047cd5058b8e829240336e704e` | 2026-10-10 |
+| cursor/plugins (pstack) | `d457567332aa6989e753ea289f30ea2bfbc80bc0` (v0.15.28) | 2026-10-19 |
