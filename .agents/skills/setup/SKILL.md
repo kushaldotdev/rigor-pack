@@ -51,4 +51,4 @@ Show drafts of every file, let the user edit, then write:
 
 Tell the user setup is complete: start work with `rigor`. They can edit `docs/agents/*.md` by hand later.
 
-Upstream names in the bodies above resolve through [the name index](../rigor/references/INDEX.md). The pstack setup body writes a Cursor rule file; this pack does not. Its §7-§8 offers are section 8 here.
+Upstream names in the bodies above resolve through [the name index](../rigor/references/INDEX.md). The pstack setup body writes its model roles to `docs/agents/workflow.md`, which this setup already writes. Its §7-§8 offers are section 8 here.

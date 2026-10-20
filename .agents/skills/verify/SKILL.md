@@ -18,7 +18,7 @@ description: "Prove a change works on the real artifact: generate or maintain a 
 
 ## Pack rules
 
-- The generators write `.cursor/skills/verify-<app>/`. In this pack write it to `.agents/skills/verify-<app>/` (plus a Claude Code symlink if `.agents/harness-targets.json` lists `claude`), and record its path in `docs/agents/workflow.md`.
+- The generators write `.agents/skills/verify-<app>/` (plus a Claude Code symlink if `.agents/harness-targets.json` lists `claude`), and record its path in `docs/agents/workflow.md`.
 - `verify-<app>` defines how to drive the app; `benchmark-checklist` defines what counts as a measured number. A perf claim is `verified` only when both pass.
 - No startable app means the unit result is `unverified`, never `verified`.
 - Upstream names resolve through [the name index](../rigor/references/INDEX.md). Inside a `rigor` run, [AFK.md](../rigor/AFK.md) overrides lines that ask the user.

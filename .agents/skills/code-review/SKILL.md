@@ -20,6 +20,6 @@ Each lens reports in its own section. No lens ranks or filters another (the same
 ## Precedence
 
 - `interrogate` keeps its upstream premise: model diversity first. Personas are the single-family fallback, labeled "single-family" in the verdict.
-- `no-comments` spawns a Cursor-only "Comment Sicko" agent. Elsewhere, apply its rules yourself or in a plain reviewer child. The rule it enforces is the Comments section of [poteto-mode](../rigor/references/pstack/poteto-mode/poteto-mode.md).
+- `no-comments` spawns a reviewer child agent. Where the harness has no child agents, apply the rules yourself. The rule it enforces is the Comments section of [poteto-mode](../rigor/references/pstack/poteto-mode/poteto-mode.md).
 - "In the foreground" in the base body means: wait for both reviewers before aggregating. Running them as background children and waiting is equivalent.
 - Upstream names resolve through [the name index](../rigor/references/INDEX.md). Inside a `rigor` run, [AFK.md](../rigor/AFK.md) supplies the fixed point and the spec and overrides every "ask the user" line.

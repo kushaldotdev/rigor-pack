@@ -8,6 +8,7 @@ import { join, dirname, relative, posix, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { copyPlan, render, sha256, readFrontmatter, parseOpenaiYaml, openaiYaml, walkFiles, HOSTS } from "./lib/pack.mjs";
 import { INTERFACE } from "./pack-layout.mjs";
+import { unknownNeutralKeys } from "./harness-neutral.mjs";
 
 const args = Object.fromEntries(process.argv.slice(2).map((a) => a.replace(/^--/, "").split("=")));
 const here = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -69,6 +70,7 @@ if (!existsSync(index) || sha256(readFileSync(index)) !== manifest.indexSha256) 
 const vendored = existsSync(join(repo, "vendors"));
 if (vendored) {
   const plan = copyPlan(repo);
+  for (const k of unknownNeutralKeys(plan)) fail(`harness-neutral key matches no plan entry: ${k}`);
   const planned = new Set(plan.entries.map((e) => e.dest));
   for (const d of listed) if (!planned.has(d)) fail(`${d}: in manifest but not in pack-layout plan (rebuild)`);
   for (const e of plan.entries) {

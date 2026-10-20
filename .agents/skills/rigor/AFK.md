@@ -46,13 +46,13 @@ Each row: the body (path relative to the skills root), a fragment of the interac
 | `rigor/references/matt/wayfinder/wayfinder.md` | Stop and ask | interview: wayfinder's map is built in the interview phase |
 | `rigor/references/pstack/poteto-help/poteto-help.md` | ask whether the user | n/a: help text; model roles come from `docs/agents/workflow.md`, never asked in a run |
 | `rigor/references/pstack/poteto-help/poteto-help.md` | unless the user asks to merge | brief: GATES / merge authority (checklist 7) |
-| `rigor/references/pstack/poteto-mode/playbooks/autonomous-run.md` | AskQuestion | n/a: already says never ask |
+| `rigor/references/pstack/poteto-mode/playbooks/autonomous-run.md` | or use a structured multiple-choice question | n/a: already says never ask |
 | `rigor/references/pstack/poteto-mode/playbooks/bug-fix.md` | ask the user | log + gate: reproduce yourself; when impossible, park a gate and mark the unit `blocked` |
 | `rigor/references/pstack/poteto-mode/playbooks/multi-phase-plan.md` | Ask the operator | brief: DEFAULTS (checklist 16); an unforeseen product call → apply a default, log it, list it at close |
 | `rigor/references/pstack/poteto-mode/playbooks/multi-phase-plan.md` | wait for the operator | brief: GATES (checklist 7); a review gate parks in gates.md, work continues around it |
 | `rigor/references/pstack/poteto-mode/playbooks/multi-phase-plan.md` | Wait for the operator | brief: GATES; stop at merge-ready, report |
 | `rigor/references/pstack/poteto-mode/playbooks/visual-parity.md` | stop and ask | log + gate: never edit the baseline; park a gate, mark the unit `blocked` |
-| `rigor/references/pstack/poteto-mode/poteto-mode.md` | AskQuestion | log: classify per the line; a genuine preference call gets the brief's default or a logged default, never a question |
+| `rigor/references/pstack/poteto-mode/poteto-mode.md` | About to ask a structured multiple-choice question | log: classify per the line; a genuine preference call gets the brief's default or a logged default, never a question |
 | `rigor/references/pstack/poteto-mode/playbooks/babysit.md` | approval is a wait | brief: GATES; owner approval parks in gates.md |
 | `rigor/references/pstack/poteto-mode/references/bugbot-triage.md` | Ask the user instead of guessing | log + gate: `ask` items park in gates.md with your recommendation; reversible fixes proceed |
 | `tdd/references/matt/tdd/tdd.md` | confirm them with the user | brief: SEAMS (checklist 2); an unlisted seam → highest existing seam, logged |

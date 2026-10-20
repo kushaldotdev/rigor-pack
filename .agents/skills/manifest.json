@@ -247,10 +247,11 @@
       "source": "pstack:interrogate",
       "vendorSha256": "a16dfe179005abc22a4651b82f25b0c8ab953284276efe4e6dc341958fb63647",
       "preRewriteSha256": "04746cf3ba52792948c277e96be4a1f44b4ccac7b38be2c90f3759b25f4cef60",
-      "sha256": "04746cf3ba52792948c277e96be4a1f44b4ccac7b38be2c90f3759b25f4cef60",
+      "sha256": "e757f41fc0ef618d67ff84b46024d8cecae894c147dca1db68dc3f2fef9a877b",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> interrogate.md"
+        "rename SKILL.md -> interrogate.md",
+        "neutralize 6 harness-specific phrase(s)"
       ]
     },
     {
@@ -304,10 +305,11 @@
       "source": "pstack:no-comments",
       "vendorSha256": "078ecfe224eafbb017f6476870612838bf6dbe38c0b697e12f0c887d0313f17e",
       "preRewriteSha256": "226e3772fdcc8fc6e8ee6aec3c0c985829af0c8e441e47f16f4adec8f177cea7",
-      "sha256": "226e3772fdcc8fc6e8ee6aec3c0c985829af0c8e441e47f16f4adec8f177cea7",
+      "sha256": "89393ab0da1e921e077965373729e1599bd2ba481ca21f0691d41957e27b308b",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> no-comments.md"
+        "rename SKILL.md -> no-comments.md",
+        "neutralize 3 harness-specific phrase(s)"
       ]
     },
     {
@@ -359,10 +361,11 @@
       "source": "pstack:architect",
       "vendorSha256": "31f8e97a52bfa5432edd61f68ade2a8632ef0bacbc2d2a6802d7a0e6821944ac",
       "preRewriteSha256": "028d7e7b9bd15d24ed1c31fb8ef6f71b246e9dbb16b12d0d194d7d6551d20211",
-      "sha256": "028d7e7b9bd15d24ed1c31fb8ef6f71b246e9dbb16b12d0d194d7d6551d20211",
+      "sha256": "996f07336c784296d60c263dde8e68626cdfe36c0edaa0766a2a4f24537276c4",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> architect.md"
+        "rename SKILL.md -> architect.md",
+        "neutralize 2 harness-specific phrase(s)"
       ]
     },
     {
@@ -400,10 +403,11 @@
       "source": "pstack:arena",
       "vendorSha256": "ed72f6c132b1ce3974d949581d0adc5dade424fe20793ac3b4c4fae22ecb9354",
       "preRewriteSha256": "671a645f152d1c5179349beead3208836848a866009659a06b6dc10af5549ae5",
-      "sha256": "671a645f152d1c5179349beead3208836848a866009659a06b6dc10af5549ae5",
+      "sha256": "9b0306726dd27d71594dd1e4757e764d77da39e8e9bbc938fd1616879c68aae0",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> arena.md"
+        "rename SKILL.md -> arena.md",
+        "neutralize 5 harness-specific phrase(s)"
       ]
     },
     {
@@ -882,10 +886,11 @@
       "source": "pstack:how",
       "vendorSha256": "08a00079bb15b4258874ac3ff62d4ca7e94350ffedb521d0fd296dc9dd21904e",
       "preRewriteSha256": "2917642869ad02f874c32027ab0353b404b88a0c57fdced786ce180f68d0ce45",
-      "sha256": "2917642869ad02f874c32027ab0353b404b88a0c57fdced786ce180f68d0ce45",
+      "sha256": "2a8340b4df46a40dfac267b26077d3db1859db3281e366e14fb35a0cfa0b6236",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> how.md"
+        "rename SKILL.md -> how.md",
+        "neutralize 4 harness-specific phrase(s)"
       ]
     },
     {
@@ -921,10 +926,11 @@
       "source": "pstack:recall",
       "vendorSha256": "b0ceb996259c3404532f61e4b010df4e3d80d7ddbed85b3c302895723eb62a89",
       "preRewriteSha256": "534bbf8a6a65ef147998a62fed517c9ce4c40adb30907676ecaf0a8cd60117fc",
-      "sha256": "534bbf8a6a65ef147998a62fed517c9ce4c40adb30907676ecaf0a8cd60117fc",
+      "sha256": "4a5d695f7dd1580d3470738a4b4ebdb7aa9f334a15c0227a63250f70c1294287",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> recall.md"
+        "rename SKILL.md -> recall.md",
+        "neutralize 1 harness-specific phrase(s)"
       ]
     },
     {
@@ -1041,10 +1047,11 @@
       "source": "pstack:why",
       "vendorSha256": "144d42e7712723d763e607bc0a969e5f1cdf83ec7228519d87677cc534571bed",
       "preRewriteSha256": "3f8735c8cc7f49bfe98bd891f4a712944870a056e8260392cac64332ac98ceae",
-      "sha256": "3f8735c8cc7f49bfe98bd891f4a712944870a056e8260392cac64332ac98ceae",
+      "sha256": "f14fdaf76ceb76e0850557791a65fd864e2f90cfceadc14be18585e890367fcb",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> why.md"
+        "rename SKILL.md -> why.md",
+        "neutralize 7 harness-specific phrase(s)"
       ]
     },
     {
@@ -1074,10 +1081,11 @@
       "source": "pstack:automate-me",
       "vendorSha256": "30b35f3628c4fd8c11af0ada06d14cdc3b28901810caca2480f627d4d21acfbe",
       "preRewriteSha256": "969ac934b1945b48eab30861da7d81805d631a8c782950388fd234b3152eba40",
-      "sha256": "969ac934b1945b48eab30861da7d81805d631a8c782950388fd234b3152eba40",
+      "sha256": "d513e75bca292a4b52dd8c285f9068e9b08a31808aa7c9cade53a4cac466014f",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> automate-me.md"
+        "rename SKILL.md -> automate-me.md",
+        "neutralize 11 harness-specific phrase(s)"
       ]
     },
     {
@@ -1119,8 +1127,10 @@
       "source": "pstack:reflect",
       "vendorSha256": "f6030d88e20e906ef5e2d9ba44cb013ce610c49c2fe2ef74c377d32e0dc9e939",
       "preRewriteSha256": "f6030d88e20e906ef5e2d9ba44cb013ce610c49c2fe2ef74c377d32e0dc9e939",
-      "sha256": "f6030d88e20e906ef5e2d9ba44cb013ce610c49c2fe2ef74c377d32e0dc9e939",
-      "transforms": [],
+      "sha256": "6ab7f0dc2b07475279ac333e51c643f21d2fbec30a620a342e7ed27ebce7f573",
+      "transforms": [
+        "neutralize 1 harness-specific phrase(s)"
+      ],
       "danglingUpstream": [
         "SKILL.md",
         "SKILL.md"
@@ -1132,8 +1142,10 @@
       "source": "pstack:reflect",
       "vendorSha256": "38f917619fbf346062d643e0ad6b12fc952d58678dfcbbf42ffcf6d8b9c08307",
       "preRewriteSha256": "38f917619fbf346062d643e0ad6b12fc952d58678dfcbbf42ffcf6d8b9c08307",
-      "sha256": "38f917619fbf346062d643e0ad6b12fc952d58678dfcbbf42ffcf6d8b9c08307",
-      "transforms": [],
+      "sha256": "4935bb62655be16c0f47dbe448e323c61eea3f27d8c1e2c106f437aa47d1c783",
+      "transforms": [
+        "neutralize 1 harness-specific phrase(s)"
+      ],
       "danglingUpstream": [
         "SKILL.md",
         "SKILL.md"
@@ -1154,8 +1166,10 @@
       "source": "pstack:reflect",
       "vendorSha256": "f81b8697e7366fbbc18feba52c6e3253a101f751091364ebc4396a1d9b5753b4",
       "preRewriteSha256": "f81b8697e7366fbbc18feba52c6e3253a101f751091364ebc4396a1d9b5753b4",
-      "sha256": "f81b8697e7366fbbc18feba52c6e3253a101f751091364ebc4396a1d9b5753b4",
-      "transforms": [],
+      "sha256": "8ecab5c728f910f17b4f9e682650dfe67558e54bcbc99202ec4687d154c44b79",
+      "transforms": [
+        "neutralize 1 harness-specific phrase(s)"
+      ],
       "danglingUpstream": [
         "SKILL.md",
         "SKILL.md"
@@ -1167,10 +1181,11 @@
       "source": "pstack:reflect",
       "vendorSha256": "1f5a8c246cdee8251f8667d85bd5d97f6c2801f505843c26ddbd6c621632519b",
       "preRewriteSha256": "371d6ad0874de6e39377c24d29b32182acc6566074a43e175667fa83050c82af",
-      "sha256": "371d6ad0874de6e39377c24d29b32182acc6566074a43e175667fa83050c82af",
+      "sha256": "244f85280b0d215e9a085ee77b4b01e5f541ff5df697606b8e8d915d082d7394",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> reflect.md"
+        "rename SKILL.md -> reflect.md",
+        "neutralize 12 harness-specific phrase(s)"
       ]
     },
     {
@@ -1376,8 +1391,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "f6a13a445c360b48d6cd72780ac01955f45b82826476efe0e67c7559329407aa",
       "preRewriteSha256": "f6a13a445c360b48d6cd72780ac01955f45b82826476efe0e67c7559329407aa",
-      "sha256": "f6a13a445c360b48d6cd72780ac01955f45b82826476efe0e67c7559329407aa",
-      "transforms": []
+      "sha256": "85e499b26425547ac34c3f58ac48bdedc30dcfcc68e9e41bf2e3106f29fb1e2c",
+      "transforms": [
+        "neutralize 1 harness-specific phrase(s)"
+      ]
     },
     {
       "dest": "rigor/references/pstack/poteto-mode/playbooks/autonomous-run.md",
@@ -1385,8 +1402,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "6ac974fd2b09748add56493e89f578a35a6a9289e1026515878d81ef3cf129d1",
       "preRewriteSha256": "6ac974fd2b09748add56493e89f578a35a6a9289e1026515878d81ef3cf129d1",
-      "sha256": "6ac974fd2b09748add56493e89f578a35a6a9289e1026515878d81ef3cf129d1",
-      "transforms": []
+      "sha256": "0707ecb26d9fc7358e6a30559597d9c8abd64c107c5b01fa0c24c99beda6cdf3",
+      "transforms": [
+        "neutralize 2 harness-specific phrase(s)"
+      ]
     },
     {
       "dest": "rigor/references/pstack/poteto-mode/playbooks/autopilot-full.md",
@@ -1394,8 +1413,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "acf4f4a58c11045f9d3e8807d907a877e61ca6432b079f1087d7d30fc931566f",
       "preRewriteSha256": "acf4f4a58c11045f9d3e8807d907a877e61ca6432b079f1087d7d30fc931566f",
-      "sha256": "acf4f4a58c11045f9d3e8807d907a877e61ca6432b079f1087d7d30fc931566f",
-      "transforms": []
+      "sha256": "fcee7f230d32997f15b7915b01d73f194ba0f64a5d5d81cb9a21ee7eff5b2e6c",
+      "transforms": [
+        "neutralize 3 harness-specific phrase(s)"
+      ]
     },
     {
       "dest": "rigor/references/pstack/poteto-mode/playbooks/autopilot-stack.md",
@@ -1412,8 +1433,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "e261c1ff5581e0f8fc6c686f34de4b535f87473e77beabea7dd8323021214610",
       "preRewriteSha256": "e261c1ff5581e0f8fc6c686f34de4b535f87473e77beabea7dd8323021214610",
-      "sha256": "e261c1ff5581e0f8fc6c686f34de4b535f87473e77beabea7dd8323021214610",
-      "transforms": []
+      "sha256": "fe35cc304a4aa9949c72a0a54f526bb87a78bd32cffcc777b7340a797a5faa2b",
+      "transforms": [
+        "neutralize 1 harness-specific phrase(s)"
+      ]
     },
     {
       "dest": "rigor/references/pstack/poteto-mode/playbooks/bug-fix.md",
@@ -1421,8 +1444,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "66e26542dad131cfd7df80ac0cdf81ed4d85e7b5e3f0eb65b933888760c4831f",
       "preRewriteSha256": "66e26542dad131cfd7df80ac0cdf81ed4d85e7b5e3f0eb65b933888760c4831f",
-      "sha256": "66e26542dad131cfd7df80ac0cdf81ed4d85e7b5e3f0eb65b933888760c4831f",
-      "transforms": []
+      "sha256": "279c1c69a8f018315cac811ae57810985000899b938dbebc93e3152b4df39f47",
+      "transforms": [
+        "neutralize 2 harness-specific phrase(s)"
+      ]
     },
     {
       "dest": "rigor/references/pstack/poteto-mode/playbooks/eval.md",
@@ -1430,8 +1455,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "a93d449a908236afa6645179651844094b1547dbab4e484cffcdda630e4b90bf",
       "preRewriteSha256": "a93d449a908236afa6645179651844094b1547dbab4e484cffcdda630e4b90bf",
-      "sha256": "a93d449a908236afa6645179651844094b1547dbab4e484cffcdda630e4b90bf",
-      "transforms": []
+      "sha256": "bd6c6914fa985e4d64f6b260a6ae5edd9c42df31e79c78871d0451e500e9b272",
+      "transforms": [
+        "neutralize 2 harness-specific phrase(s)"
+      ]
     },
     {
       "dest": "rigor/references/pstack/poteto-mode/playbooks/feature.md",
@@ -1439,8 +1466,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "af8ce700b99953741cb547e34308fde0cf6b98ce67e1652c800d0deedf53aba1",
       "preRewriteSha256": "af8ce700b99953741cb547e34308fde0cf6b98ce67e1652c800d0deedf53aba1",
-      "sha256": "af8ce700b99953741cb547e34308fde0cf6b98ce67e1652c800d0deedf53aba1",
-      "transforms": []
+      "sha256": "e240419d425956fb3d984a144d15c1dd7ee4726ae8dc1e068314748f2ac268e2",
+      "transforms": [
+        "neutralize 1 harness-specific phrase(s)"
+      ]
     },
     {
       "dest": "rigor/references/pstack/poteto-mode/playbooks/hillclimb.md",
@@ -1448,8 +1477,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "942c1565b75ad02a2cb6230dd7c1ebd87e19f59a00319ebac2b6616007bf018f",
       "preRewriteSha256": "942c1565b75ad02a2cb6230dd7c1ebd87e19f59a00319ebac2b6616007bf018f",
-      "sha256": "942c1565b75ad02a2cb6230dd7c1ebd87e19f59a00319ebac2b6616007bf018f",
-      "transforms": []
+      "sha256": "508b6381a7a27c9751df305d4cfa76a4c030a1540d3161e9905acf4bc6818e2d",
+      "transforms": [
+        "neutralize 1 harness-specific phrase(s)"
+      ]
     },
     {
       "dest": "rigor/references/pstack/poteto-mode/playbooks/investigation.md",
@@ -1466,8 +1497,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "5f239457bfdec3345c92caa06c59bf0257c662b89353f25a1c02ea942dcd00b1",
       "preRewriteSha256": "5f239457bfdec3345c92caa06c59bf0257c662b89353f25a1c02ea942dcd00b1",
-      "sha256": "5f239457bfdec3345c92caa06c59bf0257c662b89353f25a1c02ea942dcd00b1",
-      "transforms": [],
+      "sha256": "6c7a8c852ceadd3a6b04c0799a15b31571fb00738b53859a72bd030e393b5ca9",
+      "transforms": [
+        "neutralize 4 harness-specific phrase(s)"
+      ],
       "danglingUpstream": [
         "pstack/skills/swarm/SKILL.md",
         "pstack/skills/how/SKILL.md",
@@ -1481,8 +1514,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "a5aef646de8b651306c2d10974623650e4a013a245aec1c00525bbe0e31bfa76",
       "preRewriteSha256": "a5aef646de8b651306c2d10974623650e4a013a245aec1c00525bbe0e31bfa76",
-      "sha256": "a5aef646de8b651306c2d10974623650e4a013a245aec1c00525bbe0e31bfa76",
-      "transforms": []
+      "sha256": "eeea8a087c40059c584317116cc55b1a39c81505dd5c8060145a635c8835ddd1",
+      "transforms": [
+        "neutralize 2 harness-specific phrase(s)"
+      ]
     },
     {
       "dest": "rigor/references/pstack/poteto-mode/playbooks/orchestrate.md",
@@ -1490,8 +1525,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "08dce6c9e7be1d13bc6944ab9b51665f935c531437f5e088bc53d2a62099ef05",
       "preRewriteSha256": "08dce6c9e7be1d13bc6944ab9b51665f935c531437f5e088bc53d2a62099ef05",
-      "sha256": "08dce6c9e7be1d13bc6944ab9b51665f935c531437f5e088bc53d2a62099ef05",
-      "transforms": []
+      "sha256": "ff6917d150d901e591f55f394918cfb287b86443638e00ab450aa6d31d7b867f",
+      "transforms": [
+        "neutralize 5 harness-specific phrase(s)"
+      ]
     },
     {
       "dest": "rigor/references/pstack/poteto-mode/playbooks/pause-safely.md",
@@ -1508,8 +1545,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "c12aa2f82de7651a11676a3d5fea168f539b7f0faaa3a501d279255dd2a469c8",
       "preRewriteSha256": "c12aa2f82de7651a11676a3d5fea168f539b7f0faaa3a501d279255dd2a469c8",
-      "sha256": "c12aa2f82de7651a11676a3d5fea168f539b7f0faaa3a501d279255dd2a469c8",
-      "transforms": []
+      "sha256": "df461106ecb883734c0a024ee9e8552b4b0b352943d646a2bb5e350d5506aaf9",
+      "transforms": [
+        "neutralize 1 harness-specific phrase(s)"
+      ]
     },
     {
       "dest": "rigor/references/pstack/poteto-mode/playbooks/prototype.md",
@@ -1526,8 +1565,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "0f5dd38113379ea8cf61e2182eca0a7478eea9a869eb40c2dddab3335aeca197",
       "preRewriteSha256": "0f5dd38113379ea8cf61e2182eca0a7478eea9a869eb40c2dddab3335aeca197",
-      "sha256": "0f5dd38113379ea8cf61e2182eca0a7478eea9a869eb40c2dddab3335aeca197",
-      "transforms": []
+      "sha256": "8b350bd585f7a572ebbf3fa79ecef7d0795c53952551d481a6ffc9e40f0fabe6",
+      "transforms": [
+        "neutralize 1 harness-specific phrase(s)"
+      ]
     },
     {
       "dest": "rigor/references/pstack/poteto-mode/playbooks/runtime-forensics.md",
@@ -1544,8 +1585,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "d194f2a7ef392c1598ef3f0e3b561370ca25c2c7a78308007af4aa46ada8ee12",
       "preRewriteSha256": "d194f2a7ef392c1598ef3f0e3b561370ca25c2c7a78308007af4aa46ada8ee12",
-      "sha256": "d194f2a7ef392c1598ef3f0e3b561370ca25c2c7a78308007af4aa46ada8ee12",
-      "transforms": []
+      "sha256": "51a33d5e504d28abd2cde1fadd712b1023ee5ee0577da83fd18c3e2351d8a819",
+      "transforms": [
+        "neutralize 1 harness-specific phrase(s)"
+      ]
     },
     {
       "dest": "rigor/references/pstack/poteto-mode/playbooks/shipping.md",
@@ -1553,8 +1596,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "bf56339bdf7e0223bcff5abf4e8599e3f5b547b3fcc3b4ce9475e6e7dda14a9f",
       "preRewriteSha256": "bf56339bdf7e0223bcff5abf4e8599e3f5b547b3fcc3b4ce9475e6e7dda14a9f",
-      "sha256": "bf56339bdf7e0223bcff5abf4e8599e3f5b547b3fcc3b4ce9475e6e7dda14a9f",
-      "transforms": []
+      "sha256": "fd9968b18a7b24a0ae2640202d010042592afda941e331fea90f24104f808ddc",
+      "transforms": [
+        "neutralize 1 harness-specific phrase(s)"
+      ]
     },
     {
       "dest": "rigor/references/pstack/poteto-mode/playbooks/trace-forensics.md",
@@ -1580,8 +1625,10 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "be04ae0afe19d4a4da5bcc4e94455f68dbebd1cda6eb0f456ca0d358ecf76c00",
       "preRewriteSha256": "be04ae0afe19d4a4da5bcc4e94455f68dbebd1cda6eb0f456ca0d358ecf76c00",
-      "sha256": "be04ae0afe19d4a4da5bcc4e94455f68dbebd1cda6eb0f456ca0d358ecf76c00",
-      "transforms": []
+      "sha256": "66a193fd4ae0cc9bdaf41062135c9e24fee427a964b01cdc6d2eca98d0a860a0",
+      "transforms": [
+        "neutralize 2 harness-specific phrase(s)"
+      ]
     },
     {
       "dest": "rigor/references/pstack/poteto-mode/poteto-mode.md",
@@ -1589,10 +1636,11 @@
       "source": "pstack:poteto-mode",
       "vendorSha256": "2755f102e7a6d0496b429d1031a22fb353e1f3d523543367caeaae5c4ed6f544",
       "preRewriteSha256": "afdada02e159b3c5b61fc25e2185a63d9a22b2e4d7dec6182ca0205a6a7e7200",
-      "sha256": "afdada02e159b3c5b61fc25e2185a63d9a22b2e4d7dec6182ca0205a6a7e7200",
+      "sha256": "af414d0bfce9fcadc3d955f77ad35ffb01912a4eb2c35001facdd6717c112876",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> poteto-mode.md"
+        "rename SKILL.md -> poteto-mode.md",
+        "neutralize 18 harness-specific phrase(s)"
       ]
     },
     {
@@ -1890,10 +1938,11 @@
       "source": "pstack:show-me-your-work",
       "vendorSha256": "920a8217cbb62f92a2222fb81fc9eab17ecd554a0277e444a95a927195139bd1",
       "preRewriteSha256": "8abf4a791099da78723815d53b07369ae6d726fa381b646bc7d2b73efaf56726",
-      "sha256": "8abf4a791099da78723815d53b07369ae6d726fa381b646bc7d2b73efaf56726",
+      "sha256": "2227cb3f77bfa00516ea9f9b21fa0bc7eb63631091f879241e81e3503b84943b",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> show-me-your-work.md"
+        "rename SKILL.md -> show-me-your-work.md",
+        "neutralize 2 harness-specific phrase(s)"
       ]
     },
     {
@@ -1902,10 +1951,11 @@
       "source": "pstack:swarm",
       "vendorSha256": "031657cb81e490f9aed5c75d6ff2a4fda35ccafbaf72be604e59481cc4080cdc",
       "preRewriteSha256": "89b8ca6b5f22734ee611cc4e1b2eef54f8e65252f09ba13d6dba53236d31a657",
-      "sha256": "89b8ca6b5f22734ee611cc4e1b2eef54f8e65252f09ba13d6dba53236d31a657",
+      "sha256": "475ddf557d85b889a07e15f977f92103eb9d2e0c4a25e1d9e37dd8bfd572bc68",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> swarm.md"
+        "rename SKILL.md -> swarm.md",
+        "neutralize 4 harness-specific phrase(s)"
       ]
     },
     {
@@ -2010,10 +2060,11 @@
       "source": "pstack:setup-pstack",
       "vendorSha256": "b45512f6ca5e96e81681984683b7472bfe892581da3a89a73cca4159438f29ed",
       "preRewriteSha256": "7cbadc1bba58285c16050ad5cd33c78735006efc05b3a396633200ea9312c9dd",
-      "sha256": "7cbadc1bba58285c16050ad5cd33c78735006efc05b3a396633200ea9312c9dd",
+      "sha256": "6ab904e5471159aa3f02bbf695324bb29746596a22bdb0d12607db3b9c85b229",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> setup-pstack.md"
+        "rename SKILL.md -> setup-pstack.md",
+        "neutralize 27 harness-specific phrase(s)"
       ]
     },
     {
@@ -2248,10 +2299,11 @@
       "source": "pstack:create-verification-skill",
       "vendorSha256": "d353973547bf8ad8977eca645f4cd4feaed0d32f4b43d1448f906b0a76c4d694",
       "preRewriteSha256": "50e4a269628b5e7f6e983b7bf8345e9afe0110765827753367c4ff406a611f22",
-      "sha256": "50e4a269628b5e7f6e983b7bf8345e9afe0110765827753367c4ff406a611f22",
+      "sha256": "6cde27ffb68533d3852f639bb208405b58e1c64a088c9ca719fdcb513d0bfdb3",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> create-verification-skill.md"
+        "rename SKILL.md -> create-verification-skill.md",
+        "neutralize 3 harness-specific phrase(s)"
       ]
     },
     {
@@ -2308,10 +2360,11 @@
       "source": "pstack:maintain-verification-skill",
       "vendorSha256": "515c0eaa054b3f6be1b1fb06f2c2f173c80fddb58bbcac57576f89c479bc68e8",
       "preRewriteSha256": "428c5d41b7cd242e6782ca9ebfdd7b21d4e6cc16c324964f0a97ff8570f9f59c",
-      "sha256": "428c5d41b7cd242e6782ca9ebfdd7b21d4e6cc16c324964f0a97ff8570f9f59c",
+      "sha256": "836e629d5ac2032ed67bb9773340e630f1bb581c5e57455e9d589c2054d102db",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> maintain-verification-skill.md"
+        "rename SKILL.md -> maintain-verification-skill.md",
+        "neutralize 1 harness-specific phrase(s)"
       ]
     },
     {

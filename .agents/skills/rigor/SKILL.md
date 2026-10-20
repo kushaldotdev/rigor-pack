@@ -56,7 +56,7 @@ Standing orders: `.audit/<slug>.preferences.md` (authority from `docs/agents/wor
 
 Trail: one TSV per run at `.audit/<slug>.tsv` via [show-me-your-work](references/pstack/show-me-your-work/show-me-your-work.md) and its `scripts/log.sh`. Unit name in `phase`, result word in `result`. Every phase transition writes a row.
 
-Working style for all phases: [poteto-mode](references/pstack/poteto-mode/poteto-mode.md) Non-negotiables, Principles, Writing the reply and Comments, with these substitutions. Cursor `Task` → your harness's child primitive. `poteto-agent` → a plain child with the brief. `cursor-team-kit` control skills → the repo's `verify-<app>` skill. `/deslop` → the [writing](../writing/SKILL.md) skill's unslop mode. Model names → the roles in `docs/agents/workflow.md`. `AskQuestion` → never; see AFK.md. Principles not under this skill live in the hosts listed in INDEX.md.
+Working style for all phases: [poteto-mode](references/pstack/poteto-mode/poteto-mode.md) Non-negotiables, Principles, Writing the reply and Comments. A structured question is never asked in an AFK run; see AFK.md. Principles not under this skill live in the hosts listed in INDEX.md.
 
 ### Phases and gates
 

@@ -9,6 +9,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { copyPlan, render, sha256, readFrontmatter, openaiYaml, vendorSkills, HOSTS, DROPPED, VENDORS } from "./lib/pack.mjs";
 import { INTERFACE } from "./pack-layout.mjs";
+import { unknownNeutralKeys } from "./harness-neutral.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const pack = join(root, ".agents", "skills");
@@ -22,6 +23,8 @@ const missing = vendorSkills(root).filter((s) => !placed.includes(s) && !DROPPED
 if (missing.length) die(`vendor skills with no host: ${missing.join(", ")}`);
 
 const plan = copyPlan(root);
+const staleNeutral = unknownNeutralKeys(plan);
+if (staleNeutral.length) die(`harness-neutral keys match no plan entry: ${staleNeutral.join(", ")}`);
 for (const host of Object.keys(HOSTS)) {
   for (const v of Object.keys(VENDORS)) rmSync(join(pack, host, "references", v), { recursive: true, force: true });
 }

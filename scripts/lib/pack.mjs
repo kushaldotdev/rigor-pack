@@ -4,6 +4,7 @@ import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, dirname, relative, posix } from "node:path";
 import { createHash } from "node:crypto";
 import { VENDORS, HOSTS, DROPPED, EXCLUDE } from "../pack-layout.mjs";
+import { NEUTRAL } from "../harness-neutral.mjs";
 
 export const sha256 = (buf) => createHash("sha256").update(buf).digest("hex");
 const toPosix = (p) => p.split("\\").join("/");
@@ -123,6 +124,14 @@ export function render(entry, plan, root) {
   text = text.replace(LINK, (w, t) => swap(w, t, (n) => `](${n})`));
   text = text.replace(CODE, (w, t) => swap(w, t, (n) => `\`${n}\``));
   if (relinked) transforms.push(`relink ${relinked} relative path(s) to the copied location`);
+  // Harness-specific wording -> neutral wording. Drift in upstream text throws here.
+  const rules = NEUTRAL[entry.src] ?? [];
+  for (const [from, to] of rules) {
+    const n = text.split(from).length - 1;
+    if (n !== 1) throw new Error(`harness-neutral: ${entry.src}: ${JSON.stringify(from)} occurs ${n} times, expected exactly once`);
+    text = text.replace(from, () => to);
+  }
+  if (rules.length) transforms.push(`neutralize ${rules.length} harness-specific phrase(s)`);
   return { bytes: Buffer.from(text, "utf8"), transforms, pre, dangling };
 }
 
