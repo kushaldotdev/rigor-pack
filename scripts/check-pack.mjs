@@ -109,7 +109,7 @@ for (const m of manifest.files.filter((x) => x.dest.endsWith(".md"))) {
 }
 
 // 6. AFK contract: every interactive line in AFK scope has a row in rigor/AFK.md.
-const INTERACTIVE = /\b(ask the (user|operator|human|invoker)|ask for it|ask whether the user|ask again|check with the user|confirm (them |it )?with the user|quiz the user|until the user approves|wait for (the user|explicit approval|the operator)|stop and ask|offer once|AskQuestion|pause for sign-off|ambiguous, ask|tell the user to run|by asking if the user|vibe-check with the user|approval is a wait|unless the user asks|Ask: ")/i;
+const INTERACTIVE = /\b(ask the (user|operator|human|invoker)|ask for it|ask whether the user|ask again|check with the user|confirm (them |it )?with the user|quiz the user|until the user approves|wait for (the user|explicit approval|the operator|interactive approval|their approval)|stop and ask|offer once|AskQuestion|pause for sign-off|ambiguous, ask|tell the user to run|by asking if the user|vibe-check with the user|approval is a wait|unless the user asks|Ask: ")/i;
 const HUMAN_PRESENT = new Set(["setup", "triage", "teach", "retro", "wait-what", "handoff", "grilling"]);
 const afkPath = join(pack, "rigor", "AFK.md");
 const rows = existsSync(afkPath) ? [...readFileSync(afkPath, "utf8").matchAll(/^\| `([^`]+)` \| (.+?) \| .+\|$/gm)].map((m) => ({ file: m[1], frag: m[2] })) : [];

@@ -7,6 +7,13 @@
 // drift fails the build loudly instead of shipping Cursor wording.
 const P = "vendors/poteto/pstack/skills/";
 
+// Phrases rewritten in every copied body, wherever they occur. The pack never runs
+// fast-mode models, so the per-spawn speed choice is removed. Each must still match
+// at least one file, or the build fails.
+export const NEUTRAL_ALL = [
+  ["reasoning level and fast or standard speed for the job", "reasoning level for the job"],
+];
+
 export const NEUTRAL = {
   [P + "poteto-mode/playbooks/opening-a-pr.md"]: [
     ["Multiple `Task` calls on the same branch", "Multiple child-agent spawns on the same branch"],
@@ -60,6 +67,7 @@ export const NEUTRAL = {
     ["Spawn `Task` with `subagent_type: \"comment-sicko\"`.", "Spawn a reviewer child agent whose brief is the Comments section of the **poteto-mode** skill (keep only non-obvious *why* comments)."],
     ["Spawn Comment Sicko. Act on accepted findings.", "Spawn a comment-review child agent (see step 1). Act on accepted findings."],
     ["Defer to Comment Sicko's fresh perspective.", "Defer to the reviewer child's fresh perspective."],
+    ["Wait for interactive approval. Unattended and eval require caller pre-approval.", "With a human present, wait for their approval. In an unattended run or an eval, only an encoding the brief pre-approves counts as approved."],
   ],
   [P + "show-me-your-work/SKILL.md"]: [
     ["under the active workspace's `agent-transcripts/` directory (the system prompt names the path).", "in the harness's transcript directory for the active workspace (listed in `rigor/harness/` notes)."],
@@ -137,6 +145,9 @@ export const NEUTRAL = {
     ["swarm workers: grok-4.7-xhigh-fast", "swarm workers: inherit-parent"],
     ["architect runners: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast", "architect runners: inherit-parent, inherit-parent"],
     ["interrogate reviewers: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast", "interrogate reviewers: inherit-parent, inherit-parent"],
+    ["The effort token is the last token, or the one before a trailing `fast`, on the ladder", "Never write a `-fast` slug; use the same family's standard-speed slug. The effort token is the last token on the ladder"],
+    ["Grok slugs top out at `xhigh`, so under `unlimited` the fallback puts Grok at `xhigh` and keeps its `-xhigh-fast` slug as it is. `large` keeps both defaults.", "A family that tops out at `xhigh` stays at `xhigh` under `unlimited`. `large` keeps the defaults."],
+    ["(both mean: this role runs on the parent chat model, which is how Auto users stay on Auto)", "(both mean: this role runs on the parent chat model)"],
   ],
   [P + "poteto-mode/SKILL.md"]: [
     ["About to `AskQuestion` on", "About to ask a structured multiple-choice question (the harness's question tool, if any) on"],
@@ -157,6 +168,13 @@ export const NEUTRAL = {
     ["If the Task tool rejects the adjusted slug, do not try another adjusted slug. Use the role's line or default and say so.", "If the harness rejects the adjusted slug, do not try another adjusted slug. Use the role's value or default and say so."],
     ["going offline, a Cursor restart,", "going offline, a harness restart,"],
     ["so put this file's absolute path in every `poteto-agent` prompt.", "so put this file's absolute path in every child-agent prompt."],
+    ["Trivial mechanical edits go to your fast code model.", "Trivial mechanical edits go to the code role at a lower reasoning level."],
+    ["pick the reasoning level and speed the job needs.", "pick the reasoning level the job needs."],
+    [" Use fast mode only when the job is urgent, meaning CI or trunk is red or a person is blocked on the result right now. Otherwise use standard speed, the same slug without `-fast`.", ""],
+    ["stays on the `swarm workers` model and speed (", "stays on the `swarm workers` model ("],
+    ["Change only the effort level and whether the slug is fast, and keep", "Change only the effort level, and keep"],
+    ["no slug at that level and speed, use", "no slug at that level, use"],
+    ["Use the role's value or default and say so.", "Use the role's value or default and say so. Never use fast mode or a `-fast` slug for any spawn, even when the job is urgent."],
   ],
   [P + "poteto-mode/playbooks/orchestrate.md"]: [
     ["only through the Task tool.", "only through the harness's subagent tool."],

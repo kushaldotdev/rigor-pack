@@ -3,7 +3,7 @@
 
 Explore the codebase to answer "how does X work?" questions. Produce architectural explanations at the level of a senior engineer onboarding onto a subsystem, enough to build a working mental model, not so much that it reads like annotated source code.
 
-Every spawn is a general-purpose child agent, read-only where the harness supports it. Explorers use the `how explorer` role in `docs/agents/workflow.md` (default: the parent's model), and every explainer uses the `how explainer` role (default: the parent's model). Set `model` to that role's value, or to the default if the file or the role is missing. Leave `model` unset when the value is `auto` or `inherit-parent`. If the harness rejects a slug, use the default and say so. If it rejects the default too, use the parent's model and say so. Pick each subagent's reasoning level and fast or standard speed for the job, per the Subagents section of the **poteto-mode** skill.
+Every spawn is a general-purpose child agent, read-only where the harness supports it. Explorers use the `how explorer` role in `docs/agents/workflow.md` (default: the parent's model), and every explainer uses the `how explainer` role (default: the parent's model). Set `model` to that role's value, or to the default if the file or the role is missing. Leave `model` unset when the value is `auto` or `inherit-parent`. If the harness rejects a slug, use the default and say so. If it rejects the default too, use the parent's model and say so. Pick each subagent's reasoning level for the job, per the Subagents section of the **poteto-mode** skill.
 
 ## 1. Assess complexity
 

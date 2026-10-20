@@ -30,7 +30,7 @@ Each reviewer is a general-purpose child agent, read-only where the harness supp
 
 If the harness rejects a configured entry, run that reviewer on the parent's model and say so. Do not block the review on the slug issue. Never treat an alias entry as a rejected slug.
 
-Read `references/reviewer-prompt.md` and fill in the same template for every reviewer with the stated intent, the diff or file contents, the rubric from `references/rubric.md`, and the code-quality lens from `references/code-quality-review.md`. Pick each subagent's reasoning level and fast or standard speed for the job, per the Subagents section of the **poteto-mode** skill.
+Read `references/reviewer-prompt.md` and fill in the same template for every reviewer with the stated intent, the diff or file contents, the rubric from `references/rubric.md`, and the code-quality lens from `references/code-quality-review.md`. Pick each subagent's reasoning level for the job, per the Subagents section of the **poteto-mode** skill.
 
 ## Step 4, Synthesize
 

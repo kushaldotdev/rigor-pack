@@ -34,9 +34,11 @@ Canonical: `AGENTS.md`. `CLAUDE.md` imports it with `@AGENTS.md`.
 
 | Role | pi | Claude Code | Codex |
 |---|---|---|---|
-| judgment and prose | parent | parent | parent |
-| code | parent | parent | parent |
-| reviewers (interrogate, arena judge, trail review) | parent | parent | parent |
-| verifier (≠ author family when possible) | parent | parent | parent |
+| judgment and prose | inherit-parent | inherit-parent | inherit-parent |
+| code | inherit-parent | inherit-parent | inherit-parent |
+| reviewers (interrogate, arena judge, trail review) | inherit-parent | inherit-parent | inherit-parent |
+| verifier (≠ author family when possible) | inherit-parent | inherit-parent | inherit-parent |
 
-`parent` = no override configured; the child runs on the parent's model. One family everywhere means reviews are "single-family".
+`inherit-parent` = no override configured; the child runs on the parent's model (omit the child's `model`). One family everywhere means reviews are "single-family".
+
+Fast mode and `-fast` model variants are never used, for any role, even when a job is urgent.

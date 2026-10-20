@@ -28,6 +28,7 @@ Each row: the body (path relative to the skills root), a fragment of the interac
 | `code-review/references/matt/code-review/code-review.md` | ask for it | brief: REVIEW fixed point (checklist 4) |
 | `code-review/references/matt/code-review/code-review.md` | ask the user where the spec is | brief: REVIEW spec location (checklist 5); none recorded → Spec axis reports "no spec available" |
 | `code-review/references/pstack/interrogate/interrogate.md` | ask the user before | brief: GOAL is the intent; still unsure → log the intent you assumed |
+| `code-review/references/pstack/no-comments/no-comments.md` | wait for their approval | brief: an encoding offer counts as approved only when DOORS or DEFAULTS pre-approves it; otherwise delete the comment and report the constraint open |
 | `codebase-design/references/pstack/architect/architect.md` | pause for sign-off | brief: only if the interview asked for a design checkpoint; otherwise no checkpoint |
 | `codebase-design/references/pstack/principle-redesign-from-first-principles/principle-redesign-from-first-principles.md` | Ask: "if we were writing | n/a: a question to yourself |
 | `diagnosing-bugs/references/matt/diagnosing-bugs/diagnosing-bugs.md` | say so and ask the user | log: record what is missing; park a gate for the artifact; continue on other units |

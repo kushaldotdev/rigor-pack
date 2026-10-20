@@ -4,7 +4,7 @@ import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, dirname, relative, posix } from "node:path";
 import { createHash } from "node:crypto";
 import { VENDORS, HOSTS, DROPPED, EXCLUDE } from "../pack-layout.mjs";
-import { NEUTRAL } from "../harness-neutral.mjs";
+import { NEUTRAL, NEUTRAL_ALL } from "../harness-neutral.mjs";
 
 export const sha256 = (buf) => createHash("sha256").update(buf).digest("hex");
 const toPosix = (p) => p.split("\\").join("/");
@@ -101,7 +101,7 @@ function relink(token, srcFile, destFile, map, root) {
 // Produce the bytes for one plan entry plus the transforms applied to them.
 export function render(entry, plan, root) {
   const raw = readFileSync(join(root, entry.src));
-  if (!entry.src.endsWith(".md")) return { bytes: raw, transforms: [], pre: sha256(raw), dangling: [] };
+  if (!entry.src.endsWith(".md")) return { bytes: raw, transforms: [], pre: sha256(raw), dangling: [], globalHits: [] };
   let text = raw.toString("utf8");
   const transforms = [];
   if (entry.skillBody) {
@@ -132,7 +132,15 @@ export function render(entry, plan, root) {
     text = text.replace(from, () => to);
   }
   if (rules.length) transforms.push(`neutralize ${rules.length} harness-specific phrase(s)`);
-  return { bytes: Buffer.from(text, "utf8"), transforms, pre, dangling };
+  const globalHits = [];
+  NEUTRAL_ALL.forEach(([from, to], i) => {
+    const n = text.split(from).length - 1;
+    if (!n) return;
+    text = text.split(from).join(to);
+    globalHits.push(i);
+    transforms.push(`neutralize ${n} pack-wide phrase(s)`);
+  });
+  return { bytes: Buffer.from(text, "utf8"), transforms, pre, dangling, globalHits };
 }
 
 // Strict reader for the flat frontmatter this pack's host skills use:

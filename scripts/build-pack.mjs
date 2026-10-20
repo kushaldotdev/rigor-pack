@@ -9,7 +9,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { copyPlan, render, sha256, readFrontmatter, openaiYaml, vendorSkills, HOSTS, DROPPED, VENDORS } from "./lib/pack.mjs";
 import { INTERFACE } from "./pack-layout.mjs";
-import { unknownNeutralKeys } from "./harness-neutral.mjs";
+import { unknownNeutralKeys, NEUTRAL_ALL } from "./harness-neutral.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const pack = join(root, ".agents", "skills");
@@ -30,14 +30,19 @@ for (const host of Object.keys(HOSTS)) {
 }
 
 const files = [];
+const globalUsed = new Set();
 for (const e of plan.entries) {
-  const { bytes, transforms, pre, dangling } = render(e, plan, root);
+  const { bytes, transforms, pre, dangling, globalHits } = render(e, plan, root);
+  globalHits.forEach((i) => globalUsed.add(i));
   const out = join(pack, e.dest);
   mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, bytes);
   chmodSync(out, statSync(join(root, e.src)).mode & 0o777);
   files.push({ dest: e.dest, src: e.src, source: e.source, vendorSha256: sha256(readFileSync(join(root, e.src))), preRewriteSha256: pre, sha256: sha256(bytes), transforms, ...(dangling.length ? { danglingUpstream: dangling } : {}) });
 }
+
+const unusedGlobal = NEUTRAL_ALL.filter((_, i) => !globalUsed.has(i)).map(([from]) => from);
+if (unusedGlobal.length) die(`pack-wide harness-neutral phrases match no file: ${unusedGlobal.join(" | ")}`);
 
 // Per-host Codex interface file, derived from the hand-written SKILL.md.
 const skills = [];
