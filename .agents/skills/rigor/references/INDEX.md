@@ -23,7 +23,6 @@ Dropped: `pstack:make-bot-ui` (Depends on Cursor routines, update_state and Send
 | `diagnosing-bugs` | matt | diagnosing-bugs | [diagnosing-bugs/references/matt/diagnosing-bugs/diagnosing-bugs.md](../../diagnosing-bugs/references/matt/diagnosing-bugs/diagnosing-bugs.md) |
 | `domain-modeling` | matt | domain-modeling | [domain-modeling/references/matt/domain-modeling/domain-modeling.md](../../domain-modeling/references/matt/domain-modeling/domain-modeling.md) |
 | `figure-it-out` | pstack | rigor | [rigor/references/pstack/figure-it-out/figure-it-out.md](../../rigor/references/pstack/figure-it-out/figure-it-out.md) |
-| `grill-me` | matt | grilling | [grilling/references/matt/grill-me/grill-me.md](../../grilling/references/matt/grill-me/grill-me.md) |
 | `grill-with-docs` | matt | grilling | [grilling/references/matt/grill-with-docs/grill-with-docs.md](../../grilling/references/matt/grill-with-docs/grill-with-docs.md) |
 | `grilling` | matt | grilling | [grilling/references/matt/grilling/grilling.md](../../grilling/references/matt/grilling/grilling.md) |
 | `handoff` | matt | handoff | [handoff/references/matt/handoff/handoff.md](../../handoff/references/matt/handoff/handoff.md) |

@@ -7,7 +7,7 @@
 import { writeFileSync, mkdirSync, rmSync, existsSync, readFileSync, statSync, chmodSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { copyPlan, render, sha256, readFrontmatter, openaiYaml, vendorSkills, HOSTS, DROPPED, VENDORS } from "./lib/pack.mjs";
+import { copyPlan, render, sha256, readFrontmatter, openaiYaml, vendorSkills, aliasSkills, HOSTS, DROPPED, VENDORS } from "./lib/pack.mjs";
 import { INTERFACE } from "./pack-layout.mjs";
 import { unknownNeutralKeys, NEUTRAL_ALL } from "./harness-neutral.mjs";
 
@@ -19,7 +19,8 @@ const die = (m) => { console.error(`BUILD FAILED: ${m}`); process.exit(1); };
 const placed = Object.values(HOSTS).flatMap((h) => h.sources);
 const dupes = placed.filter((s, i) => placed.indexOf(s) !== i);
 if (dupes.length) die(`placed twice: ${dupes.join(", ")}`);
-const missing = vendorSkills(root).filter((s) => !placed.includes(s) && !DROPPED[s]);
+const aliases = aliasSkills(root);
+const missing = vendorSkills(root).filter((s) => !placed.includes(s) && !DROPPED[s] && !aliases.has(s));
 if (missing.length) die(`vendor skills with no host: ${missing.join(", ")}`);
 
 const plan = copyPlan(root);
@@ -85,6 +86,7 @@ const manifest = {
   advertisedCount: skills.filter((s) => s.visibility === "advertised").length,
   skills,
   dropped: DROPPED,
+  aliasTargets: [...new Set(aliases.values())].sort(),
   generated: ["*/agents/openai.yaml", "rigor/references/INDEX.md", "manifest.json"],
   indexSha256: sha256(Buffer.from(index, "utf8")),
   files: files.sort((a, b) => a.dest.localeCompare(b.dest)),

@@ -15,7 +15,7 @@ const P = (...names) => names.map((n) => `pstack:principle-${n}`);
 
 export const HOSTS = {
   // Advertised: the model or a child must reach these without a human.
-  grilling: { advertised: true, sources: ["matt:productivity/grilling", "matt:productivity/grill-me", "matt:engineering/grill-with-docs", "matt:productivity/to-questionnaire", "pstack:in-your-own-words", "pstack:sharpen"] },
+  grilling: { advertised: true, sources: ["matt:productivity/grilling", "matt:engineering/grill-with-docs", "matt:productivity/to-questionnaire", "pstack:in-your-own-words", "pstack:sharpen"] },
   "domain-modeling": { advertised: true, sources: ["matt:engineering/domain-modeling", ...P("model-the-domain")] },
   "codebase-design": {
     advertised: true,

@@ -15,6 +15,17 @@ export const NEUTRAL_ALL = [
 ];
 
 export const NEUTRAL = {
+  // grill-me is a one-line alias of grilling (see aliasSkills in lib/pack.mjs). Once
+  // its name resolves to `/grilling`, ask-matt's two Standalone bullets describe the
+  // same skill twice and step 1 says grilling "runs the same /grilling primitive".
+  // Merge them into one accurate bullet.
+  ["vendors/mattpocock/skills/engineering/ask-matt/SKILL.md"]: [
+    ["(No working directory? Use `/grilling` instead, covered under Standalone. Both run the same `/grilling` primitive; `grill-with-docs` is the one that leaves a paper trail, which makes it the better of the two whenever a repo is there to leave it in.)",
+     "(No working directory? Use `/grilling` directly, covered under Standalone. `grill-with-docs` runs the same `/grilling` interview and leaves a paper trail, which makes it the better choice whenever a repo is there to leave it in.)"],
+    ["- **`/grilling`**: the same relentless interview as `/grill-with-docs`, but **stateless**: it saves nothing locally and builds no `GLOSSARY.md`. Reach for it when you are **not working in a working directory** (sharpening a plan, a design, a piece of writing, anything with no repo under it). If you are in a working directory, use `/grill-with-docs` instead: it runs the same interview and leaves a paper trail, so it is strictly the better one.\n", ""],
+    ["- **`/grilling`** is the interview primitive itself: rounds, the frontier, facts are the agent's job and decisions are yours. `/grilling` and `/grill-with-docs` are the two named ways in, and `/triage`, `/wayfinder` and `/improve-codebase-architecture` all run it internally. Reach for it directly only when you want the interview with no wrapper around it.",
+     "- **`/grilling`** is the interview primitive itself: rounds, the frontier, facts are the agent's job and decisions are yours. Run it directly when you are **not working in a working directory** (sharpening a plan, a design, a piece of writing, anything with no repo under it): it is **stateless**, saving nothing locally and building no `GLOSSARY.md`. In a working directory use `/grill-with-docs` instead: it runs the same interview and leaves a paper trail. `/triage`, `/wayfinder` and `/improve-codebase-architecture` also run it internally."],
+  ],
   [P + "poteto-mode/playbooks/opening-a-pr.md"]: [
     ["Multiple `Task` calls on the same branch", "Multiple child-agent spawns on the same branch"],
     ["Run `/deslop` from `cursor-team-kit` over the diff", "Run the **unslop** skill over the diff"],

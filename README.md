@@ -29,7 +29,7 @@ You need two names: run **`setup`** once per repo, then give every task to **`ri
 | `prototype` | model or you | Throwaway code that answers one design question |
 | `writing` | model or you | Writing for agents, PR bodies, technical writing, unslop |
 
-Each host `SKILL.md` is a short hand-written dispatcher. The upstream bodies it uses are copied verbatim under `references/matt/` and `references/pstack/`, and the dispatcher links to them by relative path. All 83 upstream skills are inside (82 copied, `make-bot-ui` dropped); see [CHANGES.md](CHANGES.md).
+Each host `SKILL.md` is a short hand-written dispatcher. The upstream bodies it uses are copied verbatim under `references/matt/` and `references/pstack/`, and the dispatcher links to them by relative path. All 83 upstream skills are accounted for (81 copied, `make-bot-ui` dropped, and a one-line alias resolved into the skill it names); see [CHANGES.md](CHANGES.md).
 
 ```mermaid
 flowchart LR

@@ -18,7 +18,6 @@
       "visibility": "advertised",
       "sources": [
         "matt:productivity/grilling",
-        "matt:productivity/grill-me",
         "matt:engineering/grill-with-docs",
         "matt:productivity/to-questionnaire",
         "pstack:in-your-own-words",
@@ -201,12 +200,15 @@
   "dropped": {
     "pstack:make-bot-ui": "Depends on Cursor routines, update_state and SendToUser; no equivalent on pi, Codex or Claude Code."
   },
+  "aliasTargets": [
+    "grilling"
+  ],
   "generated": [
     "*/agents/openai.yaml",
     "rigor/references/INDEX.md",
     "manifest.json"
   ],
-  "indexSha256": "597c160777384dd51d2e5a1f0aa776209ed204996ff4f045c521db745a6a5578",
+  "indexSha256": "31762249244ba64e50e46b4d78af8a4ff7dbc9e2dd293f6727cbfa13c0b1d6ce",
   "files": [
     {
       "dest": "code-review/references/matt/code-review/code-review.md",
@@ -709,18 +711,6 @@
       ]
     },
     {
-      "dest": "grilling/references/matt/grill-me/grill-me.md",
-      "src": "vendors/mattpocock/skills/productivity/grill-me/SKILL.md",
-      "source": "matt:productivity/grill-me",
-      "vendorSha256": "caaf8b8de1684f96e26b28f3c29189db5c89cce4b73e1c93d86164f66ef88637",
-      "preRewriteSha256": "dba3de439b31e958dfe3e7ac400899749e3f371bd5abf1e22f2cbd70e5d0d916",
-      "sha256": "dba3de439b31e958dfe3e7ac400899749e3f371bd5abf1e22f2cbd70e5d0d916",
-      "transforms": [
-        "strip-frontmatter",
-        "rename SKILL.md -> grill-me.md"
-      ]
-    },
-    {
       "dest": "grilling/references/matt/grill-with-docs/grill-with-docs.md",
       "src": "vendors/mattpocock/skills/engineering/grill-with-docs/SKILL.md",
       "source": "matt:engineering/grill-with-docs",
@@ -1202,10 +1192,12 @@
       "source": "matt:engineering/ask-matt",
       "vendorSha256": "1371f5ce005de0992a44b137748bfb960a56948aa9871b405fe9d90b24332e3c",
       "preRewriteSha256": "fabe67ac6507effdc01e322d261d1295ed554d06ce2b811c5c489243618bed0a",
-      "sha256": "fabe67ac6507effdc01e322d261d1295ed554d06ce2b811c5c489243618bed0a",
+      "sha256": "907af6ad295ad8dd40449cf153f02091c88c30caf3c99eef5c65d39eb305d586",
       "transforms": [
         "strip-frontmatter",
-        "rename SKILL.md -> ask-matt.md"
+        "rename SKILL.md -> ask-matt.md",
+        "resolve-alias",
+        "neutralize 3 harness-specific phrase(s)"
       ]
     },
     {
@@ -1288,8 +1280,9 @@
       "source": "matt:productivity/README.md",
       "vendorSha256": "8e39d23dc60e4b3e433ea17f0ed79510c73873a2779e9852920c9791a217efc8",
       "preRewriteSha256": "8e39d23dc60e4b3e433ea17f0ed79510c73873a2779e9852920c9791a217efc8",
-      "sha256": "a3bbefb402bdb486153c0cfacf084d6122f659a65e39ae0d72a5e801e57278d2",
+      "sha256": "668e78f916820cba295c1793c06e70690e4d395573bbb8618fcf02811e0ce36e",
       "transforms": [
+        "resolve-alias",
         "relink 7 relative path(s) to the copied location"
       ]
     },

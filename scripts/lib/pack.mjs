@@ -63,7 +63,7 @@ export function copyPlan(root) {
       entries.push({ host, source: s, src: posix.join(VENDORS[vendor].root, path), dest: `${host}/${destRel}`, skillBody: false });
     }
   }
-  return { entries, folders };
+  return { entries, folders, aliases: aliasSkills(root) };
 }
 
 // Map a repo-relative vendor path (file or folder) to its pack-relative copy.
@@ -79,6 +79,23 @@ function mapper(entries, folders) {
 }
 
 const FRONTMATTER = /^---\r?\n[\s\S]*?\r?\n---\r?\n/;
+const ALIAS_BODY = /^Call the Skill tool with [`"']([a-z0-9-]+)[`"']\.?$/;
+
+// A vendor skill whose whole body is one line naming another skill is an alias,
+// not a skill: nothing is copied for it, and its name resolves to that other
+// skill wherever a copied body mentions it. Upstream keeps the alias folder.
+export function aliasSkills(root) {
+  const found = new Map();
+  for (const source of vendorSkills(root)) {
+    const { folder, name } = parseSource(source);
+    const file = join(root, folder, "SKILL.md");
+    if (!existsSync(file)) continue;
+    const body = readFileSync(file, "utf8").replace(FRONTMATTER, "").trim();
+    const m = body.match(ALIAS_BODY);
+    if (m) found.set(source, m[1] === name ? null : m[1]);
+  }
+  return new Map([...found].filter(([, target]) => target));
+}
 const LINK = /\]\(([^)\s]+)\)/g; // markdown link target
 const CODE = /`([^`\s]+)`/g; // inline code span holding one token
 
@@ -111,6 +128,16 @@ export function render(entry, plan, root) {
     transforms.push("strip-frontmatter", `rename SKILL.md -> ${posix.basename(entry.dest)}`);
   }
   const pre = sha256(Buffer.from(text, "utf8"));
+  // Resolve absorbed alias names before relinking, so a renamed wiki link still
+  // points at a real vendor file and gets relinked.
+  for (const [source, target] of plan.aliases ?? []) {
+    const name = parseSource(source).name;
+    // Whole names only: `grill-me` must not match inside a longer name like `grill-me-twice`.
+    const whole = new RegExp(`(?<![\\w-])${name.replace(/[-]/g, "\\-")}(?![\\w-])`, "g");
+    if (name === target || !whole.test(text)) continue;
+    text = text.replace(whole, target);
+    transforms.push("resolve-alias");
+  }
   const map = mapper(plan.entries, plan.folders);
   const dangling = [];
   let relinked = 0;

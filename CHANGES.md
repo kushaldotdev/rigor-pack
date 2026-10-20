@@ -6,10 +6,11 @@ Every vendor skill, where its copy lives in the pack, and what was done to it. T
 
 1. `vendors/` is never edited. The build reads it and writes copies under `.agents/skills/<host>/references/<vendor>/<name>/`.
 2. A copied `SKILL.md` becomes `<name>.md` in the same folder, with its YAML frontmatter stripped, so no harness lists it as a second skill. The trigger phrases from the stripped `description` reappear in the host's Modes table.
-3. The only text change is **relink**: a relative markdown link or inline-code path that pointed at another vendor file is rewritten to that file's new relative location. Nothing else in a body changes. Links that were already dangling upstream (pstack's unvendored `docs/`, illustrative example paths) are left as they are and listed in the manifest as `danglingUpstream`.
-4. Vendor `agents/openai.yaml` files are not copied. Each host gets a generated one from its own frontmatter.
-5. Each host carries the `LICENSE` of every vendor it copies from (`references/<vendor>/LICENSE`).
-6. Anything that differs from upstream behaviour is said once, in a hand-written file: the host `SKILL.md` (modes, precedence), `rigor/AFK.md` (what each interactive line means in an AFK run), `rigor/INTERVIEW.md`, `rigor/harness/*.md`, `setup/templates/workflow.md`. Those files are the complete list of new prose.
+3. Bodies change in three ways only. **Relink**: a relative markdown link or inline-code path that pointed at another vendor file is rewritten to that file's new relative location. **Alias resolution** (rule 4). **Harness-neutral rewrites**: exact `[old, new]` pairs listed in `scripts/harness-neutral.mjs`, each of which must match exactly once or the build fails. Links that were already dangling upstream (pstack's unvendored `docs/`, illustrative example paths) are left as they are and listed in the manifest as `danglingUpstream`.
+4. A vendor skill whose whole body is one line, `Call the Skill tool with "<name>"`, is an **alias**, not a skill: nothing is copied for it, no row appears here, and its name is rewritten to `<name>` wherever a copied body mentions it. `vendors/` keeps the alias folder. One alias resolves this way today (into `grilling`).
+5. Vendor `agents/openai.yaml` files are not copied. Each host gets a generated one from its own frontmatter.
+6. Each host carries the `LICENSE` of every vendor it copies from (`references/<vendor>/LICENSE`).
+7. Anything that differs from upstream behaviour is said once, in a hand-written file: the host `SKILL.md` (modes, precedence), `rigor/AFK.md` (what each interactive line means in an AFK run), `rigor/INTERVIEW.md`, `rigor/harness/*.md`, `setup/templates/workflow.md`. Those files are the complete list of new prose.
 
 ## Upstream pins
 
@@ -18,7 +19,7 @@ Every vendor skill, where its copy lives in the pack, and what was done to it. T
 | mattpocock/skills | `49dd158d1076134a641b33efb035946536778336` (v1.3.1), `engineering/` + `productivity/` |
 | cursor/plugins pstack | `d457567332aa6989e753ea289f30ea2bfbc80bc0` (v0.15.28), `skills/` |
 
-## Skill bodies (82 copied, 1 dropped)
+## Skill bodies (81 copied, 1 dropped, 1 alias resolved)
 
 "Other files" counts the rest of the vendor folder copied with it (references, templates, scripts, playbooks).
 
@@ -44,7 +45,6 @@ Every vendor skill, where its copy lives in the pack, and what was done to it. T
 | matt | `engineering/triage` | `triage` | `triage/references/matt/triage/triage.md` | 2 | strip frontmatter, rename |
 | matt | `engineering/wayfinder` | `rigor` | `rigor/references/matt/wayfinder/wayfinder.md` | 0 | strip frontmatter, rename |
 | matt | `engineering/wizard` | `setup` | `setup/references/matt/wizard/wizard.md` | 1 | strip frontmatter, rename |
-| matt | `productivity/grill-me` | `grilling` | `grilling/references/matt/grill-me/grill-me.md` | 0 | strip frontmatter, rename |
 | matt | `productivity/grilling` | `grilling` | `grilling/references/matt/grilling/grilling.md` | 0 | strip frontmatter, rename |
 | matt | `productivity/handoff` | `handoff` | `handoff/references/matt/handoff/handoff.md` | 0 | strip frontmatter, rename |
 | matt | `productivity/teach` | `teach` | `teach/references/matt/teach/teach.md` | 4 | strip frontmatter, rename, relink (1 file) |
