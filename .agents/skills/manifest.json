@@ -1,0 +1,2484 @@
+{
+  "generatedBy": "scripts/build-pack.mjs",
+  "vendors": {
+    "matt": {
+      "root": "vendors/mattpocock/skills",
+      "pin": "49dd158d1076134a641b33efb035946536778336 (v1.3.1)"
+    },
+    "pstack": {
+      "root": "vendors/poteto/pstack/skills",
+      "pin": "d457567332aa6989e753ea289f30ea2bfbc80bc0 (v0.15.28)"
+    }
+  },
+  "skillCount": 17,
+  "advertisedCount": 10,
+  "skills": [
+    {
+      "name": "grilling",
+      "visibility": "advertised",
+      "sources": [
+        "matt:productivity/grilling",
+        "matt:productivity/grill-me",
+        "matt:engineering/grill-with-docs",
+        "matt:productivity/to-questionnaire",
+        "pstack:in-your-own-words",
+        "pstack:sharpen"
+      ]
+    },
+    {
+      "name": "domain-modeling",
+      "visibility": "advertised",
+      "sources": [
+        "matt:engineering/domain-modeling",
+        "pstack:principle-model-the-domain"
+      ]
+    },
+    {
+      "name": "codebase-design",
+      "visibility": "advertised",
+      "sources": [
+        "matt:engineering/codebase-design",
+        "pstack:architect",
+        "pstack:arena",
+        "pstack:typescript-best-practices",
+        "pstack:principle-foundational-thinking",
+        "pstack:principle-exhaust-the-design-space",
+        "pstack:principle-subtract-before-you-add",
+        "pstack:principle-laziness-protocol",
+        "pstack:principle-minimize-reader-load",
+        "pstack:principle-boundary-discipline",
+        "pstack:principle-type-system-discipline",
+        "pstack:principle-redesign-from-first-principles",
+        "pstack:principle-migrate-callers-then-delete-legacy-apis",
+        "pstack:principle-make-operations-idempotent",
+        "pstack:principle-separate-before-serializing-shared-state"
+      ]
+    },
+    {
+      "name": "tdd",
+      "visibility": "advertised",
+      "sources": [
+        "matt:engineering/tdd",
+        "pstack:tdd",
+        "pstack:principle-test-behavior-not-implementation"
+      ]
+    },
+    {
+      "name": "diagnosing-bugs",
+      "visibility": "advertised",
+      "sources": [
+        "matt:engineering/diagnosing-bugs",
+        "pstack:principle-fix-root-causes",
+        "pstack:principle-attack-the-premise"
+      ]
+    },
+    {
+      "name": "code-review",
+      "visibility": "advertised",
+      "sources": [
+        "matt:engineering/code-review",
+        "pstack:interrogate",
+        "pstack:blast-radius",
+        "pstack:no-comments"
+      ]
+    },
+    {
+      "name": "verify",
+      "visibility": "advertised",
+      "sources": [
+        "pstack:create-verification-skill",
+        "pstack:maintain-verification-skill",
+        "pstack:create-formal-verification-skill",
+        "pstack:maintain-formal-verification-skill",
+        "pstack:benchmark-checklist",
+        "pstack:principle-prove-it-works",
+        "pstack:principle-explain-the-number"
+      ]
+    },
+    {
+      "name": "research",
+      "visibility": "advertised",
+      "sources": [
+        "matt:engineering/research",
+        "pstack:how",
+        "pstack:why",
+        "pstack:recall"
+      ]
+    },
+    {
+      "name": "prototype",
+      "visibility": "advertised",
+      "sources": [
+        "matt:engineering/prototype"
+      ]
+    },
+    {
+      "name": "writing",
+      "visibility": "advertised",
+      "sources": [
+        "matt:productivity/writing-for-agents",
+        "matt:engineering/pr",
+        "pstack:technical-writing",
+        "pstack:unslop"
+      ]
+    },
+    {
+      "name": "setup",
+      "visibility": "user-invoked",
+      "sources": [
+        "matt:engineering/setup-matt-pocock-skills",
+        "pstack:setup-pstack",
+        "matt:engineering/wizard"
+      ]
+    },
+    {
+      "name": "rigor",
+      "visibility": "user-invoked",
+      "sources": [
+        "matt:engineering/ask-matt",
+        "matt:engineering/to-spec",
+        "matt:engineering/to-tickets",
+        "matt:engineering/implement",
+        "matt:engineering/implement-spec",
+        "matt:engineering/wayfinder",
+        "matt:engineering/improve-codebase-architecture",
+        "pstack:poteto-mode",
+        "pstack:poteto-help",
+        "pstack:figure-it-out",
+        "pstack:swarm",
+        "pstack:show-me-your-work",
+        "pstack:principle-build-the-lever",
+        "pstack:principle-outcome-oriented-execution",
+        "pstack:principle-experience-first",
+        "pstack:principle-sequence-verifiable-units",
+        "pstack:principle-guard-the-context-window",
+        "pstack:principle-never-block-on-the-human"
+      ]
+    },
+    {
+      "name": "triage",
+      "visibility": "user-invoked",
+      "sources": [
+        "matt:engineering/triage"
+      ]
+    },
+    {
+      "name": "handoff",
+      "visibility": "user-invoked",
+      "sources": [
+        "matt:productivity/handoff"
+      ]
+    },
+    {
+      "name": "retro",
+      "visibility": "user-invoked",
+      "sources": [
+        "matt:engineering/retro",
+        "pstack:reflect",
+        "pstack:correct",
+        "pstack:automate-me",
+        "pstack:principle-encode-lessons-in-structure"
+      ]
+    },
+    {
+      "name": "wait-what",
+      "visibility": "user-invoked",
+      "sources": [
+        "matt:productivity/wait-what",
+        "pstack:bro",
+        "pstack:ketchup"
+      ]
+    },
+    {
+      "name": "teach",
+      "visibility": "user-invoked",
+      "sources": [
+        "matt:productivity/teach",
+        "pstack:teach"
+      ]
+    }
+  ],
+  "dropped": {
+    "pstack:make-bot-ui": "Depends on Cursor routines, update_state and SendToUser; no equivalent on pi, Codex or Claude Code."
+  },
+  "generated": [
+    "*/agents/openai.yaml",
+    "rigor/references/INDEX.md",
+    "manifest.json"
+  ],
+  "indexSha256": "597c160777384dd51d2e5a1f0aa776209ed204996ff4f045c521db745a6a5578",
+  "files": [
+    {
+      "dest": "code-review/references/matt/code-review/code-review.md",
+      "src": "vendors/mattpocock/skills/engineering/code-review/SKILL.md",
+      "source": "matt:engineering/code-review",
+      "vendorSha256": "09eb147f793e4647949edd32dbad278f0554dfb56e0d46b699cd4c2c55bf0357",
+      "preRewriteSha256": "c0a9f99686ecd046db8625b9ca249a6add6e90dcf268154422915cc5430177da",
+      "sha256": "c0a9f99686ecd046db8625b9ca249a6add6e90dcf268154422915cc5430177da",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> code-review.md"
+      ]
+    },
+    {
+      "dest": "code-review/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "code-review/references/pstack/blast-radius/blast-radius.md",
+      "src": "vendors/poteto/pstack/skills/blast-radius/SKILL.md",
+      "source": "pstack:blast-radius",
+      "vendorSha256": "2e10745b97f5862323dcda3b29ca60d56b5c3c98e37020085d26b48efbe0a436",
+      "preRewriteSha256": "0312c17e21d6e4a9e217f95cbe3d50eedbc8c273007f305a009d77699a54dc4a",
+      "sha256": "0312c17e21d6e4a9e217f95cbe3d50eedbc8c273007f305a009d77699a54dc4a",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> blast-radius.md"
+      ]
+    },
+    {
+      "dest": "code-review/references/pstack/interrogate/interrogate.md",
+      "src": "vendors/poteto/pstack/skills/interrogate/SKILL.md",
+      "source": "pstack:interrogate",
+      "vendorSha256": "a16dfe179005abc22a4651b82f25b0c8ab953284276efe4e6dc341958fb63647",
+      "preRewriteSha256": "04746cf3ba52792948c277e96be4a1f44b4ccac7b38be2c90f3759b25f4cef60",
+      "sha256": "04746cf3ba52792948c277e96be4a1f44b4ccac7b38be2c90f3759b25f4cef60",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> interrogate.md"
+      ]
+    },
+    {
+      "dest": "code-review/references/pstack/interrogate/references/code-quality-review.md",
+      "src": "vendors/poteto/pstack/skills/interrogate/references/code-quality-review.md",
+      "source": "pstack:interrogate",
+      "vendorSha256": "79162fda183eafd40d51661fbb5e151c7ba250f89e506ba17f5bd135dcbd50a8",
+      "preRewriteSha256": "79162fda183eafd40d51661fbb5e151c7ba250f89e506ba17f5bd135dcbd50a8",
+      "sha256": "79162fda183eafd40d51661fbb5e151c7ba250f89e506ba17f5bd135dcbd50a8",
+      "transforms": []
+    },
+    {
+      "dest": "code-review/references/pstack/interrogate/references/lead-judgment.md",
+      "src": "vendors/poteto/pstack/skills/interrogate/references/lead-judgment.md",
+      "source": "pstack:interrogate",
+      "vendorSha256": "355f5195a76bc75a655125292369f2a8231a2b61fabe5188d8f1386060922b87",
+      "preRewriteSha256": "355f5195a76bc75a655125292369f2a8231a2b61fabe5188d8f1386060922b87",
+      "sha256": "355f5195a76bc75a655125292369f2a8231a2b61fabe5188d8f1386060922b87",
+      "transforms": []
+    },
+    {
+      "dest": "code-review/references/pstack/interrogate/references/reviewer-prompt.md",
+      "src": "vendors/poteto/pstack/skills/interrogate/references/reviewer-prompt.md",
+      "source": "pstack:interrogate",
+      "vendorSha256": "f6005cc2b535006fca97a96c5bfda49df57312eedf1ffd8d1aaaf3eb33817c25",
+      "preRewriteSha256": "f6005cc2b535006fca97a96c5bfda49df57312eedf1ffd8d1aaaf3eb33817c25",
+      "sha256": "f6005cc2b535006fca97a96c5bfda49df57312eedf1ffd8d1aaaf3eb33817c25",
+      "transforms": []
+    },
+    {
+      "dest": "code-review/references/pstack/interrogate/references/rubric.md",
+      "src": "vendors/poteto/pstack/skills/interrogate/references/rubric.md",
+      "source": "pstack:interrogate",
+      "vendorSha256": "0f9c6bdb0b96e26dbde5f6407f417e0c02f54080e7a1268d8994f3c3ec6c5ac0",
+      "preRewriteSha256": "0f9c6bdb0b96e26dbde5f6407f417e0c02f54080e7a1268d8994f3c3ec6c5ac0",
+      "sha256": "0f9c6bdb0b96e26dbde5f6407f417e0c02f54080e7a1268d8994f3c3ec6c5ac0",
+      "transforms": []
+    },
+    {
+      "dest": "code-review/references/pstack/LICENSE",
+      "src": "vendors/poteto/pstack/LICENSE",
+      "source": "pstack:LICENSE",
+      "vendorSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "preRewriteSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "transforms": []
+    },
+    {
+      "dest": "code-review/references/pstack/no-comments/no-comments.md",
+      "src": "vendors/poteto/pstack/skills/no-comments/SKILL.md",
+      "source": "pstack:no-comments",
+      "vendorSha256": "078ecfe224eafbb017f6476870612838bf6dbe38c0b697e12f0c887d0313f17e",
+      "preRewriteSha256": "226e3772fdcc8fc6e8ee6aec3c0c985829af0c8e441e47f16f4adec8f177cea7",
+      "sha256": "226e3772fdcc8fc6e8ee6aec3c0c985829af0c8e441e47f16f4adec8f177cea7",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> no-comments.md"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/matt/codebase-design/codebase-design.md",
+      "src": "vendors/mattpocock/skills/engineering/codebase-design/SKILL.md",
+      "source": "matt:engineering/codebase-design",
+      "vendorSha256": "2c20617f87ec8af6a434859f381b2f061a69b530444e74eb39e78bb016a6d1e2",
+      "preRewriteSha256": "bf218e7ecc69d33a682cf2ffe7c3a7bc45de3c5bc1410fb6cb9beb0081d73a03",
+      "sha256": "bf218e7ecc69d33a682cf2ffe7c3a7bc45de3c5bc1410fb6cb9beb0081d73a03",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> codebase-design.md"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/matt/codebase-design/DEEPENING.md",
+      "src": "vendors/mattpocock/skills/engineering/codebase-design/DEEPENING.md",
+      "source": "matt:engineering/codebase-design",
+      "vendorSha256": "f3dd099ce99289bd213914d8ee3e2429b78309c3957ca4583f7659551b1d53c1",
+      "preRewriteSha256": "f3dd099ce99289bd213914d8ee3e2429b78309c3957ca4583f7659551b1d53c1",
+      "sha256": "42a218a19ad6da870fb5132b341048fef916993be89f1959c729bdfa4097ffd9",
+      "transforms": [
+        "relink 1 relative path(s) to the copied location"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/matt/codebase-design/DESIGN-IT-TWICE.md",
+      "src": "vendors/mattpocock/skills/engineering/codebase-design/DESIGN-IT-TWICE.md",
+      "source": "matt:engineering/codebase-design",
+      "vendorSha256": "52b52e75655a27aea59c6966b410bac82448968ad46ef1ebb9f07c274e3ae010",
+      "preRewriteSha256": "52b52e75655a27aea59c6966b410bac82448968ad46ef1ebb9f07c274e3ae010",
+      "sha256": "fe7d947099dacd974b39d48316a3e91ce1b2b047e0360df62f0afa091dd60c46",
+      "transforms": [
+        "relink 2 relative path(s) to the copied location"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "codebase-design/references/pstack/architect/architect.md",
+      "src": "vendors/poteto/pstack/skills/architect/SKILL.md",
+      "source": "pstack:architect",
+      "vendorSha256": "31f8e97a52bfa5432edd61f68ade2a8632ef0bacbc2d2a6802d7a0e6821944ac",
+      "preRewriteSha256": "028d7e7b9bd15d24ed1c31fb8ef6f71b246e9dbb16b12d0d194d7d6551d20211",
+      "sha256": "028d7e7b9bd15d24ed1c31fb8ef6f71b246e9dbb16b12d0d194d7d6551d20211",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> architect.md"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/pstack/architect/references/design-red-flags.md",
+      "src": "vendors/poteto/pstack/skills/architect/references/design-red-flags.md",
+      "source": "pstack:architect",
+      "vendorSha256": "d0e639e4cc588ec865f930d3a4111faad60987ae36925917e319d7ceca7c69ce",
+      "preRewriteSha256": "d0e639e4cc588ec865f930d3a4111faad60987ae36925917e319d7ceca7c69ce",
+      "sha256": "d0e639e4cc588ec865f930d3a4111faad60987ae36925917e319d7ceca7c69ce",
+      "transforms": []
+    },
+    {
+      "dest": "codebase-design/references/pstack/architect/references/rationale-template.md",
+      "src": "vendors/poteto/pstack/skills/architect/references/rationale-template.md",
+      "source": "pstack:architect",
+      "vendorSha256": "0cedfccdc7b47fc881febd5a8293eecbc542c20f8df825639904a8102d2eb5d3",
+      "preRewriteSha256": "0cedfccdc7b47fc881febd5a8293eecbc542c20f8df825639904a8102d2eb5d3",
+      "sha256": "cc1c9b400007e8497710c79f27319ac8469d3b47e34924a1afdfd57980da7015",
+      "transforms": [
+        "relink 2 relative path(s) to the copied location"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/pstack/architect/references/runner-prompt.md",
+      "src": "vendors/poteto/pstack/skills/architect/references/runner-prompt.md",
+      "source": "pstack:architect",
+      "vendorSha256": "21dd5314aab778c5007228027a4591d97693fbec6ab86524037772b63f40948e",
+      "preRewriteSha256": "21dd5314aab778c5007228027a4591d97693fbec6ab86524037772b63f40948e",
+      "sha256": "21dd5314aab778c5007228027a4591d97693fbec6ab86524037772b63f40948e",
+      "transforms": []
+    },
+    {
+      "dest": "codebase-design/references/pstack/arena/arena.md",
+      "src": "vendors/poteto/pstack/skills/arena/SKILL.md",
+      "source": "pstack:arena",
+      "vendorSha256": "ed72f6c132b1ce3974d949581d0adc5dade424fe20793ac3b4c4fae22ecb9354",
+      "preRewriteSha256": "671a645f152d1c5179349beead3208836848a866009659a06b6dc10af5549ae5",
+      "sha256": "671a645f152d1c5179349beead3208836848a866009659a06b6dc10af5549ae5",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> arena.md"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/pstack/LICENSE",
+      "src": "vendors/poteto/pstack/LICENSE",
+      "source": "pstack:LICENSE",
+      "vendorSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "preRewriteSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "transforms": []
+    },
+    {
+      "dest": "codebase-design/references/pstack/principle-boundary-discipline/principle-boundary-discipline.md",
+      "src": "vendors/poteto/pstack/skills/principle-boundary-discipline/SKILL.md",
+      "source": "pstack:principle-boundary-discipline",
+      "vendorSha256": "62ac2862c2caa22dd14531f51c9c6bb445ceb198ca98a687e25b4d47c1f10a28",
+      "preRewriteSha256": "a8321ae8c64692ad144580dff9e3d186163fcebb85805c19124d36ff34856f65",
+      "sha256": "a8321ae8c64692ad144580dff9e3d186163fcebb85805c19124d36ff34856f65",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-boundary-discipline.md"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/pstack/principle-exhaust-the-design-space/principle-exhaust-the-design-space.md",
+      "src": "vendors/poteto/pstack/skills/principle-exhaust-the-design-space/SKILL.md",
+      "source": "pstack:principle-exhaust-the-design-space",
+      "vendorSha256": "2de83d99f93f60ec6313455b0bc9aa9f0bfb93dd59f414f403691322db00d4db",
+      "preRewriteSha256": "f12af47a7e4f336bc5074540c474ebd1ada8a68649ad06d6ef6961cac8ccbaff",
+      "sha256": "f12af47a7e4f336bc5074540c474ebd1ada8a68649ad06d6ef6961cac8ccbaff",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-exhaust-the-design-space.md"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/pstack/principle-foundational-thinking/principle-foundational-thinking.md",
+      "src": "vendors/poteto/pstack/skills/principle-foundational-thinking/SKILL.md",
+      "source": "pstack:principle-foundational-thinking",
+      "vendorSha256": "864b827e8199d946ce58beca0f89c4ed4099ed6e426fb698a3aaa45de2a9eea2",
+      "preRewriteSha256": "52f4e1076e125453fe522accc238c3cc5afcce47bd4698b55731bac3c0672332",
+      "sha256": "52f4e1076e125453fe522accc238c3cc5afcce47bd4698b55731bac3c0672332",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-foundational-thinking.md"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/pstack/principle-laziness-protocol/principle-laziness-protocol.md",
+      "src": "vendors/poteto/pstack/skills/principle-laziness-protocol/SKILL.md",
+      "source": "pstack:principle-laziness-protocol",
+      "vendorSha256": "1be6e7a435f26a75a76eb848b9c3d611b9977d0f5822361753244da25ca3ca45",
+      "preRewriteSha256": "574158dc80b610a8a7b06ac43eed29cc00d2290a0853b9551029e1eb1ddb2328",
+      "sha256": "574158dc80b610a8a7b06ac43eed29cc00d2290a0853b9551029e1eb1ddb2328",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-laziness-protocol.md"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/pstack/principle-make-operations-idempotent/principle-make-operations-idempotent.md",
+      "src": "vendors/poteto/pstack/skills/principle-make-operations-idempotent/SKILL.md",
+      "source": "pstack:principle-make-operations-idempotent",
+      "vendorSha256": "7aa9327cf1f1aa057e95d47a0a78bd88a8f9d556b608866fee939d455a53a019",
+      "preRewriteSha256": "4d987ee2ff0b5ad4bbfaf067fa5a5d071c99299db3842b19f2f184c76f68eb1e",
+      "sha256": "4d987ee2ff0b5ad4bbfaf067fa5a5d071c99299db3842b19f2f184c76f68eb1e",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-make-operations-idempotent.md"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/pstack/principle-migrate-callers-then-delete-legacy-apis/principle-migrate-callers-then-delete-legacy-apis.md",
+      "src": "vendors/poteto/pstack/skills/principle-migrate-callers-then-delete-legacy-apis/SKILL.md",
+      "source": "pstack:principle-migrate-callers-then-delete-legacy-apis",
+      "vendorSha256": "580ad9bb1a0994ecb924321ba49efc38a2f85c64e22c76fb133f57a78272a2e6",
+      "preRewriteSha256": "25c9e921a2b32212acb2dbf899cbf54b5552e1f41de5f8424af1dcf4d2feb1eb",
+      "sha256": "25c9e921a2b32212acb2dbf899cbf54b5552e1f41de5f8424af1dcf4d2feb1eb",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-migrate-callers-then-delete-legacy-apis.md"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/pstack/principle-minimize-reader-load/principle-minimize-reader-load.md",
+      "src": "vendors/poteto/pstack/skills/principle-minimize-reader-load/SKILL.md",
+      "source": "pstack:principle-minimize-reader-load",
+      "vendorSha256": "1ea2b7fef2391cae5844c4efdbd59031f775e8a52d06b7495d707229a200dcca",
+      "preRewriteSha256": "42be6f9e8b2d8f872d4e3762c73becefd9ccd1bd1ad36b4bf5aa439f20f6b8c4",
+      "sha256": "78f5b6a9f283d1ef9a736223396387ee2fb3ff7bb9883668c63e93815abd9635",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-minimize-reader-load.md",
+        "relink 1 relative path(s) to the copied location"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/pstack/principle-redesign-from-first-principles/principle-redesign-from-first-principles.md",
+      "src": "vendors/poteto/pstack/skills/principle-redesign-from-first-principles/SKILL.md",
+      "source": "pstack:principle-redesign-from-first-principles",
+      "vendorSha256": "170e0a658783e43fee8ec5a8c2422a4abb8f69cef621dd1819a95910b8207034",
+      "preRewriteSha256": "9ee4d34df63633e9780a54808243b8aa230129dc825a7244cc9b2915b16b4a11",
+      "sha256": "9ee4d34df63633e9780a54808243b8aa230129dc825a7244cc9b2915b16b4a11",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-redesign-from-first-principles.md"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/pstack/principle-separate-before-serializing-shared-state/principle-separate-before-serializing-shared-state.md",
+      "src": "vendors/poteto/pstack/skills/principle-separate-before-serializing-shared-state/SKILL.md",
+      "source": "pstack:principle-separate-before-serializing-shared-state",
+      "vendorSha256": "05294b40448e927c5da1c7b6f5c6b9fed3744637e3833d2d948b9154a9dd00bb",
+      "preRewriteSha256": "b6abc5dbd2460ce89ae725d1532987b4d55666a439d31ffb6d34be87d6b52c31",
+      "sha256": "b6abc5dbd2460ce89ae725d1532987b4d55666a439d31ffb6d34be87d6b52c31",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-separate-before-serializing-shared-state.md"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/pstack/principle-subtract-before-you-add/principle-subtract-before-you-add.md",
+      "src": "vendors/poteto/pstack/skills/principle-subtract-before-you-add/SKILL.md",
+      "source": "pstack:principle-subtract-before-you-add",
+      "vendorSha256": "8c93bb9d1a7f38e2ef37655d93f0e790fa59903105af3d500cc8a663ebe45f3f",
+      "preRewriteSha256": "53aafbbbe87171b8d712d9cf52b5a8af1c7ac9bfb49f6a18e912195de447aa27",
+      "sha256": "53aafbbbe87171b8d712d9cf52b5a8af1c7ac9bfb49f6a18e912195de447aa27",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-subtract-before-you-add.md"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/pstack/principle-type-system-discipline/principle-type-system-discipline.md",
+      "src": "vendors/poteto/pstack/skills/principle-type-system-discipline/SKILL.md",
+      "source": "pstack:principle-type-system-discipline",
+      "vendorSha256": "5cdaf79785e3c12b2592b9469ee8c272143eb86ab7a18d8382197cea5fd30106",
+      "preRewriteSha256": "aafded8bcb55d0d97612d74a59793747aa6eaaa7546de0b5b76e231b6bbfb7d5",
+      "sha256": "aafded8bcb55d0d97612d74a59793747aa6eaaa7546de0b5b76e231b6bbfb7d5",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-type-system-discipline.md"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/pstack/typescript-best-practices/references/patterns.md",
+      "src": "vendors/poteto/pstack/skills/typescript-best-practices/references/patterns.md",
+      "source": "pstack:typescript-best-practices",
+      "vendorSha256": "12e70c9419a8b3f5d6a1ab80e272c1f00a43ac0b3bbf72d68199033570e5de77",
+      "preRewriteSha256": "12e70c9419a8b3f5d6a1ab80e272c1f00a43ac0b3bbf72d68199033570e5de77",
+      "sha256": "12e70c9419a8b3f5d6a1ab80e272c1f00a43ac0b3bbf72d68199033570e5de77",
+      "transforms": [],
+      "danglingUpstream": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "dest": "codebase-design/references/pstack/typescript-best-practices/typescript-best-practices.md",
+      "src": "vendors/poteto/pstack/skills/typescript-best-practices/SKILL.md",
+      "source": "pstack:typescript-best-practices",
+      "vendorSha256": "ec1dac086d3708e5940d45d250c30a37dd953b4e3cb2ca0692f5851d7a039e27",
+      "preRewriteSha256": "20d11e3a19b546aa54eeed8a32cac327504fef9b19fabc98eb1eab03375ff66e",
+      "sha256": "20d11e3a19b546aa54eeed8a32cac327504fef9b19fabc98eb1eab03375ff66e",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> typescript-best-practices.md"
+      ]
+    },
+    {
+      "dest": "diagnosing-bugs/references/matt/diagnosing-bugs/diagnosing-bugs.md",
+      "src": "vendors/mattpocock/skills/engineering/diagnosing-bugs/SKILL.md",
+      "source": "matt:engineering/diagnosing-bugs",
+      "vendorSha256": "849198df88cdb65fd0d97236604c1fca7ff2f22d2f705f9724a800d0266b118d",
+      "preRewriteSha256": "8125e19793332f9f97cdbf37db5862e7e5877e2a390c5317cb098b273b164c00",
+      "sha256": "8125e19793332f9f97cdbf37db5862e7e5877e2a390c5317cb098b273b164c00",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> diagnosing-bugs.md"
+      ]
+    },
+    {
+      "dest": "diagnosing-bugs/references/matt/diagnosing-bugs/scripts/hitl-loop.template.sh",
+      "src": "vendors/mattpocock/skills/engineering/diagnosing-bugs/scripts/hitl-loop.template.sh",
+      "source": "matt:engineering/diagnosing-bugs",
+      "vendorSha256": "35103539fc36873eea36074769ad454f9379d6fc8b2dc0e26ce987fd3bfe5503",
+      "preRewriteSha256": "35103539fc36873eea36074769ad454f9379d6fc8b2dc0e26ce987fd3bfe5503",
+      "sha256": "35103539fc36873eea36074769ad454f9379d6fc8b2dc0e26ce987fd3bfe5503",
+      "transforms": []
+    },
+    {
+      "dest": "diagnosing-bugs/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "diagnosing-bugs/references/pstack/LICENSE",
+      "src": "vendors/poteto/pstack/LICENSE",
+      "source": "pstack:LICENSE",
+      "vendorSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "preRewriteSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "transforms": []
+    },
+    {
+      "dest": "diagnosing-bugs/references/pstack/principle-attack-the-premise/principle-attack-the-premise.md",
+      "src": "vendors/poteto/pstack/skills/principle-attack-the-premise/SKILL.md",
+      "source": "pstack:principle-attack-the-premise",
+      "vendorSha256": "6a932884daad4aa189e9b5d1665226bbc75621d4d2a398fd4003bebd382f4599",
+      "preRewriteSha256": "8dad3d0b50c91700efcfdf4684d9855defb3f693facb6f87f575f66644397b39",
+      "sha256": "1bb4d83e357631a88e01eb609cb1e3c7643a81d5b12383386c81ae50f4a38b53",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-attack-the-premise.md",
+        "relink 4 relative path(s) to the copied location"
+      ]
+    },
+    {
+      "dest": "diagnosing-bugs/references/pstack/principle-fix-root-causes/principle-fix-root-causes.md",
+      "src": "vendors/poteto/pstack/skills/principle-fix-root-causes/SKILL.md",
+      "source": "pstack:principle-fix-root-causes",
+      "vendorSha256": "8df3c8c3fe57eb0055a5c8efab8ab144557fdf301da70b1cdc77a3a3ef3f3052",
+      "preRewriteSha256": "7b1850ee3c514f67f9515ab79d9941c753720121a3f92a005103ac8952ac489e",
+      "sha256": "7b1850ee3c514f67f9515ab79d9941c753720121a3f92a005103ac8952ac489e",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-fix-root-causes.md"
+      ]
+    },
+    {
+      "dest": "domain-modeling/references/matt/domain-modeling/ADR-FORMAT.md",
+      "src": "vendors/mattpocock/skills/engineering/domain-modeling/ADR-FORMAT.md",
+      "source": "matt:engineering/domain-modeling",
+      "vendorSha256": "944c92aa790e8fbdc9199640b170979abb8a34ba8d0fe18c2a01a63bce140ca0",
+      "preRewriteSha256": "944c92aa790e8fbdc9199640b170979abb8a34ba8d0fe18c2a01a63bce140ca0",
+      "sha256": "944c92aa790e8fbdc9199640b170979abb8a34ba8d0fe18c2a01a63bce140ca0",
+      "transforms": []
+    },
+    {
+      "dest": "domain-modeling/references/matt/domain-modeling/domain-modeling.md",
+      "src": "vendors/mattpocock/skills/engineering/domain-modeling/SKILL.md",
+      "source": "matt:engineering/domain-modeling",
+      "vendorSha256": "7b925d7b1e341a2eeae33ad68a8a8c0ab889a38ddd22a7598e4c240e5a7556a3",
+      "preRewriteSha256": "a32b039663aaa8fc15a502cf5d4c02382d0f721ca2905c36b53f9110d75e7b61",
+      "sha256": "a32b039663aaa8fc15a502cf5d4c02382d0f721ca2905c36b53f9110d75e7b61",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> domain-modeling.md"
+      ]
+    },
+    {
+      "dest": "domain-modeling/references/matt/domain-modeling/GLOSSARY-FORMAT.md",
+      "src": "vendors/mattpocock/skills/engineering/domain-modeling/GLOSSARY-FORMAT.md",
+      "source": "matt:engineering/domain-modeling",
+      "vendorSha256": "21dcc40cdec8e151a829b98ab1517c1867bc444e3665134a98c6983411996801",
+      "preRewriteSha256": "21dcc40cdec8e151a829b98ab1517c1867bc444e3665134a98c6983411996801",
+      "sha256": "21dcc40cdec8e151a829b98ab1517c1867bc444e3665134a98c6983411996801",
+      "transforms": [],
+      "danglingUpstream": [
+        "./src/ordering/GLOSSARY.md",
+        "./src/billing/GLOSSARY.md",
+        "./src/fulfillment/GLOSSARY.md"
+      ]
+    },
+    {
+      "dest": "domain-modeling/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "domain-modeling/references/pstack/LICENSE",
+      "src": "vendors/poteto/pstack/LICENSE",
+      "source": "pstack:LICENSE",
+      "vendorSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "preRewriteSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "transforms": []
+    },
+    {
+      "dest": "domain-modeling/references/pstack/principle-model-the-domain/principle-model-the-domain.md",
+      "src": "vendors/poteto/pstack/skills/principle-model-the-domain/SKILL.md",
+      "source": "pstack:principle-model-the-domain",
+      "vendorSha256": "52c0d85e0c3827c41c18299b642657d7b47eaf77b7b31609e42e0df42b84c75f",
+      "preRewriteSha256": "43b4e8ad97cc0de0f070adeb2e333fa9a9d02783796b9bb9bc0d92361f18df4f",
+      "sha256": "43b4e8ad97cc0de0f070adeb2e333fa9a9d02783796b9bb9bc0d92361f18df4f",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-model-the-domain.md"
+      ]
+    },
+    {
+      "dest": "grilling/references/matt/grill-me/grill-me.md",
+      "src": "vendors/mattpocock/skills/productivity/grill-me/SKILL.md",
+      "source": "matt:productivity/grill-me",
+      "vendorSha256": "caaf8b8de1684f96e26b28f3c29189db5c89cce4b73e1c93d86164f66ef88637",
+      "preRewriteSha256": "dba3de439b31e958dfe3e7ac400899749e3f371bd5abf1e22f2cbd70e5d0d916",
+      "sha256": "dba3de439b31e958dfe3e7ac400899749e3f371bd5abf1e22f2cbd70e5d0d916",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> grill-me.md"
+      ]
+    },
+    {
+      "dest": "grilling/references/matt/grill-with-docs/grill-with-docs.md",
+      "src": "vendors/mattpocock/skills/engineering/grill-with-docs/SKILL.md",
+      "source": "matt:engineering/grill-with-docs",
+      "vendorSha256": "7de372c13488f1ee96cc11cd8907b56b6809cc93eef776eeddd37de6b6cbe3fe",
+      "preRewriteSha256": "3718eba313f0e6110be0536ea9947f6b7f554cd2063668a0c329cacbbb3ddfd3",
+      "sha256": "3718eba313f0e6110be0536ea9947f6b7f554cd2063668a0c329cacbbb3ddfd3",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> grill-with-docs.md"
+      ]
+    },
+    {
+      "dest": "grilling/references/matt/grilling/grilling.md",
+      "src": "vendors/mattpocock/skills/productivity/grilling/SKILL.md",
+      "source": "matt:productivity/grilling",
+      "vendorSha256": "befdff1e27a1dfe2a294d5871169ac1afe16d983911daa4f32627514a48c1e15",
+      "preRewriteSha256": "176cf0bcbae1b34d6db8d849bb9b2c28b0c26db1de313f7860585412cbee6167",
+      "sha256": "176cf0bcbae1b34d6db8d849bb9b2c28b0c26db1de313f7860585412cbee6167",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> grilling.md"
+      ]
+    },
+    {
+      "dest": "grilling/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "grilling/references/matt/to-questionnaire/to-questionnaire.md",
+      "src": "vendors/mattpocock/skills/productivity/to-questionnaire/SKILL.md",
+      "source": "matt:productivity/to-questionnaire",
+      "vendorSha256": "b5eb929842ee0e93d867c5e906d183d350f2f2d149eaeaa86967d94d8eda1d3b",
+      "preRewriteSha256": "05111466dde422b1430e7d69875e7003941fd13e46cfe3880316e39ab83676bb",
+      "sha256": "05111466dde422b1430e7d69875e7003941fd13e46cfe3880316e39ab83676bb",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> to-questionnaire.md"
+      ]
+    },
+    {
+      "dest": "grilling/references/pstack/in-your-own-words/in-your-own-words.md",
+      "src": "vendors/poteto/pstack/skills/in-your-own-words/SKILL.md",
+      "source": "pstack:in-your-own-words",
+      "vendorSha256": "fa8ba74e27d7be371dc270ec78bbf816411477d0dfab185356c861ac8dd413ad",
+      "preRewriteSha256": "710dc1ea4834e7d8a12bc51cdd39eb0e7aa9424f5191fe86097b887bdc78531b",
+      "sha256": "710dc1ea4834e7d8a12bc51cdd39eb0e7aa9424f5191fe86097b887bdc78531b",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> in-your-own-words.md"
+      ]
+    },
+    {
+      "dest": "grilling/references/pstack/LICENSE",
+      "src": "vendors/poteto/pstack/LICENSE",
+      "source": "pstack:LICENSE",
+      "vendorSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "preRewriteSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "transforms": []
+    },
+    {
+      "dest": "grilling/references/pstack/sharpen/sharpen.md",
+      "src": "vendors/poteto/pstack/skills/sharpen/SKILL.md",
+      "source": "pstack:sharpen",
+      "vendorSha256": "d895695fcc29b832bf118b842c1d7cf356a69622d63c9d49b40a0c97d8496c80",
+      "preRewriteSha256": "3dfdd825264a70daadc8ae6ca4112f5763bcf4dbda9951eb1d9f7661940705c8",
+      "sha256": "3dfdd825264a70daadc8ae6ca4112f5763bcf4dbda9951eb1d9f7661940705c8",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> sharpen.md"
+      ]
+    },
+    {
+      "dest": "handoff/references/matt/handoff/handoff.md",
+      "src": "vendors/mattpocock/skills/productivity/handoff/SKILL.md",
+      "source": "matt:productivity/handoff",
+      "vendorSha256": "4cbb043950dad2ffd3662ff1a5a0b51ae676004b5cae10e3787e8ee7a4ee69d3",
+      "preRewriteSha256": "74a9c998d55ac65d671579563b258db3e505d0b11b79decd1a962ca3fde2cfe7",
+      "sha256": "74a9c998d55ac65d671579563b258db3e505d0b11b79decd1a962ca3fde2cfe7",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> handoff.md"
+      ]
+    },
+    {
+      "dest": "handoff/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "prototype/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "prototype/references/matt/prototype/LOGIC.md",
+      "src": "vendors/mattpocock/skills/engineering/prototype/LOGIC.md",
+      "source": "matt:engineering/prototype",
+      "vendorSha256": "f61c7d249e786a79ef289018901c348271e1798dd0b0bc5607b5c6f4d4a01ab9",
+      "preRewriteSha256": "f61c7d249e786a79ef289018901c348271e1798dd0b0bc5607b5c6f4d4a01ab9",
+      "sha256": "8c4136ef9ace2ecac8b3ac50104d9f8196d0eb793cbdbe1dae6f00601db29e72",
+      "transforms": [
+        "relink 1 relative path(s) to the copied location"
+      ]
+    },
+    {
+      "dest": "prototype/references/matt/prototype/prototype.md",
+      "src": "vendors/mattpocock/skills/engineering/prototype/SKILL.md",
+      "source": "matt:engineering/prototype",
+      "vendorSha256": "714de632d116bb73f65cdb5a882db15b9369a6713b9a47c0fad827848f0bfbe3",
+      "preRewriteSha256": "85479029c89fa4c516a947e2bb5cd0843cf6293cad61cf48b44d513f5181b29d",
+      "sha256": "85479029c89fa4c516a947e2bb5cd0843cf6293cad61cf48b44d513f5181b29d",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> prototype.md"
+      ]
+    },
+    {
+      "dest": "prototype/references/matt/prototype/UI.md",
+      "src": "vendors/mattpocock/skills/engineering/prototype/UI.md",
+      "source": "matt:engineering/prototype",
+      "vendorSha256": "723211e878acbc7b6ff09755263f3295cde724ba902ff0064da41eed51d45ad3",
+      "preRewriteSha256": "723211e878acbc7b6ff09755263f3295cde724ba902ff0064da41eed51d45ad3",
+      "sha256": "8012d2c59824866c98536b10b3c97f0159e2dd7c0df63a65fa2fd9f7c8420596",
+      "transforms": [
+        "relink 1 relative path(s) to the copied location"
+      ]
+    },
+    {
+      "dest": "research/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/matt/research/research.md",
+      "src": "vendors/mattpocock/skills/engineering/research/SKILL.md",
+      "source": "matt:engineering/research",
+      "vendorSha256": "985569f15739c713d6784887c3d186d4ef9ac85bec5ad9c068d25bf0739928e4",
+      "preRewriteSha256": "24ad336b28f61d2ac49f31531fadd45047b8682a15b30825cafac886d3543cb9",
+      "sha256": "24ad336b28f61d2ac49f31531fadd45047b8682a15b30825cafac886d3543cb9",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> research.md"
+      ]
+    },
+    {
+      "dest": "research/references/pstack/how/how.md",
+      "src": "vendors/poteto/pstack/skills/how/SKILL.md",
+      "source": "pstack:how",
+      "vendorSha256": "08a00079bb15b4258874ac3ff62d4ca7e94350ffedb521d0fd296dc9dd21904e",
+      "preRewriteSha256": "2917642869ad02f874c32027ab0353b404b88a0c57fdced786ce180f68d0ce45",
+      "sha256": "2917642869ad02f874c32027ab0353b404b88a0c57fdced786ce180f68d0ce45",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> how.md"
+      ]
+    },
+    {
+      "dest": "research/references/pstack/how/references/explainer-prompt.md",
+      "src": "vendors/poteto/pstack/skills/how/references/explainer-prompt.md",
+      "source": "pstack:how",
+      "vendorSha256": "ddb89cebefc24e2b54517a331aedfe045b6971e101f45c71b8cef4cccff45bff",
+      "preRewriteSha256": "ddb89cebefc24e2b54517a331aedfe045b6971e101f45c71b8cef4cccff45bff",
+      "sha256": "ddb89cebefc24e2b54517a331aedfe045b6971e101f45c71b8cef4cccff45bff",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/pstack/how/references/explorer-prompt.md",
+      "src": "vendors/poteto/pstack/skills/how/references/explorer-prompt.md",
+      "source": "pstack:how",
+      "vendorSha256": "6300128385ee940fd42ecb84b0e623435440a2dc283eae54ee4a52ba56947ba1",
+      "preRewriteSha256": "6300128385ee940fd42ecb84b0e623435440a2dc283eae54ee4a52ba56947ba1",
+      "sha256": "6300128385ee940fd42ecb84b0e623435440a2dc283eae54ee4a52ba56947ba1",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/pstack/LICENSE",
+      "src": "vendors/poteto/pstack/LICENSE",
+      "source": "pstack:LICENSE",
+      "vendorSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "preRewriteSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/pstack/recall/recall.md",
+      "src": "vendors/poteto/pstack/skills/recall/SKILL.md",
+      "source": "pstack:recall",
+      "vendorSha256": "b0ceb996259c3404532f61e4b010df4e3d80d7ddbed85b3c302895723eb62a89",
+      "preRewriteSha256": "534bbf8a6a65ef147998a62fed517c9ce4c40adb30907676ecaf0a8cd60117fc",
+      "sha256": "534bbf8a6a65ef147998a62fed517c9ce4c40adb30907676ecaf0a8cd60117fc",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> recall.md"
+      ]
+    },
+    {
+      "dest": "research/references/pstack/why/references/epistemics.md",
+      "src": "vendors/poteto/pstack/skills/why/references/epistemics.md",
+      "source": "pstack:why",
+      "vendorSha256": "d54a2361b2d5973bc3fe2edf62f446d87935974d4b40d47f23b9529f956ca758",
+      "preRewriteSha256": "d54a2361b2d5973bc3fe2edf62f446d87935974d4b40d47f23b9529f956ca758",
+      "sha256": "d54a2361b2d5973bc3fe2edf62f446d87935974d4b40d47f23b9529f956ca758",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/pstack/why/references/investigator-prompt.md",
+      "src": "vendors/poteto/pstack/skills/why/references/investigator-prompt.md",
+      "source": "pstack:why",
+      "vendorSha256": "c44afba186f899094f3694e6c9d6de5d14ff7c4ce28b787a9f50fc789c9a7fc3",
+      "preRewriteSha256": "c44afba186f899094f3694e6c9d6de5d14ff7c4ce28b787a9f50fc789c9a7fc3",
+      "sha256": "c44afba186f899094f3694e6c9d6de5d14ff7c4ce28b787a9f50fc789c9a7fc3",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/pstack/why/references/source-playbook.md",
+      "src": "vendors/poteto/pstack/skills/why/references/source-playbook.md",
+      "source": "pstack:why",
+      "vendorSha256": "9ae9dcb9d09111c9facc68510331c5aba4aed9b1b057314ff1fc0e166ad3993a",
+      "preRewriteSha256": "9ae9dcb9d09111c9facc68510331c5aba4aed9b1b057314ff1fc0e166ad3993a",
+      "sha256": "9ae9dcb9d09111c9facc68510331c5aba4aed9b1b057314ff1fc0e166ad3993a",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/pstack/why/references/sources/code-archaeology.md",
+      "src": "vendors/poteto/pstack/skills/why/references/sources/code-archaeology.md",
+      "source": "pstack:why",
+      "vendorSha256": "a4a3970e9db448054aed676f3f7feeee667b4b69f0bd57c8fd72b751be687cc7",
+      "preRewriteSha256": "a4a3970e9db448054aed676f3f7feeee667b4b69f0bd57c8fd72b751be687cc7",
+      "sha256": "a4a3970e9db448054aed676f3f7feeee667b4b69f0bd57c8fd72b751be687cc7",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/pstack/why/references/sources/databricks.md",
+      "src": "vendors/poteto/pstack/skills/why/references/sources/databricks.md",
+      "source": "pstack:why",
+      "vendorSha256": "236ede7aab6454662a992db088a5393537a5233a4c26719c93188f9e174488f6",
+      "preRewriteSha256": "236ede7aab6454662a992db088a5393537a5233a4c26719c93188f9e174488f6",
+      "sha256": "236ede7aab6454662a992db088a5393537a5233a4c26719c93188f9e174488f6",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/pstack/why/references/sources/datadog.md",
+      "src": "vendors/poteto/pstack/skills/why/references/sources/datadog.md",
+      "source": "pstack:why",
+      "vendorSha256": "b139faac5dc11b8f26c8255dce6033c1a6ac143b038d3dd103f2034c5dbec9cd",
+      "preRewriteSha256": "b139faac5dc11b8f26c8255dce6033c1a6ac143b038d3dd103f2034c5dbec9cd",
+      "sha256": "b139faac5dc11b8f26c8255dce6033c1a6ac143b038d3dd103f2034c5dbec9cd",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/pstack/why/references/sources/incident-postmortem.md",
+      "src": "vendors/poteto/pstack/skills/why/references/sources/incident-postmortem.md",
+      "source": "pstack:why",
+      "vendorSha256": "bf2661f1a81c37700884a45b77d6289be0c802b065febced31990e6564510839",
+      "preRewriteSha256": "bf2661f1a81c37700884a45b77d6289be0c802b065febced31990e6564510839",
+      "sha256": "bf2661f1a81c37700884a45b77d6289be0c802b065febced31990e6564510839",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/pstack/why/references/sources/linear.md",
+      "src": "vendors/poteto/pstack/skills/why/references/sources/linear.md",
+      "source": "pstack:why",
+      "vendorSha256": "01304e7f1badfcfb78babbb0edcadeb3cc8dd3f713793420cdff24ba190f907c",
+      "preRewriteSha256": "01304e7f1badfcfb78babbb0edcadeb3cc8dd3f713793420cdff24ba190f907c",
+      "sha256": "01304e7f1badfcfb78babbb0edcadeb3cc8dd3f713793420cdff24ba190f907c",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/pstack/why/references/sources/notion.md",
+      "src": "vendors/poteto/pstack/skills/why/references/sources/notion.md",
+      "source": "pstack:why",
+      "vendorSha256": "3bcfa695c49dfad4ac036d5d7181c12585f55ac04f1936198d16ab75a2788997",
+      "preRewriteSha256": "3bcfa695c49dfad4ac036d5d7181c12585f55ac04f1936198d16ab75a2788997",
+      "sha256": "3bcfa695c49dfad4ac036d5d7181c12585f55ac04f1936198d16ab75a2788997",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/pstack/why/references/sources/sentry.md",
+      "src": "vendors/poteto/pstack/skills/why/references/sources/sentry.md",
+      "source": "pstack:why",
+      "vendorSha256": "2d4f83048eac1df530b399e2aed75dd7c9c18577b7665420aaeb96d0ceb0b702",
+      "preRewriteSha256": "2d4f83048eac1df530b399e2aed75dd7c9c18577b7665420aaeb96d0ceb0b702",
+      "sha256": "2d4f83048eac1df530b399e2aed75dd7c9c18577b7665420aaeb96d0ceb0b702",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/pstack/why/references/sources/slack.md",
+      "src": "vendors/poteto/pstack/skills/why/references/sources/slack.md",
+      "source": "pstack:why",
+      "vendorSha256": "3bc6309f5c7b26ace3b919dbd7f7b048861dd2020f910fe24f656cc74b3b661c",
+      "preRewriteSha256": "3bc6309f5c7b26ace3b919dbd7f7b048861dd2020f910fe24f656cc74b3b661c",
+      "sha256": "3bc6309f5c7b26ace3b919dbd7f7b048861dd2020f910fe24f656cc74b3b661c",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/pstack/why/references/synthesizer-prompt.md",
+      "src": "vendors/poteto/pstack/skills/why/references/synthesizer-prompt.md",
+      "source": "pstack:why",
+      "vendorSha256": "11c62671aa7b7a6e3d36929ffe2b59bf95e6ca664eee4d93e6ee527dd3390ddb",
+      "preRewriteSha256": "11c62671aa7b7a6e3d36929ffe2b59bf95e6ca664eee4d93e6ee527dd3390ddb",
+      "sha256": "11c62671aa7b7a6e3d36929ffe2b59bf95e6ca664eee4d93e6ee527dd3390ddb",
+      "transforms": []
+    },
+    {
+      "dest": "research/references/pstack/why/why.md",
+      "src": "vendors/poteto/pstack/skills/why/SKILL.md",
+      "source": "pstack:why",
+      "vendorSha256": "144d42e7712723d763e607bc0a969e5f1cdf83ec7228519d87677cc534571bed",
+      "preRewriteSha256": "3f8735c8cc7f49bfe98bd891f4a712944870a056e8260392cac64332ac98ceae",
+      "sha256": "3f8735c8cc7f49bfe98bd891f4a712944870a056e8260392cac64332ac98ceae",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> why.md"
+      ]
+    },
+    {
+      "dest": "retro/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "retro/references/matt/retro/retro.md",
+      "src": "vendors/mattpocock/skills/engineering/retro/SKILL.md",
+      "source": "matt:engineering/retro",
+      "vendorSha256": "33fbc28568e3146f20fd908b12998bc0ab30aa4f4c87288199a40793efa94696",
+      "preRewriteSha256": "3528d1c85fe164c415cc37b2b595e23f0df61c75ac15d9bcb7bbe7118827ab07",
+      "sha256": "3528d1c85fe164c415cc37b2b595e23f0df61c75ac15d9bcb7bbe7118827ab07",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> retro.md"
+      ]
+    },
+    {
+      "dest": "retro/references/pstack/automate-me/automate-me.md",
+      "src": "vendors/poteto/pstack/skills/automate-me/SKILL.md",
+      "source": "pstack:automate-me",
+      "vendorSha256": "30b35f3628c4fd8c11af0ada06d14cdc3b28901810caca2480f627d4d21acfbe",
+      "preRewriteSha256": "969ac934b1945b48eab30861da7d81805d631a8c782950388fd234b3152eba40",
+      "sha256": "969ac934b1945b48eab30861da7d81805d631a8c782950388fd234b3152eba40",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> automate-me.md"
+      ]
+    },
+    {
+      "dest": "retro/references/pstack/correct/correct.md",
+      "src": "vendors/poteto/pstack/skills/correct/SKILL.md",
+      "source": "pstack:correct",
+      "vendorSha256": "e347045d00c967a0b831ef883cc6ac79d21329aa10b5968637df95de7febf0ba",
+      "preRewriteSha256": "36301528599ae2324a7b396fce778b5bbcf89e1cd8c588a49f8cbf797aed1543",
+      "sha256": "36301528599ae2324a7b396fce778b5bbcf89e1cd8c588a49f8cbf797aed1543",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> correct.md"
+      ]
+    },
+    {
+      "dest": "retro/references/pstack/LICENSE",
+      "src": "vendors/poteto/pstack/LICENSE",
+      "source": "pstack:LICENSE",
+      "vendorSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "preRewriteSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "transforms": []
+    },
+    {
+      "dest": "retro/references/pstack/principle-encode-lessons-in-structure/principle-encode-lessons-in-structure.md",
+      "src": "vendors/poteto/pstack/skills/principle-encode-lessons-in-structure/SKILL.md",
+      "source": "pstack:principle-encode-lessons-in-structure",
+      "vendorSha256": "228963799189f481827d6f28065f278bc2008ffa37030b1234cbd5814d36b9e9",
+      "preRewriteSha256": "0daaf085c4ef6899a74f05d1b160773a7ca5bfc439cddca970bc2d2f9493df46",
+      "sha256": "0daaf085c4ef6899a74f05d1b160773a7ca5bfc439cddca970bc2d2f9493df46",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-encode-lessons-in-structure.md"
+      ]
+    },
+    {
+      "dest": "retro/references/pstack/reflect/references/divergent-reviewer.md",
+      "src": "vendors/poteto/pstack/skills/reflect/references/divergent-reviewer.md",
+      "source": "pstack:reflect",
+      "vendorSha256": "f6030d88e20e906ef5e2d9ba44cb013ce610c49c2fe2ef74c377d32e0dc9e939",
+      "preRewriteSha256": "f6030d88e20e906ef5e2d9ba44cb013ce610c49c2fe2ef74c377d32e0dc9e939",
+      "sha256": "f6030d88e20e906ef5e2d9ba44cb013ce610c49c2fe2ef74c377d32e0dc9e939",
+      "transforms": [],
+      "danglingUpstream": [
+        "SKILL.md",
+        "SKILL.md"
+      ]
+    },
+    {
+      "dest": "retro/references/pstack/reflect/references/judgment-reviewer.md",
+      "src": "vendors/poteto/pstack/skills/reflect/references/judgment-reviewer.md",
+      "source": "pstack:reflect",
+      "vendorSha256": "38f917619fbf346062d643e0ad6b12fc952d58678dfcbbf42ffcf6d8b9c08307",
+      "preRewriteSha256": "38f917619fbf346062d643e0ad6b12fc952d58678dfcbbf42ffcf6d8b9c08307",
+      "sha256": "38f917619fbf346062d643e0ad6b12fc952d58678dfcbbf42ffcf6d8b9c08307",
+      "transforms": [],
+      "danglingUpstream": [
+        "SKILL.md",
+        "SKILL.md"
+      ]
+    },
+    {
+      "dest": "retro/references/pstack/reflect/references/synthesizer.md",
+      "src": "vendors/poteto/pstack/skills/reflect/references/synthesizer.md",
+      "source": "pstack:reflect",
+      "vendorSha256": "6af816963de74d1a1aef4070273c1ff533d2072732e488e159ddc0b299fec3cd",
+      "preRewriteSha256": "6af816963de74d1a1aef4070273c1ff533d2072732e488e159ddc0b299fec3cd",
+      "sha256": "6af816963de74d1a1aef4070273c1ff533d2072732e488e159ddc0b299fec3cd",
+      "transforms": []
+    },
+    {
+      "dest": "retro/references/pstack/reflect/references/tooling-reviewer.md",
+      "src": "vendors/poteto/pstack/skills/reflect/references/tooling-reviewer.md",
+      "source": "pstack:reflect",
+      "vendorSha256": "f81b8697e7366fbbc18feba52c6e3253a101f751091364ebc4396a1d9b5753b4",
+      "preRewriteSha256": "f81b8697e7366fbbc18feba52c6e3253a101f751091364ebc4396a1d9b5753b4",
+      "sha256": "f81b8697e7366fbbc18feba52c6e3253a101f751091364ebc4396a1d9b5753b4",
+      "transforms": [],
+      "danglingUpstream": [
+        "SKILL.md",
+        "SKILL.md"
+      ]
+    },
+    {
+      "dest": "retro/references/pstack/reflect/reflect.md",
+      "src": "vendors/poteto/pstack/skills/reflect/SKILL.md",
+      "source": "pstack:reflect",
+      "vendorSha256": "1f5a8c246cdee8251f8667d85bd5d97f6c2801f505843c26ddbd6c621632519b",
+      "preRewriteSha256": "371d6ad0874de6e39377c24d29b32182acc6566074a43e175667fa83050c82af",
+      "sha256": "371d6ad0874de6e39377c24d29b32182acc6566074a43e175667fa83050c82af",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> reflect.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/matt/ask-matt/ask-matt.md",
+      "src": "vendors/mattpocock/skills/engineering/ask-matt/SKILL.md",
+      "source": "matt:engineering/ask-matt",
+      "vendorSha256": "1371f5ce005de0992a44b137748bfb960a56948aa9871b405fe9d90b24332e3c",
+      "preRewriteSha256": "fabe67ac6507effdc01e322d261d1295ed554d06ce2b811c5c489243618bed0a",
+      "sha256": "fabe67ac6507effdc01e322d261d1295ed554d06ce2b811c5c489243618bed0a",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> ask-matt.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/matt/ask-matt/PHASE-BOUNDARIES.md",
+      "src": "vendors/mattpocock/skills/engineering/ask-matt/PHASE-BOUNDARIES.md",
+      "source": "matt:engineering/ask-matt",
+      "vendorSha256": "a8aa20158609ef39e2b308b6ba0660c91066838d07a867202e63a7744a88a3ed",
+      "preRewriteSha256": "a8aa20158609ef39e2b308b6ba0660c91066838d07a867202e63a7744a88a3ed",
+      "sha256": "a8aa20158609ef39e2b308b6ba0660c91066838d07a867202e63a7744a88a3ed",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/matt/engineering-README.md",
+      "src": "vendors/mattpocock/skills/engineering/README.md",
+      "source": "matt:engineering/README.md",
+      "vendorSha256": "32d9469dda4e6103d952909cb83e657b7bec01bc582b6be4cec3b493f66920fd",
+      "preRewriteSha256": "32d9469dda4e6103d952909cb83e657b7bec01bc582b6be4cec3b493f66920fd",
+      "sha256": "1fddebfa6790580d6cf8bf00c99d39b864560d12b50ceaf105fd779dcb97d8a0",
+      "transforms": [
+        "relink 20 relative path(s) to the copied location"
+      ]
+    },
+    {
+      "dest": "rigor/references/matt/implement-spec/implement-spec.md",
+      "src": "vendors/mattpocock/skills/engineering/implement-spec/SKILL.md",
+      "source": "matt:engineering/implement-spec",
+      "vendorSha256": "7a22dd2e60b8fcece478ced9d2533582adf3520d695acd3ab715341535c9e56d",
+      "preRewriteSha256": "b8309da590064b1bb88386d84d88eb5984d2a8b63c31c5551c0d09975aa228e3",
+      "sha256": "b8309da590064b1bb88386d84d88eb5984d2a8b63c31c5551c0d09975aa228e3",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> implement-spec.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/matt/implement/implement.md",
+      "src": "vendors/mattpocock/skills/engineering/implement/SKILL.md",
+      "source": "matt:engineering/implement",
+      "vendorSha256": "483bdc4ccf4ac31d86ac7beeaa0d0db80313e71e120bb8c59b3196ae5decd53d",
+      "preRewriteSha256": "ef544187d471c3f031695f1f2145a0a5ae5e8622fb3db013fe342a497b8864a0",
+      "sha256": "ef544187d471c3f031695f1f2145a0a5ae5e8622fb3db013fe342a497b8864a0",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> implement.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/matt/improve-codebase-architecture/HTML-REPORT.md",
+      "src": "vendors/mattpocock/skills/engineering/improve-codebase-architecture/HTML-REPORT.md",
+      "source": "matt:engineering/improve-codebase-architecture",
+      "vendorSha256": "581e8bb5a521e46bbda8ca7e19b15948bed882187108092ebb90c62513b77528",
+      "preRewriteSha256": "581e8bb5a521e46bbda8ca7e19b15948bed882187108092ebb90c62513b77528",
+      "sha256": "581e8bb5a521e46bbda8ca7e19b15948bed882187108092ebb90c62513b77528",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/matt/improve-codebase-architecture/improve-codebase-architecture.md",
+      "src": "vendors/mattpocock/skills/engineering/improve-codebase-architecture/SKILL.md",
+      "source": "matt:engineering/improve-codebase-architecture",
+      "vendorSha256": "552240a5ab5cec6b67c15dd1ad6e9f6962b1bca6ce870059a8c2713760c20392",
+      "preRewriteSha256": "9e53b3e14f746a820ee5915dd4644c810e2437c675ff8a314c7307df97c93ed5",
+      "sha256": "9e53b3e14f746a820ee5915dd4644c810e2437c675ff8a314c7307df97c93ed5",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> improve-codebase-architecture.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/matt/productivity-README.md",
+      "src": "vendors/mattpocock/skills/productivity/README.md",
+      "source": "matt:productivity/README.md",
+      "vendorSha256": "8e39d23dc60e4b3e433ea17f0ed79510c73873a2779e9852920c9791a217efc8",
+      "preRewriteSha256": "8e39d23dc60e4b3e433ea17f0ed79510c73873a2779e9852920c9791a217efc8",
+      "sha256": "a3bbefb402bdb486153c0cfacf084d6122f659a65e39ae0d72a5e801e57278d2",
+      "transforms": [
+        "relink 7 relative path(s) to the copied location"
+      ]
+    },
+    {
+      "dest": "rigor/references/matt/to-spec/to-spec.md",
+      "src": "vendors/mattpocock/skills/engineering/to-spec/SKILL.md",
+      "source": "matt:engineering/to-spec",
+      "vendorSha256": "43ad9cf318e5e7d3d1fa360253a37021796dc87a0c2e595ad262661a10f85088",
+      "preRewriteSha256": "9bc986bf599128bea79697a60115308c8433715674952c1832408aac7e823044",
+      "sha256": "9bc986bf599128bea79697a60115308c8433715674952c1832408aac7e823044",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> to-spec.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/matt/to-tickets/to-tickets.md",
+      "src": "vendors/mattpocock/skills/engineering/to-tickets/SKILL.md",
+      "source": "matt:engineering/to-tickets",
+      "vendorSha256": "56ec23c5b2782785d4e65bff9e315b6d3aeb4ef977c174a219e99489fada1995",
+      "preRewriteSha256": "ff230f40838f322c01a2bd8983f3228a5e1e31066bf1206d5f34d34e8252def8",
+      "sha256": "ff230f40838f322c01a2bd8983f3228a5e1e31066bf1206d5f34d34e8252def8",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> to-tickets.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/matt/wayfinder/wayfinder.md",
+      "src": "vendors/mattpocock/skills/engineering/wayfinder/SKILL.md",
+      "source": "matt:engineering/wayfinder",
+      "vendorSha256": "9be7b478c389605a24517d27752f278933588da97a1b5921b165f455edf4c5b7",
+      "preRewriteSha256": "71afa056378bda85102f72a5e2b69409221ff1fc74f1e3380c51d8fd700ba3e3",
+      "sha256": "71afa056378bda85102f72a5e2b69409221ff1fc74f1e3380c51d8fd700ba3e3",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> wayfinder.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/pstack/figure-it-out/figure-it-out.md",
+      "src": "vendors/poteto/pstack/skills/figure-it-out/SKILL.md",
+      "source": "pstack:figure-it-out",
+      "vendorSha256": "bdb23cdbd82a1e6af094b495691c832a6f7f3ab9706ba9edbeb664ef51a726e1",
+      "preRewriteSha256": "8e45f1d3ee941f7e24e7476a276926e4f43570b2420ded0522e0abb710820eeb",
+      "sha256": "8e45f1d3ee941f7e24e7476a276926e4f43570b2420ded0522e0abb710820eeb",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> figure-it-out.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/pstack/LICENSE",
+      "src": "vendors/poteto/pstack/LICENSE",
+      "source": "pstack:LICENSE",
+      "vendorSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "preRewriteSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-help/poteto-help.md",
+      "src": "vendors/poteto/pstack/skills/poteto-help/SKILL.md",
+      "source": "pstack:poteto-help",
+      "vendorSha256": "e0938291e8b82db4f8d35bdbb0ac3ae2a4c76fcb3607f91a4cc7aabfff3a4823",
+      "preRewriteSha256": "791583bb8f17ac98a6bc9f09e23c18fb88e683abd5f16d9615fa97d2c229cd0e",
+      "sha256": "031a75bcc0a8c7087b1632231dc19b67a209ba921416fb87320ee7835828f639",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> poteto-help.md",
+        "relink 35 relative path(s) to the copied location"
+      ],
+      "danglingUpstream": [
+        "../../README.md",
+        "../../docs/guide/01-setup.md",
+        "../../docs/harness/claude-code.md",
+        "../../docs/guide/02-poteto-mode.md",
+        "../make-bot-ui/SKILL.md",
+        "../../docs/guide/06-verify-and-ship.md",
+        "../../docs/guide/08-principles.md",
+        "../../docs/guide/07-overnight.md",
+        "../../docs/guide/10-recipes-and-pitfalls.md",
+        "../../docs/guide/09-make-it-yours.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-help/references/prompting.md",
+      "src": "vendors/poteto/pstack/skills/poteto-help/references/prompting.md",
+      "source": "pstack:poteto-help",
+      "vendorSha256": "463f450c44a60afd001a2f69fdf8a5dea174351f339369b12ec3c41515e564d3",
+      "preRewriteSha256": "463f450c44a60afd001a2f69fdf8a5dea174351f339369b12ec3c41515e564d3",
+      "sha256": "463f450c44a60afd001a2f69fdf8a5dea174351f339369b12ec3c41515e564d3",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-help/references/recipes.md",
+      "src": "vendors/poteto/pstack/skills/poteto-help/references/recipes.md",
+      "source": "pstack:poteto-help",
+      "vendorSha256": "a69696c4496bed3e852e7c4527071989e2e6d99937ba7f984ed188eb8dd8aff0",
+      "preRewriteSha256": "a69696c4496bed3e852e7c4527071989e2e6d99937ba7f984ed188eb8dd8aff0",
+      "sha256": "a69696c4496bed3e852e7c4527071989e2e6d99937ba7f984ed188eb8dd8aff0",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/authoring-a-skill.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/authoring-a-skill.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "f6a13a445c360b48d6cd72780ac01955f45b82826476efe0e67c7559329407aa",
+      "preRewriteSha256": "f6a13a445c360b48d6cd72780ac01955f45b82826476efe0e67c7559329407aa",
+      "sha256": "f6a13a445c360b48d6cd72780ac01955f45b82826476efe0e67c7559329407aa",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/autonomous-run.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/autonomous-run.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "6ac974fd2b09748add56493e89f578a35a6a9289e1026515878d81ef3cf129d1",
+      "preRewriteSha256": "6ac974fd2b09748add56493e89f578a35a6a9289e1026515878d81ef3cf129d1",
+      "sha256": "6ac974fd2b09748add56493e89f578a35a6a9289e1026515878d81ef3cf129d1",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/autopilot-full.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/autopilot-full.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "acf4f4a58c11045f9d3e8807d907a877e61ca6432b079f1087d7d30fc931566f",
+      "preRewriteSha256": "acf4f4a58c11045f9d3e8807d907a877e61ca6432b079f1087d7d30fc931566f",
+      "sha256": "acf4f4a58c11045f9d3e8807d907a877e61ca6432b079f1087d7d30fc931566f",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/autopilot-stack.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/autopilot-stack.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "c6bcb18b2ce605e77a2a2225854590a4b9a687911f79331746d91a4fe9a52e60",
+      "preRewriteSha256": "c6bcb18b2ce605e77a2a2225854590a4b9a687911f79331746d91a4fe9a52e60",
+      "sha256": "c6bcb18b2ce605e77a2a2225854590a4b9a687911f79331746d91a4fe9a52e60",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/babysit.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/babysit.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "e261c1ff5581e0f8fc6c686f34de4b535f87473e77beabea7dd8323021214610",
+      "preRewriteSha256": "e261c1ff5581e0f8fc6c686f34de4b535f87473e77beabea7dd8323021214610",
+      "sha256": "e261c1ff5581e0f8fc6c686f34de4b535f87473e77beabea7dd8323021214610",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/bug-fix.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/bug-fix.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "66e26542dad131cfd7df80ac0cdf81ed4d85e7b5e3f0eb65b933888760c4831f",
+      "preRewriteSha256": "66e26542dad131cfd7df80ac0cdf81ed4d85e7b5e3f0eb65b933888760c4831f",
+      "sha256": "66e26542dad131cfd7df80ac0cdf81ed4d85e7b5e3f0eb65b933888760c4831f",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/eval.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/eval.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "a93d449a908236afa6645179651844094b1547dbab4e484cffcdda630e4b90bf",
+      "preRewriteSha256": "a93d449a908236afa6645179651844094b1547dbab4e484cffcdda630e4b90bf",
+      "sha256": "a93d449a908236afa6645179651844094b1547dbab4e484cffcdda630e4b90bf",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/feature.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/feature.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "af8ce700b99953741cb547e34308fde0cf6b98ce67e1652c800d0deedf53aba1",
+      "preRewriteSha256": "af8ce700b99953741cb547e34308fde0cf6b98ce67e1652c800d0deedf53aba1",
+      "sha256": "af8ce700b99953741cb547e34308fde0cf6b98ce67e1652c800d0deedf53aba1",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/hillclimb.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/hillclimb.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "942c1565b75ad02a2cb6230dd7c1ebd87e19f59a00319ebac2b6616007bf018f",
+      "preRewriteSha256": "942c1565b75ad02a2cb6230dd7c1ebd87e19f59a00319ebac2b6616007bf018f",
+      "sha256": "942c1565b75ad02a2cb6230dd7c1ebd87e19f59a00319ebac2b6616007bf018f",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/investigation.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/investigation.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "dc66bcf6af3a074fc7f67aa5e12b93ef571a4fb4d8e17f2f1af5ae5359f42e46",
+      "preRewriteSha256": "dc66bcf6af3a074fc7f67aa5e12b93ef571a4fb4d8e17f2f1af5ae5359f42e46",
+      "sha256": "dc66bcf6af3a074fc7f67aa5e12b93ef571a4fb4d8e17f2f1af5ae5359f42e46",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/multi-phase-plan.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/multi-phase-plan.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "5f239457bfdec3345c92caa06c59bf0257c662b89353f25a1c02ea942dcd00b1",
+      "preRewriteSha256": "5f239457bfdec3345c92caa06c59bf0257c662b89353f25a1c02ea942dcd00b1",
+      "sha256": "5f239457bfdec3345c92caa06c59bf0257c662b89353f25a1c02ea942dcd00b1",
+      "transforms": [],
+      "danglingUpstream": [
+        "pstack/skills/swarm/SKILL.md",
+        "pstack/skills/how/SKILL.md",
+        "pstack/skills/interrogate/SKILL.md",
+        "pstack/skills/show-me-your-work/SKILL.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/opening-a-pr.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/opening-a-pr.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "a5aef646de8b651306c2d10974623650e4a013a245aec1c00525bbe0e31bfa76",
+      "preRewriteSha256": "a5aef646de8b651306c2d10974623650e4a013a245aec1c00525bbe0e31bfa76",
+      "sha256": "a5aef646de8b651306c2d10974623650e4a013a245aec1c00525bbe0e31bfa76",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/orchestrate.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/orchestrate.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "08dce6c9e7be1d13bc6944ab9b51665f935c531437f5e088bc53d2a62099ef05",
+      "preRewriteSha256": "08dce6c9e7be1d13bc6944ab9b51665f935c531437f5e088bc53d2a62099ef05",
+      "sha256": "08dce6c9e7be1d13bc6944ab9b51665f935c531437f5e088bc53d2a62099ef05",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/pause-safely.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/pause-safely.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "77968cfe5f4a71a8cd33e0ae8ffcdbd88dd693a212c240457773e6c40c96c21d",
+      "preRewriteSha256": "77968cfe5f4a71a8cd33e0ae8ffcdbd88dd693a212c240457773e6c40c96c21d",
+      "sha256": "77968cfe5f4a71a8cd33e0ae8ffcdbd88dd693a212c240457773e6c40c96c21d",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/perf-issue.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/perf-issue.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "c12aa2f82de7651a11676a3d5fea168f539b7f0faaa3a501d279255dd2a469c8",
+      "preRewriteSha256": "c12aa2f82de7651a11676a3d5fea168f539b7f0faaa3a501d279255dd2a469c8",
+      "sha256": "c12aa2f82de7651a11676a3d5fea168f539b7f0faaa3a501d279255dd2a469c8",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/prototype.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/prototype.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "7aa1f52c691c3d46d5afc527b23f90977fce869ce33573c73c81a4c7f0cde962",
+      "preRewriteSha256": "7aa1f52c691c3d46d5afc527b23f90977fce869ce33573c73c81a4c7f0cde962",
+      "sha256": "7aa1f52c691c3d46d5afc527b23f90977fce869ce33573c73c81a4c7f0cde962",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/refactoring.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/refactoring.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "0f5dd38113379ea8cf61e2182eca0a7478eea9a869eb40c2dddab3335aeca197",
+      "preRewriteSha256": "0f5dd38113379ea8cf61e2182eca0a7478eea9a869eb40c2dddab3335aeca197",
+      "sha256": "0f5dd38113379ea8cf61e2182eca0a7478eea9a869eb40c2dddab3335aeca197",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/runtime-forensics.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/runtime-forensics.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "3463372b578c28f27c236f2627f09b5c5b1e85e86db7399fb984f3892fb450f5",
+      "preRewriteSha256": "3463372b578c28f27c236f2627f09b5c5b1e85e86db7399fb984f3892fb450f5",
+      "sha256": "3463372b578c28f27c236f2627f09b5c5b1e85e86db7399fb984f3892fb450f5",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/session-pickup.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/session-pickup.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "d194f2a7ef392c1598ef3f0e3b561370ca25c2c7a78308007af4aa46ada8ee12",
+      "preRewriteSha256": "d194f2a7ef392c1598ef3f0e3b561370ca25c2c7a78308007af4aa46ada8ee12",
+      "sha256": "d194f2a7ef392c1598ef3f0e3b561370ca25c2c7a78308007af4aa46ada8ee12",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/shipping.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/shipping.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "bf56339bdf7e0223bcff5abf4e8599e3f5b547b3fcc3b4ce9475e6e7dda14a9f",
+      "preRewriteSha256": "bf56339bdf7e0223bcff5abf4e8599e3f5b547b3fcc3b4ce9475e6e7dda14a9f",
+      "sha256": "bf56339bdf7e0223bcff5abf4e8599e3f5b547b3fcc3b4ce9475e6e7dda14a9f",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/trace-forensics.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/trace-forensics.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "ef0bbf79856a4ae1a8993d54c1a1da159cb97623941b652c0069cf75a017e0f5",
+      "preRewriteSha256": "ef0bbf79856a4ae1a8993d54c1a1da159cb97623941b652c0069cf75a017e0f5",
+      "sha256": "ef0bbf79856a4ae1a8993d54c1a1da159cb97623941b652c0069cf75a017e0f5",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/visual-parity.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/visual-parity.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "950ca51999a6454c98eee6bcbc3d1bbe501a4e3a5d5439b6f6ddc378991b256c",
+      "preRewriteSha256": "950ca51999a6454c98eee6bcbc3d1bbe501a4e3a5d5439b6f6ddc378991b256c",
+      "sha256": "950ca51999a6454c98eee6bcbc3d1bbe501a4e3a5d5439b6f6ddc378991b256c",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/playbooks/worktree-cleanup.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/playbooks/worktree-cleanup.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "be04ae0afe19d4a4da5bcc4e94455f68dbebd1cda6eb0f456ca0d358ecf76c00",
+      "preRewriteSha256": "be04ae0afe19d4a4da5bcc4e94455f68dbebd1cda6eb0f456ca0d358ecf76c00",
+      "sha256": "be04ae0afe19d4a4da5bcc4e94455f68dbebd1cda6eb0f456ca0d358ecf76c00",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/poteto-mode.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/SKILL.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "2755f102e7a6d0496b429d1031a22fb353e1f3d523543367caeaae5c4ed6f544",
+      "preRewriteSha256": "afdada02e159b3c5b61fc25e2185a63d9a22b2e4d7dec6182ca0205a6a7e7200",
+      "sha256": "afdada02e159b3c5b61fc25e2185a63d9a22b2e4d7dec6182ca0205a6a7e7200",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> poteto-mode.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/references/bugbot-triage.md",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/references/bugbot-triage.md",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "b2d146c770d8d3593e1ef3d77b668039b8e1f78093ea1a86f1d45d7f99614309",
+      "preRewriteSha256": "b2d146c770d8d3593e1ef3d77b668039b8e1f78093ea1a86f1d45d7f99614309",
+      "sha256": "b2d146c770d8d3593e1ef3d77b668039b8e1f78093ea1a86f1d45d7f99614309",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/bootstrap.ts",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/bootstrap.ts",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "ccd2ed08fd9da9d0d942e5f2491cfc74bb92d8a08fa51755e0da1ac8de287361",
+      "preRewriteSha256": "ccd2ed08fd9da9d0d942e5f2491cfc74bb92d8a08fa51755e0da1ac8de287361",
+      "sha256": "ccd2ed08fd9da9d0d942e5f2491cfc74bb92d8a08fa51755e0da1ac8de287361",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/bun.lock",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/bun.lock",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "667d9cf7222e9aae3fa42a4be383e657784216e9df115da02227fbc5ac7bbe46",
+      "preRewriteSha256": "667d9cf7222e9aae3fa42a4be383e657784216e9df115da02227fbc5ac7bbe46",
+      "sha256": "667d9cf7222e9aae3fa42a4be383e657784216e9df115da02227fbc5ac7bbe46",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/check-plan.mjs",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/check-plan.mjs",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "e58c3d871b09d477be00628d69dd23ffa6c2e3a1728f5b867a841baa8e90278b",
+      "preRewriteSha256": "e58c3d871b09d477be00628d69dd23ffa6c2e3a1728f5b867a841baa8e90278b",
+      "sha256": "e58c3d871b09d477be00628d69dd23ffa6c2e3a1728f5b867a841baa8e90278b",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/check-plan.test.ts",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/check-plan.test.ts",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "c80f3ea043b81f219b92c4c8a3af6bdd4f8d32ea596ec15b5b9e0252645f2ae8",
+      "preRewriteSha256": "c80f3ea043b81f219b92c4c8a3af6bdd4f8d32ea596ec15b5b9e0252645f2ae8",
+      "sha256": "c80f3ea043b81f219b92c4c8a3af6bdd4f8d32ea596ec15b5b9e0252645f2ae8",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/orch/orch.test.ts",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/orch/orch.test.ts",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "5e80b416bdcd68e4067690ce857345852fd2e0db3dcf3e25607999cd55b963d2",
+      "preRewriteSha256": "5e80b416bdcd68e4067690ce857345852fd2e0db3dcf3e25607999cd55b963d2",
+      "sha256": "5e80b416bdcd68e4067690ce857345852fd2e0db3dcf3e25607999cd55b963d2",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/orch/orch.ts",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/orch/orch.ts",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "47c92c57e8276616d8de94665a126bd832e748036afa8d0ffdbacb7946decb5c",
+      "preRewriteSha256": "47c92c57e8276616d8de94665a126bd832e748036afa8d0ffdbacb7946decb5c",
+      "sha256": "47c92c57e8276616d8de94665a126bd832e748036afa8d0ffdbacb7946decb5c",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/orch/store.ts",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/orch/store.ts",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "558cfda533e1ebe7c8d7842604f07e0be7618759cf129b4c2397a8e29516ecea",
+      "preRewriteSha256": "558cfda533e1ebe7c8d7842604f07e0be7618759cf129b4c2397a8e29516ecea",
+      "sha256": "558cfda533e1ebe7c8d7842604f07e0be7618759cf129b4c2397a8e29516ecea",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/package.json",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/package.json",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "fd511a0c01f522e0c781ddd8eccea0e91697a0856c6e6a3261de78a6a0287c72",
+      "preRewriteSha256": "fd511a0c01f522e0c781ddd8eccea0e91697a0856c6e6a3261de78a6a0287c72",
+      "sha256": "fd511a0c01f522e0c781ddd8eccea0e91697a0856c6e6a3261de78a6a0287c72",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/watch-pr/cli.test.ts",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/watch-pr/cli.test.ts",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "a35592b4c6da96caf8d47987e9cd503fab6c7774ab87d11a43f24b4b5df2a9d1",
+      "preRewriteSha256": "a35592b4c6da96caf8d47987e9cd503fab6c7774ab87d11a43f24b4b5df2a9d1",
+      "sha256": "a35592b4c6da96caf8d47987e9cd503fab6c7774ab87d11a43f24b4b5df2a9d1",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/watch-pr/cli.ts",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/watch-pr/cli.ts",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "89c08863089181a232be782c4b2ed90a1552f44aeecb0dcb7aac2c623620e680",
+      "preRewriteSha256": "89c08863089181a232be782c4b2ed90a1552f44aeecb0dcb7aac2c623620e680",
+      "sha256": "89c08863089181a232be782c4b2ed90a1552f44aeecb0dcb7aac2c623620e680",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/watch-pr/fakes.test-helper.ts",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/watch-pr/fakes.test-helper.ts",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "cf0c5ee61b4a73444c1b775cfb6c81a40d312e055dd21a1f5eae6276e54de13f",
+      "preRewriteSha256": "cf0c5ee61b4a73444c1b775cfb6c81a40d312e055dd21a1f5eae6276e54de13f",
+      "sha256": "cf0c5ee61b4a73444c1b775cfb6c81a40d312e055dd21a1f5eae6276e54de13f",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/watch-pr/github.test.ts",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/watch-pr/github.test.ts",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "70c9f03d8738228763846f2abdd8c7de7be68dba3035041482386a69cbf5639b",
+      "preRewriteSha256": "70c9f03d8738228763846f2abdd8c7de7be68dba3035041482386a69cbf5639b",
+      "sha256": "70c9f03d8738228763846f2abdd8c7de7be68dba3035041482386a69cbf5639b",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/watch-pr/github.ts",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/watch-pr/github.ts",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "a605b8531468dbe4c07b93663c0993a9c11dc7e9179adde970f5c740396451d9",
+      "preRewriteSha256": "a605b8531468dbe4c07b93663c0993a9c11dc7e9179adde970f5c740396451d9",
+      "sha256": "a605b8531468dbe4c07b93663c0993a9c11dc7e9179adde970f5c740396451d9",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/watch-pr/policy.test.ts",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/watch-pr/policy.test.ts",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "146acabcfee9b6fa3342358eb0a9504aa65fd081bbc15b10adf9c1c5485067d2",
+      "preRewriteSha256": "146acabcfee9b6fa3342358eb0a9504aa65fd081bbc15b10adf9c1c5485067d2",
+      "sha256": "146acabcfee9b6fa3342358eb0a9504aa65fd081bbc15b10adf9c1c5485067d2",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/watch-pr/policy.ts",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/watch-pr/policy.ts",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "f2a3e31223d05edc05e5473cc3f8f3cb9bd20c202c30c6abe7f21f0f7aee8fbb",
+      "preRewriteSha256": "f2a3e31223d05edc05e5473cc3f8f3cb9bd20c202c30c6abe7f21f0f7aee8fbb",
+      "sha256": "f2a3e31223d05edc05e5473cc3f8f3cb9bd20c202c30c6abe7f21f0f7aee8fbb",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/watch-pr/render.ts",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/watch-pr/render.ts",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "2b709e86628d5b8fdb61f860e60ababc342b0626c67576305442cf548283a604",
+      "preRewriteSha256": "2b709e86628d5b8fdb61f860e60ababc342b0626c67576305442cf548283a604",
+      "sha256": "2b709e86628d5b8fdb61f860e60ababc342b0626c67576305442cf548283a604",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/watch-pr/tsconfig.json",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/watch-pr/tsconfig.json",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "1ecccc72320b086c63ce3f73c959896fd747363e63553b3b1136296ea4069e45",
+      "preRewriteSha256": "1ecccc72320b086c63ce3f73c959896fd747363e63553b3b1136296ea4069e45",
+      "sha256": "1ecccc72320b086c63ce3f73c959896fd747363e63553b3b1136296ea4069e45",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/watch-pr/types.compile.ts",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/watch-pr/types.compile.ts",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "621af4c9a664fbf699a9737efccdc248abb416df8819c9dc5f824beae2b9b1d6",
+      "preRewriteSha256": "621af4c9a664fbf699a9737efccdc248abb416df8819c9dc5f824beae2b9b1d6",
+      "sha256": "621af4c9a664fbf699a9737efccdc248abb416df8819c9dc5f824beae2b9b1d6",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/watch-pr/types.ts",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/watch-pr/types.ts",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "0cac435294dc85ce1ba755e8e67f6c5ab163dfa252f2722d6e3a2d68c58fec59",
+      "preRewriteSha256": "0cac435294dc85ce1ba755e8e67f6c5ab163dfa252f2722d6e3a2d68c58fec59",
+      "sha256": "0cac435294dc85ce1ba755e8e67f6c5ab163dfa252f2722d6e3a2d68c58fec59",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/watch-pr/watch-pr",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/watch-pr/watch-pr",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "d955603be6cc0e8b8ffcec722f635192b2261410b1f2929abea94480e47eb5d4",
+      "preRewriteSha256": "d955603be6cc0e8b8ffcec722f635192b2261410b1f2929abea94480e47eb5d4",
+      "sha256": "d955603be6cc0e8b8ffcec722f635192b2261410b1f2929abea94480e47eb5d4",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/poteto-mode/scripts/worktree-audit.sh",
+      "src": "vendors/poteto/pstack/skills/poteto-mode/scripts/worktree-audit.sh",
+      "source": "pstack:poteto-mode",
+      "vendorSha256": "e0a94e5e5b1ff60638916e440600e15851f7b79bc1a1d1f602fde05d465e2ec0",
+      "preRewriteSha256": "e0a94e5e5b1ff60638916e440600e15851f7b79bc1a1d1f602fde05d465e2ec0",
+      "sha256": "e0a94e5e5b1ff60638916e440600e15851f7b79bc1a1d1f602fde05d465e2ec0",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/principle-build-the-lever/principle-build-the-lever.md",
+      "src": "vendors/poteto/pstack/skills/principle-build-the-lever/SKILL.md",
+      "source": "pstack:principle-build-the-lever",
+      "vendorSha256": "3434b0ad0c640c6f1d7960be7a8986c3bcdc14e26060360dec29903df60074ff",
+      "preRewriteSha256": "177c894df9c8aa43af2d57e6ec476eae73d74d5612500d2bde6ce35086111f6b",
+      "sha256": "45cf4c3b96a335100c4287445c0f3c59a98a92853473235b275c2a0a016cf364",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-build-the-lever.md",
+        "relink 3 relative path(s) to the copied location"
+      ]
+    },
+    {
+      "dest": "rigor/references/pstack/principle-experience-first/principle-experience-first.md",
+      "src": "vendors/poteto/pstack/skills/principle-experience-first/SKILL.md",
+      "source": "pstack:principle-experience-first",
+      "vendorSha256": "58903529d733b1c1a7c9ccf127d45ef3c7d0d9f0b81164a4dc6b80efe6f2912b",
+      "preRewriteSha256": "ca79f6794d6ab017dc30684fceb316db54aa5cee820a3e3af5f21fd98cdc37d5",
+      "sha256": "ca79f6794d6ab017dc30684fceb316db54aa5cee820a3e3af5f21fd98cdc37d5",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-experience-first.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/pstack/principle-guard-the-context-window/principle-guard-the-context-window.md",
+      "src": "vendors/poteto/pstack/skills/principle-guard-the-context-window/SKILL.md",
+      "source": "pstack:principle-guard-the-context-window",
+      "vendorSha256": "af0b9dd70b43628ce4a59a4d332e9d9ad055084e460f430e7a757495c627e81a",
+      "preRewriteSha256": "1de9dd5af2fe61bbc40c477c02440c9498cc35c1c9fc2c8f88c2abff80583d38",
+      "sha256": "1de9dd5af2fe61bbc40c477c02440c9498cc35c1c9fc2c8f88c2abff80583d38",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-guard-the-context-window.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/pstack/principle-never-block-on-the-human/principle-never-block-on-the-human.md",
+      "src": "vendors/poteto/pstack/skills/principle-never-block-on-the-human/SKILL.md",
+      "source": "pstack:principle-never-block-on-the-human",
+      "vendorSha256": "05030a7a083c337676f793881b4e93cd218e8f1dd676529f56e6ac1d3efb8d1f",
+      "preRewriteSha256": "3dcf9fa0503dcc4d85c8bb415e56a9fc43cbb5fd59d00e65cd936f0707544faf",
+      "sha256": "3dcf9fa0503dcc4d85c8bb415e56a9fc43cbb5fd59d00e65cd936f0707544faf",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-never-block-on-the-human.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/pstack/principle-outcome-oriented-execution/principle-outcome-oriented-execution.md",
+      "src": "vendors/poteto/pstack/skills/principle-outcome-oriented-execution/SKILL.md",
+      "source": "pstack:principle-outcome-oriented-execution",
+      "vendorSha256": "10eb91633aa570355ba4bb37088fcade2b22e498df7a58edc749e65bc5a78e2d",
+      "preRewriteSha256": "c72fc27e4b4ccf521bdb2031913256faf1ba7d415781e764f255300a340e45b0",
+      "sha256": "c72fc27e4b4ccf521bdb2031913256faf1ba7d415781e764f255300a340e45b0",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-outcome-oriented-execution.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/pstack/principle-sequence-verifiable-units/principle-sequence-verifiable-units.md",
+      "src": "vendors/poteto/pstack/skills/principle-sequence-verifiable-units/SKILL.md",
+      "source": "pstack:principle-sequence-verifiable-units",
+      "vendorSha256": "2ccbbacc56ace5afdfb8670cef19d7bd009fb2a0033b9a741cbdf2b6baf72187",
+      "preRewriteSha256": "937804c1b8d250eb6dfb966f4f4e7997d345568c32e93ed25c1db3fd33b21821",
+      "sha256": "937804c1b8d250eb6dfb966f4f4e7997d345568c32e93ed25c1db3fd33b21821",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-sequence-verifiable-units.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/pstack/show-me-your-work/references/decision-log-template.tsv",
+      "src": "vendors/poteto/pstack/skills/show-me-your-work/references/decision-log-template.tsv",
+      "source": "pstack:show-me-your-work",
+      "vendorSha256": "6779378006a2f5225e8c06deb84f1d913fb532041ebbb6e50d94600bfe3f4b76",
+      "preRewriteSha256": "6779378006a2f5225e8c06deb84f1d913fb532041ebbb6e50d94600bfe3f4b76",
+      "sha256": "6779378006a2f5225e8c06deb84f1d913fb532041ebbb6e50d94600bfe3f4b76",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/show-me-your-work/scripts/log.sh",
+      "src": "vendors/poteto/pstack/skills/show-me-your-work/scripts/log.sh",
+      "source": "pstack:show-me-your-work",
+      "vendorSha256": "a65a4bc5fb7cdeadbdb7b7ff1ca4682f4d9c42420942b2977cd17b46c4ac338e",
+      "preRewriteSha256": "a65a4bc5fb7cdeadbdb7b7ff1ca4682f4d9c42420942b2977cd17b46c4ac338e",
+      "sha256": "a65a4bc5fb7cdeadbdb7b7ff1ca4682f4d9c42420942b2977cd17b46c4ac338e",
+      "transforms": []
+    },
+    {
+      "dest": "rigor/references/pstack/show-me-your-work/show-me-your-work.md",
+      "src": "vendors/poteto/pstack/skills/show-me-your-work/SKILL.md",
+      "source": "pstack:show-me-your-work",
+      "vendorSha256": "920a8217cbb62f92a2222fb81fc9eab17ecd554a0277e444a95a927195139bd1",
+      "preRewriteSha256": "8abf4a791099da78723815d53b07369ae6d726fa381b646bc7d2b73efaf56726",
+      "sha256": "8abf4a791099da78723815d53b07369ae6d726fa381b646bc7d2b73efaf56726",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> show-me-your-work.md"
+      ]
+    },
+    {
+      "dest": "rigor/references/pstack/swarm/swarm.md",
+      "src": "vendors/poteto/pstack/skills/swarm/SKILL.md",
+      "source": "pstack:swarm",
+      "vendorSha256": "031657cb81e490f9aed5c75d6ff2a4fda35ccafbaf72be604e59481cc4080cdc",
+      "preRewriteSha256": "89b8ca6b5f22734ee611cc4e1b2eef54f8e65252f09ba13d6dba53236d31a657",
+      "sha256": "89b8ca6b5f22734ee611cc4e1b2eef54f8e65252f09ba13d6dba53236d31a657",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> swarm.md"
+      ]
+    },
+    {
+      "dest": "setup/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "setup/references/matt/setup-matt-pocock-skills/domain.md",
+      "src": "vendors/mattpocock/skills/engineering/setup-matt-pocock-skills/domain.md",
+      "source": "matt:engineering/setup-matt-pocock-skills",
+      "vendorSha256": "593a7042218689f1d24df89df14eaf0a20e19e0d0a7d479a01947ac78f0784b9",
+      "preRewriteSha256": "593a7042218689f1d24df89df14eaf0a20e19e0d0a7d479a01947ac78f0784b9",
+      "sha256": "593a7042218689f1d24df89df14eaf0a20e19e0d0a7d479a01947ac78f0784b9",
+      "transforms": []
+    },
+    {
+      "dest": "setup/references/matt/setup-matt-pocock-skills/issue-tracker-github.md",
+      "src": "vendors/mattpocock/skills/engineering/setup-matt-pocock-skills/issue-tracker-github.md",
+      "source": "matt:engineering/setup-matt-pocock-skills",
+      "vendorSha256": "f0653fe106dd8ee7b33be27bd7fe3104b40555896cb45f61997aed20467020c3",
+      "preRewriteSha256": "f0653fe106dd8ee7b33be27bd7fe3104b40555896cb45f61997aed20467020c3",
+      "sha256": "f0653fe106dd8ee7b33be27bd7fe3104b40555896cb45f61997aed20467020c3",
+      "transforms": []
+    },
+    {
+      "dest": "setup/references/matt/setup-matt-pocock-skills/issue-tracker-gitlab.md",
+      "src": "vendors/mattpocock/skills/engineering/setup-matt-pocock-skills/issue-tracker-gitlab.md",
+      "source": "matt:engineering/setup-matt-pocock-skills",
+      "vendorSha256": "591a9e7057382aaccdfbed3f7ea3f2ad07e0cd29f012d18b82ee4e485fd81e24",
+      "preRewriteSha256": "591a9e7057382aaccdfbed3f7ea3f2ad07e0cd29f012d18b82ee4e485fd81e24",
+      "sha256": "591a9e7057382aaccdfbed3f7ea3f2ad07e0cd29f012d18b82ee4e485fd81e24",
+      "transforms": []
+    },
+    {
+      "dest": "setup/references/matt/setup-matt-pocock-skills/issue-tracker-local.md",
+      "src": "vendors/mattpocock/skills/engineering/setup-matt-pocock-skills/issue-tracker-local.md",
+      "source": "matt:engineering/setup-matt-pocock-skills",
+      "vendorSha256": "7dcda20a2eb4bdc89b95d1143423c0691309921cadae3132e6424f371030506e",
+      "preRewriteSha256": "7dcda20a2eb4bdc89b95d1143423c0691309921cadae3132e6424f371030506e",
+      "sha256": "7dcda20a2eb4bdc89b95d1143423c0691309921cadae3132e6424f371030506e",
+      "transforms": []
+    },
+    {
+      "dest": "setup/references/matt/setup-matt-pocock-skills/setup-matt-pocock-skills.md",
+      "src": "vendors/mattpocock/skills/engineering/setup-matt-pocock-skills/SKILL.md",
+      "source": "matt:engineering/setup-matt-pocock-skills",
+      "vendorSha256": "f148858ffb7f63c03c06fca06e6fdb1d91a35c6b293244b8fdfacd5f4cc028c4",
+      "preRewriteSha256": "e9a5fa7109c6cc587aef8243e850590dfcf2c24289bb3606d152515f2d38486a",
+      "sha256": "e9a5fa7109c6cc587aef8243e850590dfcf2c24289bb3606d152515f2d38486a",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> setup-matt-pocock-skills.md"
+      ]
+    },
+    {
+      "dest": "setup/references/matt/setup-matt-pocock-skills/triage-labels.md",
+      "src": "vendors/mattpocock/skills/engineering/setup-matt-pocock-skills/triage-labels.md",
+      "source": "matt:engineering/setup-matt-pocock-skills",
+      "vendorSha256": "ae512af838c78b8750471c42cd2b20fa32319553e61d84c9a23d171b40ce14aa",
+      "preRewriteSha256": "ae512af838c78b8750471c42cd2b20fa32319553e61d84c9a23d171b40ce14aa",
+      "sha256": "ae512af838c78b8750471c42cd2b20fa32319553e61d84c9a23d171b40ce14aa",
+      "transforms": []
+    },
+    {
+      "dest": "setup/references/matt/wizard/template.sh",
+      "src": "vendors/mattpocock/skills/engineering/wizard/template.sh",
+      "source": "matt:engineering/wizard",
+      "vendorSha256": "6566f147299bc6f1d941e64591ed04385416d543e11f96f564c7228f5018d0ed",
+      "preRewriteSha256": "6566f147299bc6f1d941e64591ed04385416d543e11f96f564c7228f5018d0ed",
+      "sha256": "6566f147299bc6f1d941e64591ed04385416d543e11f96f564c7228f5018d0ed",
+      "transforms": []
+    },
+    {
+      "dest": "setup/references/matt/wizard/wizard.md",
+      "src": "vendors/mattpocock/skills/engineering/wizard/SKILL.md",
+      "source": "matt:engineering/wizard",
+      "vendorSha256": "bdf31d48211ea559878f95a4f344aeabf8d85897488ba564382bab0b000daac1",
+      "preRewriteSha256": "0b8b607a527e9b7c2481eed21a210227a24b42597e039683d108b1cc9e8a22b5",
+      "sha256": "0b8b607a527e9b7c2481eed21a210227a24b42597e039683d108b1cc9e8a22b5",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> wizard.md"
+      ]
+    },
+    {
+      "dest": "setup/references/pstack/LICENSE",
+      "src": "vendors/poteto/pstack/LICENSE",
+      "source": "pstack:LICENSE",
+      "vendorSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "preRewriteSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "transforms": []
+    },
+    {
+      "dest": "setup/references/pstack/setup-pstack/setup-pstack.md",
+      "src": "vendors/poteto/pstack/skills/setup-pstack/SKILL.md",
+      "source": "pstack:setup-pstack",
+      "vendorSha256": "b45512f6ca5e96e81681984683b7472bfe892581da3a89a73cca4159438f29ed",
+      "preRewriteSha256": "7cbadc1bba58285c16050ad5cd33c78735006efc05b3a396633200ea9312c9dd",
+      "sha256": "7cbadc1bba58285c16050ad5cd33c78735006efc05b3a396633200ea9312c9dd",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> setup-pstack.md"
+      ]
+    },
+    {
+      "dest": "tdd/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "tdd/references/matt/tdd/mocking.md",
+      "src": "vendors/mattpocock/skills/engineering/tdd/mocking.md",
+      "source": "matt:engineering/tdd",
+      "vendorSha256": "3ceb807fdf4a47d6a93d4d9a891e5ba6d362a6247bd08adc451feebfc17361ef",
+      "preRewriteSha256": "3ceb807fdf4a47d6a93d4d9a891e5ba6d362a6247bd08adc451feebfc17361ef",
+      "sha256": "3ceb807fdf4a47d6a93d4d9a891e5ba6d362a6247bd08adc451feebfc17361ef",
+      "transforms": []
+    },
+    {
+      "dest": "tdd/references/matt/tdd/tdd.md",
+      "src": "vendors/mattpocock/skills/engineering/tdd/SKILL.md",
+      "source": "matt:engineering/tdd",
+      "vendorSha256": "5505d25bbaa8fc14a79e4d20163936958992a2995b7f1dd1d6197edc9ed722e0",
+      "preRewriteSha256": "a5c4564b85435fbcd07a06d3357297ce4163a1ea56ed034eae196f18c8e7d061",
+      "sha256": "a5c4564b85435fbcd07a06d3357297ce4163a1ea56ed034eae196f18c8e7d061",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> tdd.md"
+      ]
+    },
+    {
+      "dest": "tdd/references/matt/tdd/tests.md",
+      "src": "vendors/mattpocock/skills/engineering/tdd/tests.md",
+      "source": "matt:engineering/tdd",
+      "vendorSha256": "859f9e592c188fda4fc7277dd180e4ce9c7a2e13f6efe1f6f29eccc9d28c106a",
+      "preRewriteSha256": "859f9e592c188fda4fc7277dd180e4ce9c7a2e13f6efe1f6f29eccc9d28c106a",
+      "sha256": "859f9e592c188fda4fc7277dd180e4ce9c7a2e13f6efe1f6f29eccc9d28c106a",
+      "transforms": []
+    },
+    {
+      "dest": "tdd/references/pstack/LICENSE",
+      "src": "vendors/poteto/pstack/LICENSE",
+      "source": "pstack:LICENSE",
+      "vendorSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "preRewriteSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "transforms": []
+    },
+    {
+      "dest": "tdd/references/pstack/principle-test-behavior-not-implementation/principle-test-behavior-not-implementation.md",
+      "src": "vendors/poteto/pstack/skills/principle-test-behavior-not-implementation/SKILL.md",
+      "source": "pstack:principle-test-behavior-not-implementation",
+      "vendorSha256": "f7223698623b6a26fea49c751e466b38e6691b1f32ce841d3983e7ffbe2b74a6",
+      "preRewriteSha256": "f5104476701735a3c44ea7d04a2ba96da6d6e1187e585187b08d4f579adb7c29",
+      "sha256": "f5104476701735a3c44ea7d04a2ba96da6d6e1187e585187b08d4f579adb7c29",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-test-behavior-not-implementation.md"
+      ]
+    },
+    {
+      "dest": "tdd/references/pstack/tdd/tdd.md",
+      "src": "vendors/poteto/pstack/skills/tdd/SKILL.md",
+      "source": "pstack:tdd",
+      "vendorSha256": "eeb868e2dfebee528d730a67d7b17498fac4bb85dec2e38bc5c5176aca4d5d2f",
+      "preRewriteSha256": "64cab416e85611fcd34912471ca8c79e5ec987c2a97609f89c553db94c0bea83",
+      "sha256": "64cab416e85611fcd34912471ca8c79e5ec987c2a97609f89c553db94c0bea83",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> tdd.md"
+      ]
+    },
+    {
+      "dest": "teach/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "teach/references/matt/teach/GLOSSARY-FORMAT.md",
+      "src": "vendors/mattpocock/skills/productivity/teach/GLOSSARY-FORMAT.md",
+      "source": "matt:productivity/teach",
+      "vendorSha256": "9b99859ec28437668130d8f2ce5a342938970f8a1ed4fd38c3eab4f4b5fff210",
+      "preRewriteSha256": "9b99859ec28437668130d8f2ce5a342938970f8a1ed4fd38c3eab4f4b5fff210",
+      "sha256": "9b99859ec28437668130d8f2ce5a342938970f8a1ed4fd38c3eab4f4b5fff210",
+      "transforms": []
+    },
+    {
+      "dest": "teach/references/matt/teach/LEARNING-RECORD-FORMAT.md",
+      "src": "vendors/mattpocock/skills/productivity/teach/LEARNING-RECORD-FORMAT.md",
+      "source": "matt:productivity/teach",
+      "vendorSha256": "701fa34b6748aa89e6c960ffb815257f481a7d77fb2900f9028f7edf3fdd6052",
+      "preRewriteSha256": "701fa34b6748aa89e6c960ffb815257f481a7d77fb2900f9028f7edf3fdd6052",
+      "sha256": "701fa34b6748aa89e6c960ffb815257f481a7d77fb2900f9028f7edf3fdd6052",
+      "transforms": [],
+      "danglingUpstream": [
+        "./learning-records/",
+        "./learning-records/"
+      ]
+    },
+    {
+      "dest": "teach/references/matt/teach/MISSION-FORMAT.md",
+      "src": "vendors/mattpocock/skills/productivity/teach/MISSION-FORMAT.md",
+      "source": "matt:productivity/teach",
+      "vendorSha256": "8cacbb3c0644d3ae0ea4965564797099401a6930a23f7cf462918576587f2418",
+      "preRewriteSha256": "8cacbb3c0644d3ae0ea4965564797099401a6930a23f7cf462918576587f2418",
+      "sha256": "8cacbb3c0644d3ae0ea4965564797099401a6930a23f7cf462918576587f2418",
+      "transforms": []
+    },
+    {
+      "dest": "teach/references/matt/teach/RESOURCES-FORMAT.md",
+      "src": "vendors/mattpocock/skills/productivity/teach/RESOURCES-FORMAT.md",
+      "source": "matt:productivity/teach",
+      "vendorSha256": "e9cacf34026e11a8d1c8f9de88abe5bcbf654f4ebdb25cae8c0de0d5f48f44ec",
+      "preRewriteSha256": "e9cacf34026e11a8d1c8f9de88abe5bcbf654f4ebdb25cae8c0de0d5f48f44ec",
+      "sha256": "6963d6fa62067ce45246b094810ce22186e0f5ca8cb7e18cd00e99cd4cfee657",
+      "transforms": [
+        "relink 1 relative path(s) to the copied location"
+      ]
+    },
+    {
+      "dest": "teach/references/matt/teach/teach.md",
+      "src": "vendors/mattpocock/skills/productivity/teach/SKILL.md",
+      "source": "matt:productivity/teach",
+      "vendorSha256": "550482c2d674b085c9043b87bfdc14a8f2ec453c736119e7fcbb1e9332bffeba",
+      "preRewriteSha256": "db9a54056a78418290311213f3668d3b0f154f54ef8c91bffea4b11dc67fde34",
+      "sha256": "db9a54056a78418290311213f3668d3b0f154f54ef8c91bffea4b11dc67fde34",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> teach.md"
+      ],
+      "danglingUpstream": [
+        "./lessons/",
+        "./lessons/",
+        "./assets/",
+        "./assets/",
+        "./assets/"
+      ]
+    },
+    {
+      "dest": "teach/references/pstack/LICENSE",
+      "src": "vendors/poteto/pstack/LICENSE",
+      "source": "pstack:LICENSE",
+      "vendorSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "preRewriteSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "transforms": []
+    },
+    {
+      "dest": "teach/references/pstack/teach/teach.md",
+      "src": "vendors/poteto/pstack/skills/teach/SKILL.md",
+      "source": "pstack:teach",
+      "vendorSha256": "bd286e5a6290673be2cd28aef7af2ec7f1fb138e6bce156ea657368c7e7fc8a4",
+      "preRewriteSha256": "0e76a46355fe3dc29d7968b4723f60c39b4440924c9615d75a1acb58669e0ad7",
+      "sha256": "0e76a46355fe3dc29d7968b4723f60c39b4440924c9615d75a1acb58669e0ad7",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> teach.md"
+      ]
+    },
+    {
+      "dest": "triage/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "triage/references/matt/triage/AGENT-BRIEF.md",
+      "src": "vendors/mattpocock/skills/engineering/triage/AGENT-BRIEF.md",
+      "source": "matt:engineering/triage",
+      "vendorSha256": "7f5f87fed3033df1b06e083c480f3e847b1fbb0647746b8a4c6a50f9f26ef44f",
+      "preRewriteSha256": "7f5f87fed3033df1b06e083c480f3e847b1fbb0647746b8a4c6a50f9f26ef44f",
+      "sha256": "7f5f87fed3033df1b06e083c480f3e847b1fbb0647746b8a4c6a50f9f26ef44f",
+      "transforms": []
+    },
+    {
+      "dest": "triage/references/matt/triage/OUT-OF-SCOPE.md",
+      "src": "vendors/mattpocock/skills/engineering/triage/OUT-OF-SCOPE.md",
+      "source": "matt:engineering/triage",
+      "vendorSha256": "1fbf9b432130c6380aa65813b55553cfda150309b27c595e183f8e335b8a190d",
+      "preRewriteSha256": "1fbf9b432130c6380aa65813b55553cfda150309b27c595e183f8e335b8a190d",
+      "sha256": "1fbf9b432130c6380aa65813b55553cfda150309b27c595e183f8e335b8a190d",
+      "transforms": []
+    },
+    {
+      "dest": "triage/references/matt/triage/triage.md",
+      "src": "vendors/mattpocock/skills/engineering/triage/SKILL.md",
+      "source": "matt:engineering/triage",
+      "vendorSha256": "917b0baf74be583e74f110857ed45df2766617f75c00baf61fd136d7af515edf",
+      "preRewriteSha256": "7a32ed82e88fed60e264bdee6ec18772e560cc30841c5224930732032470e5ed",
+      "sha256": "7a32ed82e88fed60e264bdee6ec18772e560cc30841c5224930732032470e5ed",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> triage.md"
+      ]
+    },
+    {
+      "dest": "verify/references/pstack/benchmark-checklist/benchmark-checklist.md",
+      "src": "vendors/poteto/pstack/skills/benchmark-checklist/SKILL.md",
+      "source": "pstack:benchmark-checklist",
+      "vendorSha256": "ba109e96c8f6c1c391baccf19e5d11e14370df7b3f2605e1572cd565a6c0fca0",
+      "preRewriteSha256": "e905d944f094471f5e5974075423d0128b0f484e354b78fd71c07c6982064c3b",
+      "sha256": "e905d944f094471f5e5974075423d0128b0f484e354b78fd71c07c6982064c3b",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> benchmark-checklist.md"
+      ]
+    },
+    {
+      "dest": "verify/references/pstack/create-formal-verification-skill/create-formal-verification-skill.md",
+      "src": "vendors/poteto/pstack/skills/create-formal-verification-skill/SKILL.md",
+      "source": "pstack:create-formal-verification-skill",
+      "vendorSha256": "6c934cd15a9583533ff9b7a9cad62775d7e80402d26d3ba7f74f79ea21a1d8eb",
+      "preRewriteSha256": "8952713b52721c8b2fc0e1c465b9be981c936439d01512dee497df3a5763ee69",
+      "sha256": "8952713b52721c8b2fc0e1c465b9be981c936439d01512dee497df3a5763ee69",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> create-formal-verification-skill.md"
+      ]
+    },
+    {
+      "dest": "verify/references/pstack/create-verification-skill/create-verification-skill.md",
+      "src": "vendors/poteto/pstack/skills/create-verification-skill/SKILL.md",
+      "source": "pstack:create-verification-skill",
+      "vendorSha256": "d353973547bf8ad8977eca645f4cd4feaed0d32f4b43d1448f906b0a76c4d694",
+      "preRewriteSha256": "50e4a269628b5e7f6e983b7bf8345e9afe0110765827753367c4ff406a611f22",
+      "sha256": "50e4a269628b5e7f6e983b7bf8345e9afe0110765827753367c4ff406a611f22",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> create-verification-skill.md"
+      ]
+    },
+    {
+      "dest": "verify/references/pstack/create-verification-skill/references/feature-map-example/create-note.md",
+      "src": "vendors/poteto/pstack/skills/create-verification-skill/references/feature-map-example/create-note.md",
+      "source": "pstack:create-verification-skill",
+      "vendorSha256": "644a44c74f35d38c2feb7cd05a0121fdebbb623e8dc376c185b565a581d1ccf7",
+      "preRewriteSha256": "644a44c74f35d38c2feb7cd05a0121fdebbb623e8dc376c185b565a581d1ccf7",
+      "sha256": "644a44c74f35d38c2feb7cd05a0121fdebbb623e8dc376c185b565a581d1ccf7",
+      "transforms": []
+    },
+    {
+      "dest": "verify/references/pstack/create-verification-skill/references/feature-map-example/README.md",
+      "src": "vendors/poteto/pstack/skills/create-verification-skill/references/feature-map-example/README.md",
+      "source": "pstack:create-verification-skill",
+      "vendorSha256": "cb7bd782cf89968a4ba3d58a5151db837430db92d19a6f52a906973b77b516ba",
+      "preRewriteSha256": "cb7bd782cf89968a4ba3d58a5151db837430db92d19a6f52a906973b77b516ba",
+      "sha256": "cb7bd782cf89968a4ba3d58a5151db837430db92d19a6f52a906973b77b516ba",
+      "transforms": []
+    },
+    {
+      "dest": "verify/references/pstack/create-verification-skill/references/feature-map-example/search.md",
+      "src": "vendors/poteto/pstack/skills/create-verification-skill/references/feature-map-example/search.md",
+      "source": "pstack:create-verification-skill",
+      "vendorSha256": "6e87b9e7f2791a7776ba1bb83f371cd285c306c67f19d245cc4dd6ca3015c823",
+      "preRewriteSha256": "6e87b9e7f2791a7776ba1bb83f371cd285c306c67f19d245cc4dd6ca3015c823",
+      "sha256": "6e87b9e7f2791a7776ba1bb83f371cd285c306c67f19d245cc4dd6ca3015c823",
+      "transforms": []
+    },
+    {
+      "dest": "verify/references/pstack/LICENSE",
+      "src": "vendors/poteto/pstack/LICENSE",
+      "source": "pstack:LICENSE",
+      "vendorSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "preRewriteSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "transforms": []
+    },
+    {
+      "dest": "verify/references/pstack/maintain-formal-verification-skill/maintain-formal-verification-skill.md",
+      "src": "vendors/poteto/pstack/skills/maintain-formal-verification-skill/SKILL.md",
+      "source": "pstack:maintain-formal-verification-skill",
+      "vendorSha256": "0c96f54293542d3818b68754562b338073958781a9684454611dca37592e2d2c",
+      "preRewriteSha256": "be5c3aae57a6760233802cbc8833856f17afd7aff3ee46a680b4334b0ba552e8",
+      "sha256": "be5c3aae57a6760233802cbc8833856f17afd7aff3ee46a680b4334b0ba552e8",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> maintain-formal-verification-skill.md"
+      ]
+    },
+    {
+      "dest": "verify/references/pstack/maintain-verification-skill/maintain-verification-skill.md",
+      "src": "vendors/poteto/pstack/skills/maintain-verification-skill/SKILL.md",
+      "source": "pstack:maintain-verification-skill",
+      "vendorSha256": "515c0eaa054b3f6be1b1fb06f2c2f173c80fddb58bbcac57576f89c479bc68e8",
+      "preRewriteSha256": "428c5d41b7cd242e6782ca9ebfdd7b21d4e6cc16c324964f0a97ff8570f9f59c",
+      "sha256": "428c5d41b7cd242e6782ca9ebfdd7b21d4e6cc16c324964f0a97ff8570f9f59c",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> maintain-verification-skill.md"
+      ]
+    },
+    {
+      "dest": "verify/references/pstack/principle-explain-the-number/principle-explain-the-number.md",
+      "src": "vendors/poteto/pstack/skills/principle-explain-the-number/SKILL.md",
+      "source": "pstack:principle-explain-the-number",
+      "vendorSha256": "cd5a25f9e7cf023627ccb470dc5faa97542f29b4319496a32b839a8e1e988047",
+      "preRewriteSha256": "ccace06a5d92ceda09bb073d1a1d6dba6be6b1e8328a7043059be7ac01be41e9",
+      "sha256": "0f07d1b58a415c712909652ef06f8d21f8cb615c7bc6482b1b0f2f61dfb48420",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-explain-the-number.md",
+        "relink 2 relative path(s) to the copied location"
+      ]
+    },
+    {
+      "dest": "verify/references/pstack/principle-prove-it-works/principle-prove-it-works.md",
+      "src": "vendors/poteto/pstack/skills/principle-prove-it-works/SKILL.md",
+      "source": "pstack:principle-prove-it-works",
+      "vendorSha256": "ec79a15025bac8d33d62011c54f3b612733fd2a024e623b531b3637aa75070e2",
+      "preRewriteSha256": "b4e91c8e8b5a137865e3dba26048951c1caf13351e1463d0c025e05b1fafcfe1",
+      "sha256": "b4e91c8e8b5a137865e3dba26048951c1caf13351e1463d0c025e05b1fafcfe1",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> principle-prove-it-works.md"
+      ]
+    },
+    {
+      "dest": "wait-what/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "wait-what/references/matt/wait-what/wait-what.md",
+      "src": "vendors/mattpocock/skills/productivity/wait-what/SKILL.md",
+      "source": "matt:productivity/wait-what",
+      "vendorSha256": "d961bb37defd975c539427edb8f450cdbccdcdd552e213c1ece46676a7970905",
+      "preRewriteSha256": "d4eef446bb2a565d852680f98f77482aa19a1c2c501257b7d68e62d5e9f362e3",
+      "sha256": "d4eef446bb2a565d852680f98f77482aa19a1c2c501257b7d68e62d5e9f362e3",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> wait-what.md"
+      ]
+    },
+    {
+      "dest": "wait-what/references/pstack/bro/bro.md",
+      "src": "vendors/poteto/pstack/skills/bro/SKILL.md",
+      "source": "pstack:bro",
+      "vendorSha256": "aa329d0ceeeecb6822a7174ad76bb07a7826a3c52ceb6a588dec4138815084bb",
+      "preRewriteSha256": "25b005f17039e0021bdca8173c4efc2bf2eb2c4f0b4870067984679c43e635e2",
+      "sha256": "25b005f17039e0021bdca8173c4efc2bf2eb2c4f0b4870067984679c43e635e2",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> bro.md"
+      ]
+    },
+    {
+      "dest": "wait-what/references/pstack/ketchup/ketchup.md",
+      "src": "vendors/poteto/pstack/skills/ketchup/SKILL.md",
+      "source": "pstack:ketchup",
+      "vendorSha256": "f2923ffd14f6fc778f75a47aaed1f317fb5fd00b5701ca769d6446c74106dead",
+      "preRewriteSha256": "a4e4cc63fe14a53734ad3e0158baa7630535b0b0dd8e057cee2b1ceaf869da59",
+      "sha256": "4597304d1fff1f55dad7cc981adfa9b55c655601d291e9aad6ce65da7999e843",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> ketchup.md",
+        "relink 1 relative path(s) to the copied location"
+      ]
+    },
+    {
+      "dest": "wait-what/references/pstack/LICENSE",
+      "src": "vendors/poteto/pstack/LICENSE",
+      "source": "pstack:LICENSE",
+      "vendorSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "preRewriteSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "transforms": []
+    },
+    {
+      "dest": "writing/references/matt/LICENSE",
+      "src": "vendors/mattpocock/skills/LICENSE",
+      "source": "matt:LICENSE",
+      "vendorSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "preRewriteSha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "transforms": []
+    },
+    {
+      "dest": "writing/references/matt/pr/CREDITS.md",
+      "src": "vendors/mattpocock/skills/engineering/pr/CREDITS.md",
+      "source": "matt:engineering/pr",
+      "vendorSha256": "a7a087127665d7298a72280ef6e19c41ad8404523712a788c8dc3ab414bc2497",
+      "preRewriteSha256": "a7a087127665d7298a72280ef6e19c41ad8404523712a788c8dc3ab414bc2497",
+      "sha256": "a7a087127665d7298a72280ef6e19c41ad8404523712a788c8dc3ab414bc2497",
+      "transforms": []
+    },
+    {
+      "dest": "writing/references/matt/pr/pr.md",
+      "src": "vendors/mattpocock/skills/engineering/pr/SKILL.md",
+      "source": "matt:engineering/pr",
+      "vendorSha256": "ab63f1cf78647389edcd386c9427c5dfca27ed2836930c24773ffee834c19bcd",
+      "preRewriteSha256": "c20ed01e39298204271ed7e26cb651a72b671ee81ec8b697fa28dd5d3380c2aa",
+      "sha256": "c20ed01e39298204271ed7e26cb651a72b671ee81ec8b697fa28dd5d3380c2aa",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> pr.md"
+      ]
+    },
+    {
+      "dest": "writing/references/matt/writing-for-agents/SKILL-MECHANICS.md",
+      "src": "vendors/mattpocock/skills/productivity/writing-for-agents/SKILL-MECHANICS.md",
+      "source": "matt:productivity/writing-for-agents",
+      "vendorSha256": "c768e6307c7c10728c401c213f2c4ba71c542127eeb7ad2956aabd15a0fa0059",
+      "preRewriteSha256": "c768e6307c7c10728c401c213f2c4ba71c542127eeb7ad2956aabd15a0fa0059",
+      "sha256": "9404c3621d51d978af395378ea59a52ca7b16d728caa69cf7dc463cd522b3f59",
+      "transforms": [
+        "relink 4 relative path(s) to the copied location"
+      ]
+    },
+    {
+      "dest": "writing/references/matt/writing-for-agents/writing-for-agents.md",
+      "src": "vendors/mattpocock/skills/productivity/writing-for-agents/SKILL.md",
+      "source": "matt:productivity/writing-for-agents",
+      "vendorSha256": "551adca942227b44192edba88acd4e8db911f0121ce58ad16944ccf6a896a74a",
+      "preRewriteSha256": "393d286f6500fb39fd69b3102680f3591df85257c3f9faf2818d75bd2d77f565",
+      "sha256": "393d286f6500fb39fd69b3102680f3591df85257c3f9faf2818d75bd2d77f565",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> writing-for-agents.md"
+      ]
+    },
+    {
+      "dest": "writing/references/pstack/LICENSE",
+      "src": "vendors/poteto/pstack/LICENSE",
+      "source": "pstack:LICENSE",
+      "vendorSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "preRewriteSha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "transforms": []
+    },
+    {
+      "dest": "writing/references/pstack/technical-writing/technical-writing.md",
+      "src": "vendors/poteto/pstack/skills/technical-writing/SKILL.md",
+      "source": "pstack:technical-writing",
+      "vendorSha256": "61fe9c424a798ebf36ad94941f87be049cb8827bdf86d21474a0dde37b513c43",
+      "preRewriteSha256": "fa78033951fd96ef88a481ca3545da2355a5bd390ff07032cdd1a96b3e5a0dae",
+      "sha256": "fa78033951fd96ef88a481ca3545da2355a5bd390ff07032cdd1a96b3e5a0dae",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> technical-writing.md"
+      ]
+    },
+    {
+      "dest": "writing/references/pstack/unslop/unslop.md",
+      "src": "vendors/poteto/pstack/skills/unslop/SKILL.md",
+      "source": "pstack:unslop",
+      "vendorSha256": "ccab208e315ce05e2fab8eeee2f7879f1289b5c6844840b2d307adf31c79144f",
+      "preRewriteSha256": "4398ebd335a9da1ff7e557196f58142d72b4fa3b1377dea59fb735894030565e",
+      "sha256": "4398ebd335a9da1ff7e557196f58142d72b4fa3b1377dea59fb735894030565e",
+      "transforms": [
+        "strip-frontmatter",
+        "rename SKILL.md -> unslop.md"
+      ]
+    }
+  ]
+}

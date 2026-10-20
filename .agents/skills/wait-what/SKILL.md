@@ -1,6 +1,16 @@
 ---
 name: wait-what
-description: "Stop. That last message did not land: re-pitch it."
+description: "That last message did not land: re-pitch it in plain words, or catch the user up on what changed and what waits on them."
 disable-model-invocation: true
 ---
-Wait, I don't understand where you've got to here. Re-pitch that: give me a little bit of context, talk in ASD-STE100 Simplified Technical English, and use the ubiquitous language from `GLOSSARY.md` (follow `GLOSSARY-MAP.md` to the right one if the repo has more than one).
+
+# Wait, what?
+
+## Modes
+
+| Mode | When | Body |
+|---|---|---|
+| re-pitch (default) | The last message didn't land | [wait-what](references/matt/wait-what/wait-what.md); for a simpler restate with no glossary, [bro](references/pstack/bro/bro.md) |
+| catch up | What changed since the user's last message, and every item waiting on them | [ketchup](references/pstack/ketchup/ketchup.md) |
+
+Where `wait-what` says `GLOSSARY.md`, use the glossary file `docs/agents/domain.md` records. The `rigor` close report uses the catch-up shape.

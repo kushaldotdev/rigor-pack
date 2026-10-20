@@ -1,5 +1,5 @@
 interface:
   display_name: "Handoff"
-  short_description: "Compact the conversation into a handoff doc for the next agent"
+  short_description: "Pause, hand off, or pick up work"
 policy:
   allow_implicit_invocation: false

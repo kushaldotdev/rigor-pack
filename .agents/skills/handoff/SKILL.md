@@ -1,29 +1,23 @@
 ---
 name: handoff
-description: Compact the current conversation into a handoff document for another agent to pick up.
-argument-hint: "What will the next session be used for?"
+description: "Pause, hand off, or pick up in-flight work: write a portable handoff doc, suspend work so it can resume, or take over a prior agent's work."
+argument-hint: "hand off | pause | pickup, plus what the next session is for"
 disable-model-invocation: true
 ---
 
-Write a handoff document summarising the current conversation so a fresh agent can continue the work.
+# Handoff
 
-Save it in the current working directory as `tmp/<timestamp>-<what-we-did>.md`:
+## Modes
 
-- Write to `tmp/`, creating it if it does not exist. If that directory is not writable, fall back to the OS temporary directory (`$TMPDIR`, else `/tmp`; `%TEMP%` on Windows) and say which one you used.
-- Timestamp is local time in `YYYYMMDD-HHMM` format.
-- `<what-we-did>` is a short lowercase kebab-case slug of the work this handoff covers, 3–6 words, derived from the conversation and from any passed arguments — e.g. `tmp/20261001-0130-fix-subagent-skill-drift.md`.
-- Leave the file untracked. If `tmp/` is not covered by `.gitignore`, say so in your reply rather than editing `.gitignore` unasked.
+| Mode | When | Body |
+|---|---|---|
+| hand off (default) | New harness, new directory, a colleague, or forking a side task mid-phase | [handoff](references/matt/handoff/handoff.md) |
+| pause | Suspend in-flight work cleanly: going offline, restart, imminent compaction | [pause-safely playbook](../rigor/references/pstack/poteto-mode/playbooks/pause-safely.md) |
+| pickup | Resume or take over a prior agent's work from a transcript, branch, or handoff doc | [session-pickup playbook](../rigor/references/pstack/poteto-mode/playbooks/session-pickup.md) |
 
-End your reply with the handoff file's absolute path on its own line, in a plain code block, so the user can copy-paste it straight into the next session:
+## Pack rules
 
-```
-/absolute/path/to/handoff.md
-```
-
-Include a "suggested skills" section in the document, naming which skills the next agent should read and follow - by skill name, with each one's file under `<skills-root>/<name>/SKILL.md`.
-
-Do not duplicate content already captured in other artifacts (specs, plans, ADRs, issues, commits, diffs). Reference them by path or URL instead.
-
-Redact any sensitive information, such as API keys, passwords, or personally identifiable information.
-
-If the user passed arguments, treat them as a description of what the next session will focus on and tailor the doc accordingly.
+- Inside a repo with a `rigor` run in flight, the handoff doc goes to `.audit/<slug>.handoff.md` (committed) instead of the OS temp directory, so any clone can resume. Elsewhere follow the body.
+- Resuming a `rigor` run is the `rigor` skill's resume path (three questions, then AFK). Pickup is for work that has no `.audit/` brief.
+- "Suggested skills" in the doc names pack skills (`rigor`, `code-review`, …), not upstream names.
+- Upstream names resolve through [the name index](../rigor/references/INDEX.md).

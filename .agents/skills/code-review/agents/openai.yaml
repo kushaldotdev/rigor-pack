@@ -1,3 +1,5 @@
 interface:
   display_name: "Code Review"
-  short_description: "Review a diff on standards and spec"
+  short_description: "Standards, spec, adversarial and blast-radius lenses"
+policy:
+  allow_implicit_invocation: true

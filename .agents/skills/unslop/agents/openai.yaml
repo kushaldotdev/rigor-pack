@@ -1,3 +1,0 @@
-interface:
-  display_name: "Unslop"
-  short_description: "Strip AI-writing tells from prose surfaces"

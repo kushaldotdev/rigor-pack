@@ -1,104 +1,85 @@
 #!/usr/bin/env node
-// Materialize Matt Pocock wrappers into self-contained .agents/skills/ entries.
-// .agents/skills/ must work with NO vendors/ present (install = copy .agents/skills/).
-// Sources stay pristine under vendors/ for upgrade diffs. Forks, ask-pack, and
-// rigor are hand-maintained and NOT touched by this script.
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, cpSync } from "node:fs";
+// Regenerate every vendor copy in .agents/skills/ from vendors/ (never edited),
+// plus each host's agents/openai.yaml, rigor/references/INDEX.md, and
+// .agents/skills/manifest.json. Hand-written files (each host's SKILL.md and
+// any file outside references/{matt,pstack}/) are never touched.
+// A second run must produce a zero diff.
+import { writeFileSync, mkdirSync, rmSync, existsSync, readFileSync, statSync, chmodSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { copyPlan, render, sha256, readFrontmatter, openaiYaml, vendorSkills, HOSTS, DROPPED, VENDORS } from "./lib/pack.mjs";
+import { INTERFACE } from "./pack-layout.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const vend = (...p) => join(root, "vendors", ...p);
-const out = (...p) => join(root, ".agents", "skills", ...p);
-const PIN = "49dd158"; // mattpocock/skills v1.3.1
+const pack = join(root, ".agents", "skills");
+const die = (m) => { console.error(`BUILD FAILED: ${m}`); process.exit(1); };
 
-// name -> {bucket, extra}
-const WRAPPERS = {
-  "tdd": { bucket: "engineering" },
-  "code-review": { bucket: "engineering", extra: "- The two review axes run as two parallel read-only reviewer children in one pi `subagent` workflow, launched async; the parent aggregates their reports (see `subagent-orchestration-policy` §6 for lenses and disposition)." },
-  "diagnosing-bugs": { bucket: "engineering" },
-  "domain-modeling": { bucket: "engineering" },
-  "grill-with-docs": { bucket: "engineering" },
-  "implement": { bucket: "engineering", extra: "- Issue-tracker operations use the repo's configured tracker (see the repo's agent docs for which CLI and workflow)." },
-  "improve-codebase-architecture": { bucket: "engineering" },
-  "prototype": { bucket: "engineering" },
-  "research": { bucket: "engineering" },
-  "to-spec": { bucket: "engineering" },
-  "to-tickets": { bucket: "engineering" },
-  "triage": { bucket: "engineering" },
-  "wayfinder": { bucket: "engineering", extra: "- Parallel research children run as one pi `subagent` workflow, each resolving its ticket via the `research` skill." },
-  "codebase-design": { bucket: "engineering" },
-  "retro": { bucket: "engineering" },
-  "setup-matt-pocock-skills": { bucket: "engineering" },
-  "grilling": { bucket: "productivity" },
-  "wait-what": { bucket: "productivity" },
-  "writing-for-agents": { bucket: "productivity" },
+// Coverage: every vendor skill is placed exactly once or dropped with a reason.
+const placed = Object.values(HOSTS).flatMap((h) => h.sources);
+const dupes = placed.filter((s, i) => placed.indexOf(s) !== i);
+if (dupes.length) die(`placed twice: ${dupes.join(", ")}`);
+const missing = vendorSkills(root).filter((s) => !placed.includes(s) && !DROPPED[s]);
+if (missing.length) die(`vendor skills with no host: ${missing.join(", ")}`);
+
+const plan = copyPlan(root);
+for (const host of Object.keys(HOSTS)) {
+  for (const v of Object.keys(VENDORS)) rmSync(join(pack, host, "references", v), { recursive: true, force: true });
+}
+
+const files = [];
+for (const e of plan.entries) {
+  const { bytes, transforms, pre, dangling } = render(e, plan, root);
+  const out = join(pack, e.dest);
+  mkdirSync(dirname(out), { recursive: true });
+  writeFileSync(out, bytes);
+  chmodSync(out, statSync(join(root, e.src)).mode & 0o777);
+  files.push({ dest: e.dest, src: e.src, source: e.source, vendorSha256: sha256(readFileSync(join(root, e.src))), preRewriteSha256: pre, sha256: sha256(bytes), transforms, ...(dangling.length ? { danglingUpstream: dangling } : {}) });
+}
+
+// Per-host Codex interface file, derived from the hand-written SKILL.md.
+const skills = [];
+for (const [host, spec] of Object.entries(HOSTS)) {
+  const skillPath = join(pack, host, "SKILL.md");
+  const hidden = existsSync(skillPath) ? readFrontmatter(readFileSync(skillPath, "utf8"))["disable-model-invocation"] === true : !spec.advertised;
+  if (hidden === spec.advertised) die(`${host}: SKILL.md visibility disagrees with pack-layout.mjs`);
+  const [display, short] = INTERFACE[host];
+  mkdirSync(join(pack, host, "agents"), { recursive: true });
+  writeFileSync(join(pack, host, "agents", "openai.yaml"), openaiYaml(display, short, !hidden));
+  skills.push({ name: host, visibility: spec.advertised ? "advertised" : "user-invoked", sources: spec.sources });
+}
+
+// Name index: upstream bodies name siblings by upstream name ("the **how**
+// skill", `/setup-pstack`); this resolves each name to its copy.
+const bodies = files.filter((f) => f.transforms[0] === "strip-frontmatter");
+const rows = bodies.map((f) => {
+  const name = f.dest.split("/").at(-1).replace(/\.md$/, "");
+  const vendor = f.source.split(":")[0];
+  return `| \`${name}\` | ${vendor} | ${f.dest.split("/")[0]} | [${f.dest}](../../${f.dest}) |`;
+}).sort();
+const index = `# Upstream name index (generated by scripts/build-pack.mjs; do not edit)
+
+Upstream bodies name other skills by their upstream names: "the **how** skill", \`/setup-pstack\`, "call the Skill tool with \`tdd\`", "the **prove-it-works** principle skill" (= \`principle-prove-it-works\`).
+In this pack, most of those are files, not skills. Resolve a name here and read the file; paths are relative to the skills root (the folder holding \`rigor/\`).
+A slash form such as \`/swarm\` or \`$swarm\` in an upstream body means "read and follow that body", not a command to type.
+Where two vendors share a name (\`tdd\`, \`teach\`), the host's SKILL.md says which one applies.
+Dropped: ${Object.entries(DROPPED).map(([k, v]) => `\`${k}\` (${v})`).join("; ")}
+
+| Upstream name | Vendor | Host skill | File |
+|---|---|---|---|
+${rows.join("\n")}
+`;
+writeFileSync(join(pack, "rigor", "references", "INDEX.md"), index);
+
+const manifest = {
+  generatedBy: "scripts/build-pack.mjs",
+  vendors: Object.fromEntries(Object.entries(VENDORS).map(([k, v]) => [k, { root: v.root, pin: v.pin }])),
+  skillCount: skills.length,
+  advertisedCount: skills.filter((s) => s.visibility === "advertised").length,
+  skills,
+  dropped: DROPPED,
+  generated: ["*/agents/openai.yaml", "rigor/references/INDEX.md", "manifest.json"],
+  indexSha256: sha256(Buffer.from(index, "utf8")),
+  files: files.sort((a, b) => a.dest.localeCompare(b.dest)),
 };
-
-// Cross-skill references use the hybrid form:
-//   read and follow the `<name>` skill (<skills-root>/<name>/SKILL.md)
-// Name-first because pi resolves a model-invocable skill by the absolute `<location>`
-// it injects into the prompt - every cross-reference target in this pack is
-// model-invocable, so the name always resolves. The path is kept as fallback, as a
-// greppable anchor for scripts/check-pack.mjs, and for non-pi harnesses.
-//
-// `<skills-root>` is NOT a pi token - pi has no root placeholder. It is this pack's
-// own hint (defined in CHANGES.md), never a contract: the repo's `.agents/skills/`,
-// the global `~/.pi/agent/skills/`, or `~/.agents/skills/`, whichever holds the
-// target. A hardcoded `.agents/skills/` path is dead for a globally-installed target.
-const SKILLS_ROOT = "<skills-root>";
-
-// Upstream quotes a skill name with either "..." or `...`, depending on the file.
-const NAME = '["`]([a-z-]+)["`]';
-const REF = (a) => `read and follow the \`${a}\` skill (${SKILLS_ROOT}/${a}/SKILL.md)`;
-const REF_ING = (a) => `reading and following the \`${a}\` skill (${SKILLS_ROOT}/${a}/SKILL.md)`;
-
-// Content transforms: upstream harness assumptions -> self-contained, pi-native forms.
-function transform(src) {
-  let t = src;
-  t = t.replace(new RegExp(`[Cc]all the Skill tool twice, for ${NAME} and ${NAME}`, "g"),
-    (_m, a, b) => `${REF(a)} and ${REF(b)}`);
-  t = t.replace(new RegExp(`\\b[Cc]alls? the Skill tool with ${NAME}`, "g"),
-    (_m, a) => REF(a));
-  t = t.replace(new RegExp(`calling the Skill tool with ${NAME}`, "gi"),
-    (_m, a) => REF_ING(a));
-  t = t.replace(/call the Skill tool for whichever skills ([^,.]+)/gi,
-    (_m, rest) => `read and follow the SKILL.md of whichever skills ${rest} (each \`<name>\` skill, file under ${SKILLS_ROOT}/<name>/SKILL.md)`);
-  t = t.replace(/call the Skill tool/gi, `read and follow the named skill (file under ${SKILLS_ROOT}/<name>/SKILL.md)`);
-  t = t.replace(/calling the Skill tool/gi, `reading and following the named skill (file under ${SKILLS_ROOT}/<name>/SKILL.md)`);
-  t = t.replace(/together, in the foreground, and aggregate/g, "together as async children, and aggregate");
-  t = t.replace(/run `\/setup-matt-pocock-skills`/g, "run `/skill:setup-matt-pocock-skills`");
-  t = t.replace(/run `\/([a-z-]+)`/g, (_m, a) => `run \`/skill:${a}\``);
-  return t;
-}
-
-// Skills deliberately absent from the pack (see CHANGES.md). A generated wrapper
-// must not point at one, or the build fails at the guard. Omitted on purpose:
-// `teach` and `pr` are ordinary prose/CLI tokens ("gh pr ..."), so they stay out
-// of the mechanical guard.
-const DROPPED_SKILLS = ["grill-me", "to-questionnaire", "wizard", "implement-spec"];
-const DROPPED_RE = new RegExp("`(" + DROPPED_SKILLS.join("|") + ")`", "i");
-
-const ADAPT = (extra) => (extra ? `\n## pi notes\n\n${extra}\n` : "");
-
-let built = 0;
-for (const [name, { bucket, extra }] of Object.entries(WRAPPERS)) {
-  const src = vend("mattpocock", "skills", bucket, name, "SKILL.md");
-  if (!existsSync(src)) { console.error(`MISSING SOURCE ${src}`); process.exit(1); }
-  const upstream = readFileSync(src, "utf8");
-  // split frontmatter from body
-  const m = upstream.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
-  if (!m) { console.error(`NO FRONTMATTER ${src}`); process.exit(1); }
-  let [, fm, body] = m;
-  // description mentioning another skill's trigger is fine; keep upstream fm verbatim
-  const materialized = `---\n${fm}\n---\n${transform(body).trimStart()}${ADAPT(extra)}`;
-  const dropped = materialized.match(DROPPED_RE);
-  if (dropped) { console.error(`DROPPED SKILL REF ${name}: \`${dropped[1]}\` is not in the pack`); process.exit(1); }
-  mkdirSync(out(name), { recursive: true });
-  // carry the whole upstream skill folder (support files: references, formats, scripts)
-  cpSync(vend("mattpocock", "skills", bucket, name), out(name), { recursive: true });
-  writeFileSync(out(name, "SKILL.md"), materialized);
-  built++;
-  console.log(`built ${name}`);
-}
-console.log(`\n${built} wrappers materialized (self-contained; no vendors/ reference survives)`);
+writeFileSync(join(pack, "manifest.json"), JSON.stringify(manifest, null, 2) + "\n");
+console.log(`built ${files.length} vendor files into ${skills.length} host skills (${manifest.advertisedCount} advertised)`);

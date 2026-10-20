@@ -1,0 +1,5 @@
+interface:
+  display_name: "Verify"
+  short_description: "Prove changes work on the real artifact"
+policy:
+  allow_implicit_invocation: true

@@ -1,186 +1,136 @@
-# Deviations from upstream
+# CHANGES: provenance
 
-Policy: `vendors/` is pristine and never edited. **Wrappers are materialized
-build output**: the upstream SKILL.md content is inlined into
-`.agents/skills/<name>/SKILL.md` by `scripts/build-pack.mjs` with mechanical
-transforms applied (conventions below) — `.agents/skills/` is self-contained
-and needs no `vendors/` at runtime. Never hand-edit a wrapper; rebuild:
-`node scripts/build-pack.mjs`. A **fork** is hand-maintained content ported
-from upstream; a **new** skill is ours. Every entry must list its exact
-deviation. When upstream is re-vendored, rebuild and re-verify every row below
-against the new text.
+Every vendor skill, where its copy lives in the pack, and what was done to it. The machine-checked version of this table is `.agents/skills/manifest.json` (sha256 of every vendor file, its pre-rewrite body and its copy). `node scripts/check-pack.mjs` fails if a copy, a vendor file or the plan drifts from it.
 
-## Vendors
+## Rules
 
-| Vendor | Pinned ref | Notes |
+1. `vendors/` is never edited. The build reads it and writes copies under `.agents/skills/<host>/references/<vendor>/<name>/`.
+2. A copied `SKILL.md` becomes `<name>.md` in the same folder, with its YAML frontmatter stripped, so no harness lists it as a second skill. The trigger phrases from the stripped `description` reappear in the host's Modes table.
+3. The only text change is **relink**: a relative markdown link or inline-code path that pointed at another vendor file is rewritten to that file's new relative location. Nothing else in a body changes. Links that were already dangling upstream (pstack's unvendored `docs/`, illustrative example paths) are left as they are and listed in the manifest as `danglingUpstream`.
+4. Vendor `agents/openai.yaml` files are not copied. Each host gets a generated one from its own frontmatter.
+5. Each host carries the `LICENSE` of every vendor it copies from (`references/<vendor>/LICENSE`).
+6. Anything that differs from upstream behaviour is said once, in a hand-written file: the host `SKILL.md` (modes, precedence), `rigor/AFK.md` (what each interactive line means in an AFK run), `rigor/INTERVIEW.md`, `rigor/harness/*.md`, `setup/templates/workflow.md`. Those files are the complete list of new prose.
+
+## Upstream pins
+
+| Vendor | Ref |
+|---|---|
+| mattpocock/skills | `49dd158d1076134a641b33efb035946536778336` (v1.3.1), `engineering/` + `productivity/` |
+| cursor/plugins pstack | `d457567332aa6989e753ea289f30ea2bfbc80bc0` (v0.15.28), `skills/` |
+
+## Skill bodies (82 copied, 1 dropped)
+
+"Other files" counts the rest of the vendor folder copied with it (references, templates, scripts, playbooks).
+
+| Vendor | Upstream skill | Host | Copy | Other files | Transform |
+|---|---|---|---|---|---|
+| matt | `engineering/ask-matt` | `rigor` | `rigor/references/matt/ask-matt/ask-matt.md` | 1 | strip frontmatter, rename |
+| matt | `engineering/code-review` | `code-review` | `code-review/references/matt/code-review/code-review.md` | 0 | strip frontmatter, rename |
+| matt | `engineering/codebase-design` | `codebase-design` | `codebase-design/references/matt/codebase-design/codebase-design.md` | 2 | strip frontmatter, rename, relink (2 files) |
+| matt | `engineering/diagnosing-bugs` | `diagnosing-bugs` | `diagnosing-bugs/references/matt/diagnosing-bugs/diagnosing-bugs.md` | 1 | strip frontmatter, rename |
+| matt | `engineering/domain-modeling` | `domain-modeling` | `domain-modeling/references/matt/domain-modeling/domain-modeling.md` | 2 | strip frontmatter, rename |
+| matt | `engineering/grill-with-docs` | `grilling` | `grilling/references/matt/grill-with-docs/grill-with-docs.md` | 0 | strip frontmatter, rename |
+| matt | `engineering/implement-spec` | `rigor` | `rigor/references/matt/implement-spec/implement-spec.md` | 0 | strip frontmatter, rename |
+| matt | `engineering/implement` | `rigor` | `rigor/references/matt/implement/implement.md` | 0 | strip frontmatter, rename |
+| matt | `engineering/improve-codebase-architecture` | `rigor` | `rigor/references/matt/improve-codebase-architecture/improve-codebase-architecture.md` | 1 | strip frontmatter, rename |
+| matt | `engineering/pr` | `writing` | `writing/references/matt/pr/pr.md` | 1 | strip frontmatter, rename |
+| matt | `engineering/prototype` | `prototype` | `prototype/references/matt/prototype/prototype.md` | 2 | strip frontmatter, rename, relink (2 files) |
+| matt | `engineering/research` | `research` | `research/references/matt/research/research.md` | 0 | strip frontmatter, rename |
+| matt | `engineering/retro` | `retro` | `retro/references/matt/retro/retro.md` | 0 | strip frontmatter, rename |
+| matt | `engineering/setup-matt-pocock-skills` | `setup` | `setup/references/matt/setup-matt-pocock-skills/setup-matt-pocock-skills.md` | 5 | strip frontmatter, rename |
+| matt | `engineering/tdd` | `tdd` | `tdd/references/matt/tdd/tdd.md` | 2 | strip frontmatter, rename |
+| matt | `engineering/to-spec` | `rigor` | `rigor/references/matt/to-spec/to-spec.md` | 0 | strip frontmatter, rename |
+| matt | `engineering/to-tickets` | `rigor` | `rigor/references/matt/to-tickets/to-tickets.md` | 0 | strip frontmatter, rename |
+| matt | `engineering/triage` | `triage` | `triage/references/matt/triage/triage.md` | 2 | strip frontmatter, rename |
+| matt | `engineering/wayfinder` | `rigor` | `rigor/references/matt/wayfinder/wayfinder.md` | 0 | strip frontmatter, rename |
+| matt | `engineering/wizard` | `setup` | `setup/references/matt/wizard/wizard.md` | 1 | strip frontmatter, rename |
+| matt | `productivity/grill-me` | `grilling` | `grilling/references/matt/grill-me/grill-me.md` | 0 | strip frontmatter, rename |
+| matt | `productivity/grilling` | `grilling` | `grilling/references/matt/grilling/grilling.md` | 0 | strip frontmatter, rename |
+| matt | `productivity/handoff` | `handoff` | `handoff/references/matt/handoff/handoff.md` | 0 | strip frontmatter, rename |
+| matt | `productivity/teach` | `teach` | `teach/references/matt/teach/teach.md` | 4 | strip frontmatter, rename, relink (1 file) |
+| matt | `productivity/to-questionnaire` | `grilling` | `grilling/references/matt/to-questionnaire/to-questionnaire.md` | 0 | strip frontmatter, rename |
+| matt | `productivity/wait-what` | `wait-what` | `wait-what/references/matt/wait-what/wait-what.md` | 0 | strip frontmatter, rename |
+| matt | `productivity/writing-for-agents` | `writing` | `writing/references/matt/writing-for-agents/writing-for-agents.md` | 1 | strip frontmatter, rename, relink (1 file) |
+| pstack | `architect` | `codebase-design` | `codebase-design/references/pstack/architect/architect.md` | 3 | strip frontmatter, rename, relink (1 file) |
+| pstack | `arena` | `codebase-design` | `codebase-design/references/pstack/arena/arena.md` | 0 | strip frontmatter, rename |
+| pstack | `automate-me` | `retro` | `retro/references/pstack/automate-me/automate-me.md` | 0 | strip frontmatter, rename |
+| pstack | `benchmark-checklist` | `verify` | `verify/references/pstack/benchmark-checklist/benchmark-checklist.md` | 0 | strip frontmatter, rename |
+| pstack | `blast-radius` | `code-review` | `code-review/references/pstack/blast-radius/blast-radius.md` | 0 | strip frontmatter, rename |
+| pstack | `bro` | `wait-what` | `wait-what/references/pstack/bro/bro.md` | 0 | strip frontmatter, rename |
+| pstack | `correct` | `retro` | `retro/references/pstack/correct/correct.md` | 0 | strip frontmatter, rename |
+| pstack | `create-formal-verification-skill` | `verify` | `verify/references/pstack/create-formal-verification-skill/create-formal-verification-skill.md` | 0 | strip frontmatter, rename |
+| pstack | `create-verification-skill` | `verify` | `verify/references/pstack/create-verification-skill/create-verification-skill.md` | 3 | strip frontmatter, rename |
+| pstack | `figure-it-out` | `rigor` | `rigor/references/pstack/figure-it-out/figure-it-out.md` | 0 | strip frontmatter, rename |
+| pstack | `how` | `research` | `research/references/pstack/how/how.md` | 2 | strip frontmatter, rename |
+| pstack | `in-your-own-words` | `grilling` | `grilling/references/pstack/in-your-own-words/in-your-own-words.md` | 0 | strip frontmatter, rename |
+| pstack | `interrogate` | `code-review` | `code-review/references/pstack/interrogate/interrogate.md` | 4 | strip frontmatter, rename |
+| pstack | `ketchup` | `wait-what` | `wait-what/references/pstack/ketchup/ketchup.md` | 0 | strip frontmatter, rename, relink (1 file) |
+| pstack | `maintain-formal-verification-skill` | `verify` | `verify/references/pstack/maintain-formal-verification-skill/maintain-formal-verification-skill.md` | 0 | strip frontmatter, rename |
+| pstack | `maintain-verification-skill` | `verify` | `verify/references/pstack/maintain-verification-skill/maintain-verification-skill.md` | 0 | strip frontmatter, rename |
+| pstack | `no-comments` | `code-review` | `code-review/references/pstack/no-comments/no-comments.md` | 0 | strip frontmatter, rename |
+| pstack | `poteto-help` | `rigor` | `rigor/references/pstack/poteto-help/poteto-help.md` | 2 | strip frontmatter, rename, relink (1 file) |
+| pstack | `poteto-mode` | `rigor` | `rigor/references/pstack/poteto-mode/poteto-mode.md` | 45 | strip frontmatter, rename |
+| pstack | `principle-attack-the-premise` | `diagnosing-bugs` | `diagnosing-bugs/references/pstack/principle-attack-the-premise/principle-attack-the-premise.md` | 0 | strip frontmatter, rename, relink (1 file) |
+| pstack | `principle-boundary-discipline` | `codebase-design` | `codebase-design/references/pstack/principle-boundary-discipline/principle-boundary-discipline.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-build-the-lever` | `rigor` | `rigor/references/pstack/principle-build-the-lever/principle-build-the-lever.md` | 0 | strip frontmatter, rename, relink (1 file) |
+| pstack | `principle-encode-lessons-in-structure` | `retro` | `retro/references/pstack/principle-encode-lessons-in-structure/principle-encode-lessons-in-structure.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-exhaust-the-design-space` | `codebase-design` | `codebase-design/references/pstack/principle-exhaust-the-design-space/principle-exhaust-the-design-space.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-experience-first` | `rigor` | `rigor/references/pstack/principle-experience-first/principle-experience-first.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-explain-the-number` | `verify` | `verify/references/pstack/principle-explain-the-number/principle-explain-the-number.md` | 0 | strip frontmatter, rename, relink (1 file) |
+| pstack | `principle-fix-root-causes` | `diagnosing-bugs` | `diagnosing-bugs/references/pstack/principle-fix-root-causes/principle-fix-root-causes.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-foundational-thinking` | `codebase-design` | `codebase-design/references/pstack/principle-foundational-thinking/principle-foundational-thinking.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-guard-the-context-window` | `rigor` | `rigor/references/pstack/principle-guard-the-context-window/principle-guard-the-context-window.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-laziness-protocol` | `codebase-design` | `codebase-design/references/pstack/principle-laziness-protocol/principle-laziness-protocol.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-make-operations-idempotent` | `codebase-design` | `codebase-design/references/pstack/principle-make-operations-idempotent/principle-make-operations-idempotent.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-migrate-callers-then-delete-legacy-apis` | `codebase-design` | `codebase-design/references/pstack/principle-migrate-callers-then-delete-legacy-apis/principle-migrate-callers-then-delete-legacy-apis.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-minimize-reader-load` | `codebase-design` | `codebase-design/references/pstack/principle-minimize-reader-load/principle-minimize-reader-load.md` | 0 | strip frontmatter, rename, relink (1 file) |
+| pstack | `principle-model-the-domain` | `domain-modeling` | `domain-modeling/references/pstack/principle-model-the-domain/principle-model-the-domain.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-never-block-on-the-human` | `rigor` | `rigor/references/pstack/principle-never-block-on-the-human/principle-never-block-on-the-human.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-outcome-oriented-execution` | `rigor` | `rigor/references/pstack/principle-outcome-oriented-execution/principle-outcome-oriented-execution.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-prove-it-works` | `verify` | `verify/references/pstack/principle-prove-it-works/principle-prove-it-works.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-redesign-from-first-principles` | `codebase-design` | `codebase-design/references/pstack/principle-redesign-from-first-principles/principle-redesign-from-first-principles.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-separate-before-serializing-shared-state` | `codebase-design` | `codebase-design/references/pstack/principle-separate-before-serializing-shared-state/principle-separate-before-serializing-shared-state.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-sequence-verifiable-units` | `rigor` | `rigor/references/pstack/principle-sequence-verifiable-units/principle-sequence-verifiable-units.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-subtract-before-you-add` | `codebase-design` | `codebase-design/references/pstack/principle-subtract-before-you-add/principle-subtract-before-you-add.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-test-behavior-not-implementation` | `tdd` | `tdd/references/pstack/principle-test-behavior-not-implementation/principle-test-behavior-not-implementation.md` | 0 | strip frontmatter, rename |
+| pstack | `principle-type-system-discipline` | `codebase-design` | `codebase-design/references/pstack/principle-type-system-discipline/principle-type-system-discipline.md` | 0 | strip frontmatter, rename |
+| pstack | `recall` | `research` | `research/references/pstack/recall/recall.md` | 0 | strip frontmatter, rename |
+| pstack | `reflect` | `retro` | `retro/references/pstack/reflect/reflect.md` | 4 | strip frontmatter, rename |
+| pstack | `setup-pstack` | `setup` | `setup/references/pstack/setup-pstack/setup-pstack.md` | 0 | strip frontmatter, rename |
+| pstack | `sharpen` | `grilling` | `grilling/references/pstack/sharpen/sharpen.md` | 0 | strip frontmatter, rename |
+| pstack | `show-me-your-work` | `rigor` | `rigor/references/pstack/show-me-your-work/show-me-your-work.md` | 2 | strip frontmatter, rename |
+| pstack | `swarm` | `rigor` | `rigor/references/pstack/swarm/swarm.md` | 0 | strip frontmatter, rename |
+| pstack | `tdd` | `tdd` | `tdd/references/pstack/tdd/tdd.md` | 0 | strip frontmatter, rename |
+| pstack | `teach` | `teach` | `teach/references/pstack/teach/teach.md` | 0 | strip frontmatter, rename |
+| pstack | `technical-writing` | `writing` | `writing/references/pstack/technical-writing/technical-writing.md` | 0 | strip frontmatter, rename |
+| pstack | `typescript-best-practices` | `codebase-design` | `codebase-design/references/pstack/typescript-best-practices/typescript-best-practices.md` | 1 | strip frontmatter, rename |
+| pstack | `unslop` | `writing` | `writing/references/pstack/unslop/unslop.md` | 0 | strip frontmatter, rename |
+| pstack | `why` | `research` | `research/references/pstack/why/why.md` | 12 | strip frontmatter, rename |
+| pstack | `make-bot-ui` | dropped | none | none | Depends on Cursor routines, `update_state` and `SendToUser`; no equivalent on pi, Codex or Claude Code. |
+
+Also copied: Matt's bucket READMEs as `rigor/references/matt/{engineering,productivity}-README.md` (relinked).
+
+## Behaviour that differs from upstream, and where it is said
+
+| Upstream behaviour | In this pack | Said in |
 |---|---|---|
-| mattpocock/skills | `49dd158d1076134a641b33efb035946536778336` (v1.3.1) | trimmed verbatim: `skills/engineering/` + `skills/productivity/` + `LICENSE` only; `.git` stripped — upgrade = re-clone at pin, copy subset, diff |
-| cursor/plugins (pstack) | `d457567332aa6989e753ea289f30ea2bfbc80bc0` (v0.15.28) | trimmed verbatim: `skills/` + `LICENSE` only; `.git` stripped — upgrade = re-clone at pin, copy subset, diff | pstack is Cursor-native: multi-model panels, `AskQuestion`, `~/.cursor` transcript paths, team-kit plugin deps |
+| Two routers (`ask-matt`, `poteto-mode` / `poteto-help`) | One entry, `rigor`; both routers are read as orientation | `rigor/SKILL.md` §1 |
+| Mid-flow questions (`tdd` seams, `to-tickets` quiz, `code-review` fixed point, `improve-codebase-architecture` pick, …) | Asked once in the opening interview; mid-run they read the brief or decide-and-log | `rigor/INTERVIEW.md`, `rigor/AFK.md` |
+| `setup-matt-pocock-skills` edits whichever of `CLAUDE.md` / `AGENTS.md` exists | `AGENTS.md` canonical plus `CLAUDE.md` importing `@AGENTS.md`, so Codex and Claude both read it | `setup/SKILL.md` §2.4 |
+| `setup-pstack` picks models and writes a Cursor rule | Records the roles each harness already configures; never picks | `setup/SKILL.md` §2.9 |
+| Glossary is `GLOSSARY.md` | The filename the repo already has (`GLOSSARY.md` or `CONTEXT.md`), recorded in `docs/agents/domain.md`; never renamed | `setup/SKILL.md` §2.3, host pack rules |
+| PR body: Matt `pr` vs pstack `opening-a-pr` | `setup` asks per repo | `setup/SKILL.md` §2.6, `writing/SKILL.md` |
+| Merge authority | Merge-ready by default; `setup` can grant merge per repo | `setup/templates/workflow.md` |
+| `unslop` | Always on for prose (as upstream poteto-mode) | `writing/SKILL.md` |
+| Cursor `Task`, `poteto-agent`, cloud agents, `/loop`, `cursor-team-kit`, `agent-transcripts/` | Per-harness primitive and fallback | `rigor/harness/*.md`, `rigor/SKILL.md` §3 |
+| `create-verification-skill` writes `.cursor/skills/verify-<app>/` | Writes `.agents/skills/verify-<app>/` | `verify/SKILL.md` |
+| `show-me-your-work` trail local by default | Committed under `.audit/` so a run resumes from any clone | `rigor/SKILL.md` §3-§4 |
+| `handoff` writes to the OS temp dir | Inside a rigor run, `.audit/<slug>.handoff.md` | `handoff/SKILL.md` |
+| `no-comments` spawns Cursor's Comment Sicko | Apply its rules directly | `code-review/SKILL.md` |
+| poteto-mode playbooks split across concerns | Kept whole under `rigor/references/pstack/poteto-mode/` so their internal links work; other hosts link into it | host Modes tables |
 
-Port log: 2026-10-19 978ca6e9 (v0.15.17) → d457567 (v0.15.28), 119 commits, skills 52 → 56. Vendored verbatim, not wrapped: the 4 new skills (`create-formal-verification-skill`, `maintain-formal-verification-skill` — a TLA+/model-checking pair no rigor phase calls; `sharpen`, `in-your-own-words` — 4-line prompt shapers that overlap `grilling`, `to-spec`, `wait-what`). Of the 30 changed skills, only the pack's poteto forks got content adoptions, five lines total, all Cursor-free and repo-agnostic: `correct` step-3 test rule; `create-verification-skill` Launch readiness (usable ≠ process answers), seed-data precondition → `Gotchas` and never weaken the journey, stand-in-vs-real-target proof gap; `unslop` description drops "Must always apply.". Accepted upstream changes not taken: the "pick reasoning level per poteto-mode §Subagents" line added to `interrogate` and `show-me-your-work` (dangling ref to a skill this pack does not ship, and the substance is already carried by each fork's own reviewer-tier wording), and `interrogate`'s Cursor model-slug family fallbacks (`cursor-grok-*`, `composer-*` — no pi equivalent; the fork sources model choice from agent definitions). Upstream's cuts to `interrogate/references/lead-judgment.md` ("Why This Step Matters", "Verdict Calibration") are style trims, not corrections — the fork keeps them. Port log: 2026-10-10 d73344b → 978ca6e9 (#538 distill prompts — behavior-neutral compression, ported into unslop/benchmark-checklist/interrogate; #539 adds ketchup — source only, not wrapped). Accepted upstream deletions, not restored: reviewer-prompt "explains WHY something is a problem" clause (covered by the Evidence finding field), rubric "Three lines of duplication beat a premature abstraction" and "Use judgment." sentences (covered by neighboring rules).
+## Lost on purpose
 
-## Global pi conventions (applied at build time to every wrapper)
-
-1. Any upstream invocation of another skill via "the Skill tool" (phrasings
-   seen upstream: "Call the Skill tool with `X`", "call the Skill tool twice,
-   for `X` and `Y`", "calling the Skill tool", "call the Skill tool for
-   whichever skills ...") → the hybrid form
-   "read and follow the `X` skill (`<skills-root>/X/SKILL.md`)" (pi has no Skill
-   tool; skills load by reading their SKILL.md). Upstream quotes the skill name
-   with `"..."` in some files and `` `...` `` in others; the transform matches both.
-   - **Name first** because pi injects each model-invocable skill's absolute
-     location into the prompt (`docs/skills.md`: "Pi tells the model where the
-     skill lives so it can resolve those paths"), so the name always resolves.
-     Every cross-reference target in this pack is model-invocable, so none of
-     them falls outside the catalog. `pi-subagents` takes a skill by bare name
-     too (`skill: "<name>"`).
-   - **The path is the fallback**: a greppable anchor for `scripts/check-pack.mjs`,
-     and what a non-pi harness reads.
-   - **`<skills-root>` is NOT a pi token.** pi has no root placeholder - verified
-     by grep across pi's docs and source. It is this pack's own hint, defined once
-     in `ask-pack`, never a contract: repo `.agents/skills/`, global
-     `~/.pi/agent/skills/`, or `~/.agents/skills/`, whichever holds the target.
-     A hardcoded `.agents/skills/` path was measurably wrong: it failed 4 of 6
-     install layouts, including a real consumer repo's `triage` → `grilling` case, where
-     the target is global-only.
-2. A materialized wrapper never points at a skill left out of the pack. A
-   surviving backticked dropped-skill name fails both the build and
-   `scripts/check-pack.mjs`. `teach` and `pr` are excluded from the guard on
-   purpose - they are ordinary prose/CLI tokens ("gh pr ...") with no mechanical
-   discriminator. When upstream does name a dropped skill, the preferred fix is
-   to bring that skill into the pack (see the `writing-for-agents` row below);
-   deleting the reference is the fallback, not the default.
-3. Cross-skill references to user-invoked skills stay "tell the human to run
-   it" (upstream rule, unchanged).
-4. `GLOSSARY.md` naming kept as upstream; a consumer repo does the `CONTEXT.md` →
-   `GLOSSARY.md` repo rename at install time (tracked as repo work, not a
-   skill deviation).
-5. Upstream slash commands (`/setup-matt-pocock-skills`, `/triage`, ...) →
-   pi's skill command form `/skill:<name>`. "Tell the human to run it"
-   posture kept.
-6. Whole upstream skill folder is copied (support files: references, formats,
-   scripts) so relative links resolve in the installed repo.
-7. Wrappers carry NO in-file provenance marker: the wrapper list is the
-   `WRAPPERS` map in `scripts/build-pack.mjs` and every row below, and the pin
-   is the vendor table above. A skill-specific `## pi notes` section is
-   appended only where that skill's own pi behavior differs (the `extra`
-   column below); shared pi facts (invocation is `/skill:<name>`, subagent
-   ceilings live in `subagent-orchestration-policy`) live in these docs and in
-   the parent's child packet, never duplicated into every file.
-8. Children run async by default - pi-subagents' own rule is to set
-   `async: false` only when the parent must block, and to keep final reviews,
-   validation gates, and publication checks async. Upstream `code-review` broke
-   that rule: "Issue both sub-agent calls together, in the foreground, and
-   aggregate the reports they return." The transform rewrites "together, in the
-   foreground, and aggregate" to "together as async children, and aggregate",
-   and the wrapper's pi note records that the children launch async.
-
-## Matt skills → materialized wrappers
-
-| Skill | Type | Deviations beyond global conventions |
-|---|---|---|
-| tdd | wrapper | none (pattern exemplar) |
-| code-review | wrapper | two review axes = two parallel read-only reviewer children in one pi `subagent` workflow, parent aggregates; lenses/disposition per subagent-orchestration-policy §6 |
-| diagnosing-bugs | wrapper | none |
-| domain-modeling | wrapper | none |
-| grill-with-docs | wrapper | none |
-| implement | wrapper | issue-tracker operations go through the target repo's configured tracker doc |
-| improve-codebase-architecture | wrapper | none |
-| prototype | wrapper | none |
-| research | wrapper | none |
-| to-spec | wrapper | none |
-| to-tickets | wrapper | none |
-| triage | wrapper | none |
-| wayfinder | wrapper | parallel research children run as one pi `subagent` workflow, each resolving its ticket via the research skill |
-| codebase-design | wrapper | none |
-| retro | wrapper | none — upstream text kept intact: step 1's writing-style-guide reference resolves to the pack's own `writing-for-agents`; added in the self-contained rebuild so rigor's close phase points at an installed skill, not a vendored path |
-| setup-matt-pocock-skills | wrapper | none |
-| grilling | wrapper | none — upstream v1.3.1 already carries the yes-shaped-question line a consumer repo's old local copy lacked; wrapper supersedes that stale copy |
-| wait-what | wrapper | none |
-| writing-for-agents | wrapper | none — promoted into the pack (2026-10-12) so `retro`'s writing-style-guide step resolves to an installed skill; previously dropped, which left `retro` pointing at a skill the pack did not ship |
-| handoff | fork | upstream v1.3.1 writes to the OS temp dir and drops the reply-trailing path; fork keeps the pi-native behaviour: saves to `tmp/<timestamp>-<slug>.md` in the cwd, timestamp + kebab-slug filename rules, untracked + gitignore warning, reply ends with the absolute path in a code block; `call the Skill tool` → scope-agnostic `<skills-root>/<name>/SKILL.md` phrasing |
-
-## poteto skills → forks (hand-maintained)
-
-| Skill | Type | Deviations |
-|---|---|---|
-| blast-radius | fork | dropped companion refs to unported `how`/`why` (plain-language replacements); step 1 pulls diff via `git diff <base>...HEAD`; step 6 arena/multi-model → two parallel reviewer children with different attack angles |
-| interrogate | fork | Task tool + model-panel config (`~/.cursor/rules/pstack-models.mdc`) → pi `subagent` workflow, 4 default adversarial personas (skeptic / bug hunter / contract breaker / simplifier) instead of model diversity; personas run on the reviewer tier configured in agent definitions (`agentOverrides.model`/`thinking`) — model choice is configuration, never a runtime decision; a missing reviewer tier means each reviewer runs on its own configured default, never the root agent's model, and the gap is noted in the verdict; description de-"multi-model"-ed; `references/lead-judgment.md` model-consensus wording → reviewer wording; `references/rubric.md` tool names → pi tools (read, bash, ffgrep, fffind); references/ otherwise verbatim |
-| correct | fork | none — verbatim copy, no Cursor-isms found on audit. 2026-10-19 upstream (d457567): step 3 reworded to "any test that still passes when the behavior it checks breaks, or that fails when only the internals change" (was "would still pass if every function it calls returned nothing") |
-| benchmark-checklist | fork | verbatim otherwise; `principle-explain-the-number` link and the Opening-a-PR / Perf-issue / Hillclimb playbook refs replaced with plain-language equivalents inlined in the text (self-contained rule) |
-| show-me-your-work | fork | transcript audit reads `git log`/`git status` + session evidence instead of Cursor `agent-transcripts/` paths; cross-model review → fresh-context read-only subagent (pi is single-model per session; heading renamed); encode-lessons-in-structure pointer → inlined plain-language principle; output location → repo `tmp/` convention at use sites |
-| create-verification-skill | fork | generated skill location `.cursor/skills/verify-<app>/` → `.agents/skills/verify-<app>/`; Drive section: pi has bash not computer use — headless Playwright + curl + DB CLI + screenshot saved to `tmp/` and read back; maintenance pointer → "re-run periodically after meaningful app changes" (vendored `maintain-verification-skill` reference dropped); 2026-10-19 upstream (d457567) adoptions: Launch says ready means usable, not just that a process answers — must reach a usable state from an empty data dir including migrations and seed data; a seed-data precondition a journey needs makes the journey report a failure with the reason in that feature's `Gotchas`, never a weakened journey; §4 proof run against a stand-in for the real target must list every setup step the stand-in did that the target will not |
-| unslop | fork | none — verbatim copy, no Cursor-isms found on audit. 2026-10-19 upstream (d457567): description drops "Must always apply." — Cursor always-apply phrasing, dead weight on a `disable-model-invocation` skill |
-
-## Matt skills → fork (hand-maintained)
-
-| Skill | Type | Deviations |
-|---|---|---|
-| ask-pack | fork | fork of upstream `ask-matt`, renamed: the router is remapped from Matt's 20-skill engineering flow onto this pack's 29 skills — main flow gains a conductor step (`rigor` replaces implement-spec-style whole-spec orchestration; per-ticket `implement` kept for hand-driving), new "Per-task rigor checks" section covers the pstack forks (interrogate, blast-radius, benchmark-checklist, correct, show-me-your-work, create-verification-skill, unslop); upstream skills not in the pack dropped (grill-me, to-questionnaire, wizard, teach, implement-spec, pr); `wait-what`, `handoff`, and `writing-for-agents` are pack members (`handoff` ships in the pack but is installed globally); `writing-for-agents` appears in the "Vocabulary underneath" section (three model-invoked references, not two); phase-boundary section pi-adapted (pi's `/new` and `/compact`; support file PHASE-BOUNDARIES.md carried with the same adaptations); standalone section lists pack contents (grilling, prototype, research, wait-what) |
-
-## New skills (ours)
-
-| Skill | Type | Notes |
-|---|---|---|
-| rigor | new (renamed from rigor-mode) | conductor: intake router (issue / feature / md-file batch / seam sweep / diagnosing-bugs / improve-codebase-architecture / to-spec routes), merit gate (stop before planning if long-run benefit is questionable), S/M/L size tiers with L = queue of S/M units, phases (intake → ground → plan gate → build → verify → review → close), batch + sweep playbooks, batch failure rule (halt, revert failed item, checkpoint blocked, yield), checkpoint barrier (`tmp/checkpoints/<slug>.tsv`, show-me-your-work format), run budget 3-5 units per workflow, repo-derived one-way doors (from AGENTS.md + universal set; domain examples apply only where they match), tracker-optional, handoff doc at L-run barriers, skill-map table, cold-start child delivery rules (skill: option or packet-inlined SKILL.md + the pi facts restated per packet - no Skill tool (only name/description/path reach the prompt; the child reads the file), /skill:<name> to force, ceilings in subagent-orchestration-policy; recursive: a child that may delegate gets the same rule to pass down; workers/reviewers/research children get working skills, parent keeps planning + single-writer skills); inlines child mechanics (Delegation mechanics section distilled from subagent-orchestration-policy) so rigor never loads it; that skill remains the default for non-rigor delegated work. Rename 2026-10-12: "mode" was redundant — triggers ("rigor this", "rigor on issue 142") unchanged; body self-references, skill-map retro row wording (vendored → wrapper), and openai.yaml display_name updated in the same change | intake router (issue / feature / md-file batch / seam sweep / diagnosing-bugs / improve-codebase-architecture / to-spec routes), merit gate (stop before planning if long-run benefit is questionable), S/M/L size tiers with L = queue of S/M units, phases (intake → ground → plan gate → build → verify → review → close), batch + sweep playbooks, batch failure rule (halt, revert failed item, checkpoint blocked, yield), checkpoint barrier (`tmp/checkpoints/<slug>.tsv`, show-me-your-work format), run budget 3-5 units per workflow, repo-derived one-way doors (from AGENTS.md + universal set; domain examples apply only where they match), tracker-optional, handoff doc at L-run barriers, skill-map table, cold-start child delivery rules (skill: option or packet-inlined SKILL.md + the pi facts restated per packet - no Skill tool (only name/description/path reach the prompt; the child reads the file), /skill:<name> to force, ceilings in subagent-orchestration-policy; recursive: a child that may delegate gets the same rule to pass down; workers/reviewers/research children get working skills, parent keeps planning + single-writer skills); inlines child mechanics (Delegation mechanics section distilled from subagent-orchestration-policy) so rigor never loads it; that skill remains the default for non-rigor delegated work |
-| verify-<app> | new (generated) | output of running the create-verification-skill fork against a consumer repo; lives in that repo, not here |
-
-## Build & validation scripts
-
-- `scripts/build-pack.mjs` — materializes the Matt wrappers from
-  `vendors/mattpocock/skills/` into `.agents/skills/` (transforms + optional
-  `## pi notes` + whole-folder copy). Forks, `ask-pack`, and `rigor` are
-  hand-maintained and untouched by the build.
-- `scripts/check-pack.mjs` — validates the pack: frontmatter parses (pi's own
-  yaml lib), in-pack cross-references resolve (both the repo `.agents/skills/`
-  and the scope-agnostic `<skills-root>/` forms), no `vendors/` references,
-  no Cursor-isms, relative links resolve, and no reference to a dropped skill.
-  Run after any rebuild or re-vendor.
-
-## Upstream defect fixes (2026-10-12)
-
-Defects found auditing the materialized pack; all fixed at the source
-(generator / validator / hand-maintained forks), never by hand-editing build
-output.
-
-1. **`retro` pointed at a dropped skill.** Vendor `retro` step 1 fetches
-   `writing-for-agents` for the writing style guide, but that skill had been
-   left out of the pack, so the reference materialized as a dead path (the
-   `§Files` bullet named it too). Fixed by **promoting `writing-for-agents` into
-   the pack** rather than deleting the references: it is added to the
-   `WRAPPERS` map (`productivity` bucket), appears in ask-pack's "Vocabulary
-   underneath" section, and `retro` now resolves to it through the normal
-   transform. This keeps the upstream `retro` text intact. Files:
-   `scripts/build-pack.mjs`, `.agents/skills/writing-for-agents/`,
-   `.agents/skills/ask-pack/SKILL.md`, `.agents/skills/retro/SKILL.md`.
-2. **`rigor` named a dropped skill in prose.** "integration branch
-   (implement-spec shape)" referenced an upstream skill the pack drops; reworded
-   to "whole-spec orchestration shape". File: `.agents/skills/rigor/SKILL.md`.
-3. **Cross-skill paths were scope-hardcoded.** The transform emitted
-   `.agents/skills/<name>/SKILL.md`, which is dead for the skills the pack ships
-   global-only (`handoff`, `grilling`, `code-review`) and wrong whenever a
-   consumer installs a subset globally - exactly what a consumer repo does. A read-only
-   experiment (`tmp/review-root-form.md`, 4 cold-start pi processes per form plus
-   a deterministic resolution matrix) measured 4 of 6 layouts failing for the
-   hardcoded form, including a real consumer repo's `triage` → `grilling` case; the model
-   recovered every time only by burning an extra search call, which a weaker model
-   or a read-only child cannot do. The same experiment established that
-   `<skills-root>` is not a pi token, so the pack now emits the hybrid form
-   (skill name + path) and defines `<skills-root>` once in `ask-pack`. The two
-   hand-maintained files that carried the hardcoded form (`rigor`, `handoff`) were
-   updated to match. The validator resolves both path forms. Files:
-   `scripts/build-pack.mjs`, `scripts/check-pack.mjs`, `.agents/skills/rigor/SKILL.md`,
-   `.agents/skills/handoff/SKILL.md`, `.agents/skills/ask-pack/SKILL.md`, and the
-   rebuilt wrappers.
-
-Note: this changes the installed pack's skill count (28 → 29) and its
-cross-reference form, so any repo that installed an earlier build should
-re-copy `.agents/skills/` to pick both up.
-
-## Explicitly not ported
-
-`poteto-mode`, `setup-pstack`, `poteto-help`, `automate-me`, `arena`, `swarm`,
-`recall`, `reflect`, `how`, `why`, `architect`, `figure-it-out`,
-`no-comments`, `typescript-best-practices`, pstack `tdd`, pstack `teach`,
-`grill-me` — Cursor-coupled or duplicate of an installed skill (reasons logged
-in the design discussion, 2026-10).
+- Direct slash entry to `/architect`, `/interrogate`, `/blast-radius`, `/how`, `/why`, `/swarm`, `/arena`, `/figure-it-out`, `/correct`, `/benchmark-checklist`. Reach them through their host skill's mode or a `rigor` route.
+- Each principle leaf's own description, and with it independent model-triggering of principles.
+- Cursor cloud agents and Bugbot, with no replacement.

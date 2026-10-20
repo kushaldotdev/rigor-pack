@@ -1,3 +1,5 @@
 interface:
   display_name: "Rigor"
-  short_description: "Conductor for full-cycle engineering work"
+  short_description: "The one workflow: interview, then AFK build"
+policy:
+  allow_implicit_invocation: false

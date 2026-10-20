@@ -1,211 +1,227 @@
 # skills-harness
 
-Testbed for a vendored, materialized agent-skills pack on pi: Matt Pocock's
-[mattpocock/skills](https://github.com/mattpocock/skills) (engineering
-lifecycle) combined with poteto's
-[pstack](https://github.com/cursor/plugins/tree/main/pstack/skills) (per-task
-rigor), orchestrated by the `rigor` conductor skill and routed by the
-`ask-pack` finder.
+One merged agent-skills pack built from two upstream collections, with one workflow. It installs into any repo and runs on **pi**, **OpenAI Codex CLI** and **Claude Code** from the same files.
 
-## Design rule: self-contained pack
+- [mattpocock/skills](https://github.com/mattpocock/skills) (engineering lifecycle: grill → spec → tickets → implement → review → retro)
+- [pstack](https://github.com/cursor/plugins/tree/main/pstack/skills) (playbooks, principles, adversarial review, decision trails, autonomy)
 
-- **`.agents/skills/` is the deliverable and is self-contained.** Installing
-  into a repo = copying `.agents/skills/` and nothing else. No `vendors/`
-  needed at runtime; every skill works from the copied folder alone.
-- `vendors/` holds **pristine upstream copies, trimmed to the skill buckets we
-  use** (Matt: `engineering` + `productivity`; pstack: `skills/`). Never edit
-  anything in `vendors/`. It exists for upgrade diffs only. Upgrading =
-  re-clone upstream at the pin, copy the same subset, then diff (the `.git`
-  dirs were stripped, so upgrades re-clone rather than pull).
-- `.agents/skills/` holds **materialized wrappers**, **forks**, and **new**
-  skills:
-  - **Materialized wrapper** (the Matt skills): build output of
-    `scripts/build-pack.mjs` — the upstream SKILL.md content is inlined with
-    mechanical transforms (Skill-tool phrasings → in-pack skill paths, slash
-    commands → `/skill:<name>`), the whole upstream folder
-    (support files) is copied, plus a short "pi notes" section only where
-    that skill needs one.
-    Never hand-edit a wrapper — rebuild instead.
-  - **Fork** (poteto ports that assume Cursor): hand-maintained content
-    genuinely edited for pi. Every deviation logged in `CHANGES.md`.
-  - **New** (ours): `rigor` conductor, generated verification skills.
-- Every deviation from upstream — transform or fork edit — is logged in
-  [`CHANGES.md`](./CHANGES.md). If it isn't logged, it doesn't exist.
-- Skill delivery to subagents: pi-subagents children are cold-start and load
-  no skills on their own; the parent delivers each child's skill via the
-  `skill:` option or by packet-inlining the operative SKILL.md path + rules,
-  plus the pi facts (no `Skill` tool - the child reads the SKILL.md file,
-  the user forces one with `/skill:<name>`; ceilings in
-  `subagent-orchestration-policy`) since skills carry no shared adaptations
-  block. A child that may delegate further gets the same delivery rule to pass
-  down. Workers/reviewers/research children get working skills; the parent
-  keeps planning and single-writer skills.
+You need two names: run **`setup`** once per repo, then give every task to **`rigor`**. `rigor` interviews you once at the start. After that the run is AFK: it plans, builds, verifies and reviews without asking you anything, and parks anything irreversible as a gate for you to answer at the end.
 
-## The pack (29 skills)
+## The pack: 17 skills
 
-All live in `.agents/skills/`; every one traces to a vendor row in `CHANGES.md`.
+| Skill | Who invokes it | What it is for |
+|---|---|---|
+| `rigor` | you | The one workflow: route, interview, AFK run, resume, close |
+| `setup` | you, once per repo | Every repo-level question, answered once into `docs/agents/` |
+| `triage` | you | Move incoming issues through triage roles (human-present) |
+| `handoff` | you | Hand off, pause, or pick up work |
+| `retro` | you | Retro, reflect, correct, automate-me |
+| `wait-what` | you | Re-pitch the last message, or catch up |
+| `teach` | you | Explain code, or a multi-session learning workspace |
+| `grilling` | model or you | Interview primitive (restate, sharpen, grill, questionnaire) |
+| `domain-modeling` | model or you | Glossary, ADRs, model-the-domain |
+| `codebase-design` | model or you | Deep modules, architect, arena, 11 design principles, TypeScript |
+| `tdd` | model or you | Red-green at agreed seams; bug regression tests |
+| `diagnosing-bugs` | model or you | Diagnosis loop, bug/perf/hillclimb/forensics playbooks |
+| `code-review` | model or you | Standards + spec, interrogate, blast radius, comments, bot triage |
+| `verify` | model or you | Prove it works; create/maintain `verify-<app>`; formal verification; benchmark checklist |
+| `research` | model or you | Research, how, why, recall |
+| `prototype` | model or you | Throwaway code that answers one design question |
+| `writing` | model or you | Writing for agents, PR bodies, technical writing, unslop |
 
-### New — ours
+Each host `SKILL.md` is a short hand-written dispatcher. The upstream bodies it uses are copied verbatim under `references/matt/` and `references/pstack/`, and the dispatcher links to them by relative path. All 83 upstream skills are inside (82 copied, `make-bot-ui` dropped); see [CHANGES.md](CHANGES.md).
 
-| Skill | Purpose |
-|---|---|
-| `rigor` | The conductor. Point it at a GitHub issue, a feature description, a markdown file of work items, or a seam/PR review range; it routes through the skills below, fans out pi `subagent` children, enforces size tiers (S/M/L), a merit gate (stop before planning if the work's long-run benefit is questionable), checkpoint barriers, batch failure stop-and-yield, and repo-derived one-way-door autonomy gates. Tracker-optional. Phase diagram at the top of its SKILL.md. |
-| `ask-pack` | "Which skill fits?" router over the pack: main flow, on-ramps, per-task rigor checks, standalone skills. Fork of Matt's `ask-matt`, remapped to this pack. |
+```mermaid
+flowchart LR
+  subgraph vendors["vendors/ (pristine, never edited)"]
+    M[mattpocock/skills]
+    P[pstack/skills]
+  end
+  B[[scripts/build-pack.mjs]]
+  subgraph pack[".agents/skills/ (the deliverable)"]
+    H["17 host SKILL.md<br/>(hand-written dispatchers)"]
+    R["references/matt, references/pstack<br/>(verbatim copies, SKILL.md renamed)"]
+    G["agents/openai.yaml, INDEX.md, manifest.json<br/>(generated)"]
+  end
+  M --> B
+  P --> B
+  B --> R
+  B --> G
+  H -- relative links --> R
+  C[[scripts/check-pack.mjs]] -. hashes, links, AFK rows .-> pack
+```
 
-### Materialized wrappers — Matt Pocock skills, inlined + adapted
+## 1. First-time setup
 
-| Skill | Purpose |
-|---|---|
-| `tdd` | Test-driven red-green-refactor loop; seam questions before code. |
-| `code-review` | Review a diff on two axes (standards + spec) via two parallel read-only reviewer children. |
-| `diagnosing-bugs` | Diagnosis loop for hard bugs and perf regressions: reproduce, isolate, root-cause, prove the fix. |
-| `domain-modeling` | Build and sharpen `GLOSSARY.md` and ADRs as the domain model crystallizes. |
-| `grill-with-docs` | Relentless interview to sharpen a plan, writing ADRs/glossary as it goes. |
-| `implement` | Implement a spec or ticket set end to end (tdd at seams, code-review at close). |
-| `improve-codebase-architecture` | Scan for deep-module opportunities, present as visual report, grill the pick. |
-| `prototype` | Throwaway prototype to answer a design question before committing. |
-| `research` | Investigate a question against primary sources, capture findings as a repo doc. |
-| `to-spec` | Synthesize the current conversation into a spec published to the tracker. |
-| `to-tickets` | Break a plan/spec into tracer-bullet tickets with blocking edges on the tracker. |
-| `triage` | Move issues/PRs through triage roles; verify, grill, write agent-ready briefs. |
-| `wayfinder` | Plan multi-session work as a map of decision tickets; resolve the frontier one at a time. |
-| `codebase-design` | Deep-module vocabulary: interfaces, seams, deletion tests. |
-| `retro` | Structured retrospective on a completed unit of work. |
-| `setup-matt-pocock-skills` | One-time repo config: tracker, triage labels, domain doc layout. |
-| `grilling` | Stress-test a plan or decision with rounds of yes-shaped questions. |
-| `wait-what` | "That last message didn't land" reset: re-pitch it in plain language using `GLOSSARY.md` vocabulary. |
-| `writing-for-agents` | Reference for writing any document an agent consumes - a skill, `AGENTS.md`/`CLAUDE.md`, or a pointed-at doc - and the context-pointer wording that decides when the agent reaches it. |
+```mermaid
+flowchart TD
+  A["In this repo: node scripts/install-harness.mjs<br/>--repo=PATH/TO/REPO --targets=pi,codex,claude"] --> B["Copies .agents/skills/ into the repo<br/>writes .agents/harness-targets.json<br/>Claude: per-skill symlinks .claude/skills/NAME"]
+  B --> C["node scripts/install-harness.mjs --repo=... --check"]
+  C --> D["In the target repo, start your harness<br/>and invoke setup<br/>(pi: /skill:setup · Claude: /setup · Codex: $setup)"]
+  D --> E["setup explores first: git remote, AGENTS.md / CLAUDE.md,<br/>glossary file, ADRs, gh/glab/bun, existing verify-* skill,<br/>configured model roles"]
+  E --> F["Asks one section at a time, recommended answer first:<br/>1 issue tracker · 2 triage labels · 3 domain docs + glossary name<br/>4 instruction file · 5 run state · 6 PR template<br/>7 authority (commit/push/PR/merge) · 8 verify skill · 9 model roles"]
+  F --> G{"Generate verify-APP now?"}
+  G -- yes --> H["create-verification-skill interviews the repo<br/>writes .agents/skills/verify-APP/"]
+  G -- no --> I
+  H --> I["Shows drafts, you edit, then writes:<br/>docs/agents/issue-tracker.md, triage-labels.md, domain.md, workflow.md<br/>## Agent skills block in AGENTS.md (+ CLAUDE.md: @AGENTS.md)"]
+  I --> J(["Done. These questions are never asked again."])
+```
 
-### Forks — upstream skills edited for pi
+## 2. Giving it a task
 
-| Skill | Purpose |
-|---|---|
-| `interrogate` | Adversarial review: 4 persona reviewers (skeptic, bug hunter, contract breaker, simplifier) attack the change; synthesized verdict; reviewers run on the reviewer tier configured in agent definitions (missing tier = child's own default, never the root model). |
-| `blast-radius` | Find what a change breaks beyond the diff; prove the one safety fact by running real code. |
-| `correct` | Mine the repo's repeated agent mistakes and make each one impossible (architecture > types > lint > test). |
-| `benchmark-checklist` | 7-question vetting before trusting any perf number you measured. |
-| `show-me-your-work` | TSV decision trail for long/unattended runs; audit against git evidence; fresh-context reviewer flags. |
-| `create-verification-skill` | Generate a repo-local `verify-<app>` skill that drives the real app: Playwright + curl + DB CLI + screenshots read back as images. |
-| `unslop` | Strip AI-writing tells from prose surfaces. |
-| `handoff` (Matt: productivity) | Compact the conversation into a `tmp/<timestamp>-<slug>.md` handoff doc for the next agent; ships in the pack but is always installed globally, never into a repo. |
-| `ask-pack` (Matt: engineering) | Router over the whole pack: main flow, on-ramps, per-task checks, standalone skills. |
+```mermaid
+flowchart TD
+  T["rigor + any task:<br/>idea, issue, spec, bug, migration, review range"] --> P0{"docs/agents/* present?"}
+  P0 -- no --> S["Stop. Ask you to run setup.<br/>Assumes nothing."]
+  P0 -- yes --> RS{".audit/SLUG.brief.md exists?"}
+  RS -- yes --> RES["Resume: three questions, then AFK"]
+  RS -- no --> RT["Route: feature, multi-session build, wayfinder,<br/>bug/perf, refactor, investigation, program,<br/>autonomous run, babysit/ship, review only"]
+  RT --> INT["Interview (you are here):<br/>restate → sharpen → grill + domain modeling<br/>→ checklist → spec + tickets → brief"]
+  INT --> OK{"You confirm the brief"}
+  OK --> AFK["AFK run (no more questions):<br/>ground → design → build → verify → review"]
+  AFK --> CL["Close report: what changed, what was verified,<br/>unit results, open gates (your only asks), next unit, PR links"]
+```
+
+## 3. Planning (the interview)
+
+```mermaid
+flowchart TD
+  A["in-your-own-words: restate goal and problem"] --> B["sharpen: expert approach, real intent, level of spec"]
+  B --> C["grilling rounds: whole frontier per round,<br/>recommended answer each, 'yes' accepts"]
+  C --> D{"Question needs a fact?"}
+  D -- yes --> E["Child agent looks it up; you are never asked for facts"]
+  D -- "needs running code" --> F["prototype settles it"]
+  E --> C
+  F --> C
+  C --> G["domain-modeling: glossary terms + ADRs as decisions settle"]
+  G --> H["Checklist closed: done predicate, seams, review fixed point,<br/>one-way doors, gates, budget, verify surface,<br/>out of scope, forbidden commands/paths, dead ends"]
+  H --> I{"Route needs spec + tickets?"}
+  I -- yes --> J["to-spec → tracker<br/>to-tickets: quiz on granularity and blocking edges → tracker<br/>(local: .scratch/FEATURE/issues/NN-*.md)"]
+  I -- no --> K
+  J --> K["Write .audit/SLUG.brief.md + preferences.md<br/>open .audit/SLUG.tsv trail · you confirm"]
+```
+
+## 4. Implementing (the AFK run)
+
+```mermaid
+flowchart TD
+  G["ground: how over the area; merit + premise check<br/>gate: trail row"] --> D["design: codebase-design, architect/arena for one-way doors<br/>gate: every door crossed is pre-approved in the brief"]
+  D --> U["next ready unit (ticket frontier / playbook step)"]
+  U --> B["build: tdd at the brief's seams (one child per unit,<br/>own worktree if allowed)<br/>gate: commit + check command exits 0 + trail row"]
+  B --> V["verify: verify-APP on the real surface<br/>gate: evidence exists at the logged path"]
+  V -- no evidence --> B
+  V -- no startable app --> UV["unit = unverified, run continues"]
+  V --> RV["review: standards + spec, interrogate, blast radius, no-comments<br/>gate: blocking findings = 0 or round limit"]
+  RV -- findings --> FX["fresh child fixes with consolidated scope"] --> RV
+  RV --> RU["unit = verified, trail row"]
+  UV --> MORE
+  RU --> MORE{"more units?"}
+  MORE -- yes --> U
+  MORE -- no --> C["close: re-check done predicate on the real artifact<br/>PR body (recorded template) + unslop · ketchup-style report"]
+  X["Irreversible step not pre-approved"] -. park in gates.md, route around .-> U
+```
+
+Mid-run rules ([rigor/AFK.md](.agents/skills/rigor/AFK.md)): a reversible ambiguity gets the conservative choice and a logged reason. An unapproved irreversible step becomes a gate. A missing harness feature gets the documented fallback, logged as `degraded: ...`. Unit results are only `verified`, `unverified`, `blocked`, `reverted` or `skipped`.
+
+## 5. Implementing across separate sessions
+
+```mermaid
+sequenceDiagram
+  actor You
+  participant S1 as Session 1
+  participant Repo as Repo + tracker (.audit/, tickets, branch)
+  participant S2 as Session 2..N (fresh context)
+  You->>S1: rigor FEATURE
+  S1->>You: interview (one time)
+  S1->>Repo: spec + tickets on tracker, brief.md, preferences.md, trail.tsv
+  S1->>Repo: build ticket 01 → verify → review → commit, trail row
+  S1->>Repo: commit .audit/, last trail row = next ready ticket
+  Note over S1: context budget short or ticket done → end session
+  You->>S2: rigor resume SLUG
+  S2->>Repo: read brief, preferences, trail tail, gates.md, git log, open tickets
+  S2->>You: 3 questions: premise changed? new doors/approvals (gate answers)? continue or re-plan?
+  S2->>Repo: start row, then build next frontier ticket(s) AFK
+  S2->>Repo: commit .audit/ + next ready unit
+  Note over S2: repeat per ticket until the frontier is empty
+  S2->>You: close report + open gates
+```
+
+Planning and building share a session by default (Continue is the first branch to rule out). Start a fresh session per ticket for multi-session builds, when the context budget is short, or for a wayfinder effort. State never lives in chat: a fresh session in any clone reaches full working state from `.audit/`, the tracker and git. To move to another harness or a colleague mid-phase, use `handoff`.
+
+## Per-harness differences
+
+The skill bodies, references, playbooks and scripts are byte-identical on every harness. Only these differ:
+
+| | pi | Claude Code | Codex CLI |
+|---|---|---|---|
+| Finds `.agents/skills/` | natively | no: needs `.claude/skills/<name>` symlinks (installer) | natively |
+| Invoke | `/skill:rigor` | `/rigor` | `$rigor` |
+| Hidden-skill flag | frontmatter | frontmatter | generated `agents/openai.yaml` |
+| Reads | `AGENTS.md`, `CLAUDE.md` | `CLAUDE.md` (which imports `@AGENTS.md`) | `AGENTS.md` |
+| Subagents | pi-subagents extension | Agent tool | built in |
+| Notes | [rigor/harness/pi.md](.agents/skills/rigor/harness/pi.md) | [rigor/harness/claude.md](.agents/skills/rigor/harness/claude.md) | [rigor/harness/codex.md](.agents/skills/rigor/harness/codex.md) |
+
+Checked on 2026-10-20 from a fresh repo: each harness lists exactly the 10 advertised pack skills and none of the 7 hidden ones. `rigor` opens by explicit invocation on all three (pi 1.3.0, codex-cli 0.163.0, Claude Code), and with no setup it stops and asks for `setup`. Claude Code also ships a built-in `/code-review` that may shadow this pack's; `rigor` reaches `code-review` by path, so the workflow does not depend on the name.
 
 ## Layout
 
 ```
 skills-harness/
-├── README.md                  ← this file
-├── CHANGES.md                 ← exact deviations from upstream, per skill
+├── README.md, CHANGES.md        ← this file; per-skill provenance
 ├── scripts/
-│   ├── build-pack.mjs         ← materializes wrappers from vendors/ into .agents/skills/
-│   └── check-pack.mjs         ← validates the pack (frontmatter, refs, self-contained, Cursor-isms)
-├── vendors/                   ← pristine upstream, NEVER edit; upgrade diffs only
-│   ├── mattpocock/skills/     ← engineering/ + productivity/ only @ 49dd158 (v1.3.1)
-│   └── poteto/pstack/         ← skills/ only @ d457567 (56 skills)
-├── .agents/skills/            ← the deliverable; pi auto-loads these when cwd = this folder
-│   ├── rigor/                 ← NEW: conductor (phases, batch/sweep playbooks,
-│   │                             merit gate, autonomy gates, checkpoint barriers)
-│   ├── ask-pack/              ← FORK of ask-matt: pack-wide skill router
-│   ├── <matt-name>/           ← MATERIALIZED WRAPPERS: tdd, code-review, retro, ...
-│   └── <poteto-name>/         ← FORKS: blast-radius, interrogate, correct, ...
-└── tmp/                       ← scratch, never committed
+│   ├── pack-layout.mjs          ← which vendor skill goes in which host (the plan)
+│   ├── lib/pack.mjs             ← copy plan, relink transform, frontmatter reader, hashing
+│   ├── build-pack.mjs           ← vendors/ → .agents/skills/ copies + generated files
+│   ├── check-pack.mjs           ← validates the pack (also on an installed copy, --repo=)
+│   └── install-harness.mjs      ← installs into a repo; per-harness footprint; --check
+├── vendors/                     ← pristine upstream, never edited
+├── .agents/skills/              ← the deliverable
+│   ├── manifest.json            ← skills, every copied file with vendor/pre/post sha256
+│   ├── rigor/  SKILL.md INTERVIEW.md AFK.md harness/ references/{INDEX.md,matt,pstack}
+│   ├── setup/  SKILL.md templates/workflow.md references/...
+│   └── <host>/ SKILL.md agents/openai.yaml references/{matt,pstack}/<name>/<name>.md
+├── .agents/harness-targets.json ← targets this checkout installs for
+└── .claude/skills/<name>        ← symlinks for Claude Code
 ```
 
-## Build & validate
+## Build, check, install
 
 ```bash
-node scripts/build-pack.mjs   # rebuild wrappers from vendors/ (never hand-edit them)
-node scripts/check-pack.mjs   # must pass before any commit: 29/29 skills
+node scripts/build-pack.mjs        # regenerate copies from vendors/; a second run is a zero diff
+node scripts/check-pack.mjs        # must pass before any commit
+node scripts/install-harness.mjs --repo=../my-app --targets=pi,codex,claude
+node scripts/install-harness.mjs --repo=../my-app --check
 ```
 
-## Testing
+`check-pack` fails on any of these:
 
-```bash
-cd ~/projects/skills-harness
-pi          # skills in .agents/skills/ auto-load for this cwd
-```
+- a broken link
+- a deleted or extra skill (counted against the manifest)
+- an edited copy
+- a vendor file that changed since the build
+- an interactive "ask the user" line in AFK scope with no row in `rigor/AFK.md`
+- an `openai.yaml` flag that disagrees with the frontmatter
+- a nested `SKILL.md`
+- a reference to something outside the pack
+- a skill list over Codex's 8,000-character default
+- a missing Claude symlink for a declared target
 
-## Installing into a repo (e.g. my-app)
-
-### Placement — which skills live where
-
-One rule first: **a skill lives in exactly one place.** The same skill name
-in repo `.agents/skills/` and global `~/.pi/agent/skills/` double-advertises
-to the agent — install-time deletions below are part of the install, not
-optional cleanup.
-
-| Location | Skills | Why |
-|---|---|---|
-| Repo `.agents/skills/` | **the whole pack, as-is** | skills resolve in-pack cross-references (`.agents/skills/<name>/SKILL.md`) and act on that repo's surfaces; self-contained means nothing else is needed |
-| Global `~/.pi/agent/skills/` | `handoff` (pack member), `subagent-orchestration-policy` | harness-level, repo-agnostic; `handoff` ships in the pack but is always installed globally, never into a repo |
-| Global, optional (pack-less repos only) | `grilling`, `unslop`, `code-review`, `diagnosing-bugs` | standalone, universal skills that work with no repo pack; if a repo with the full pack also sees the global copy, delete one side |
-| Repo-specific, stays in the target repo | `codebase-memory`, `postgres-query`, `redis-inspect`, generated `verify-<app>` | written against that repo, not part of this pack |
-
-### Install steps
-
-```bash
-# 1. delete the target repo's stale skills this pack supersedes
-#    (No-Legacy: replace = delete — a consumer repo's old tdd/code-review/domain-modeling
-#    copies must go, not merge)
-rm -rf <repo>/.agents/skills/<stale-names>
-# 2. copy the pack — this is the entire install
-rsync -a --delete .agents/skills/ <repo>/.agents/skills/
-# 3. delete any global copy of a skill the repo pack now carries (double-advertise)
-rm -rf ~/.pi/agent/skills/{grilling,unslop,code-review,diagnosing-bugs}
-# 4. rename the domain doc the pack's skills speak
-(cd <repo> && git mv CONTEXT.md GLOSSARY.md)   # if the repo still has CONTEXT.md
-# 5. expose the same skills to other harnesses
-bash scripts/link-harnesses.sh repo
-```
-
-### Harness symlinks (OpenAI / Claude / Cursor / others)
-
-Canonical stores stay where they are — other harnesses get a symlink, never a
-copy, so there is one source of truth to upgrade:
-
-```bash
-bash scripts/link-harnesses.sh repo    # .claude/skills .codex/skills .cursor/skills -> .agents/skills
-bash scripts/link-harnesses.sh global  # ~/.claude/skills ~/.codex/skills ~/.cursor/skills -> ~/.pi/agent/skills
-bash scripts/link-harnesses.sh all     # both
-```
-
-The script is idempotent (`ln -sfn`), and refuses to replace an existing
-**real** directory (prints SKIP) — resolve that manually, keeping the
-single-owner rule. Verify with `ls -la <target>` (readlink should show the
-canonical store). If a harness does not follow symlinked skill dirs, fall
-back to per-skill links:
-
-```bash
-for d in .agents/skills/*/; do ln -sfn "$PWD/$d" ".claude/skills/$(basename "$d")"; done
-```
-
-Global-vs-repo duplicates then apply inside those harnesses exactly as for pi:
-when a repo carries the full pack, the global symlink's shared names are
-shadowed by convention — keep global to `handoff` + `subagent-orchestration-policy`
-(plus the optional four for pack-less repos) unless you accept the duplicate.
+To change behaviour, edit a host's `SKILL.md`, `rigor/*.md` or `setup/templates/`. Never edit a copy under `references/matt/` or `references/pstack/`: the build overwrites it and the check flags it.
 
 ## Upgrading upstream
 
 ```bash
-# refresh a vendor (no .git kept, so re-clone and diff)
 git clone --depth 1 https://github.com/mattpocock/skills /tmp/mp-fresh
 diff -r /tmp/mp-fresh/skills/engineering vendors/mattpocock/skills/engineering
-# then: copy the new subset in, node scripts/build-pack.mjs,
-# node scripts/check-pack.mjs, and re-verify every CHANGES.md row against
-# the new upstream text.
+# copy the same subset into vendors/, update the pin in scripts/pack-layout.mjs, then:
+node scripts/build-pack.mjs && node scripts/check-pack.mjs
+# check-pack names every new interactive line that needs an AFK.md row,
+# and build-pack fails on any new vendor skill with no host.
 ```
 
 ## Vendor contents
 
-Verbatim skill copies, trimmed to used buckets; `.git` stripped, upstream
-`LICENSE` kept for attribution, bucket READMEs kept:
-
-| Vendor | Kept | Dropped |
+| Vendor | Kept | Ref |
 |---|---|---|
-| mattpocock/skills | `skills/engineering/` (20 skills), `skills/productivity/` (7 skills), bucket READMEs, `LICENSE` | `deprecated/`, `in-progress/`, `misc/`, docs, scripts, CI, plugin manifests |
-| poteto/pstack | `skills/` (56), `LICENSE` | `README.md`, docs, `.gitignore` |
-
-| Vendor | Ref | Date |
-|---|---|---|
-| mattpocock/skills | `49dd158d1076134a641b33efb035946536778336` (v1.3.1) | 2026-10-09 |
-| cursor/plugins (pstack) | `d457567332aa6989e753ea289f30ea2bfbc80bc0` (v0.15.28) | 2026-10-19 |
+| mattpocock/skills | `skills/engineering/` (20), `skills/productivity/` (7), bucket READMEs, `LICENSE` | `49dd158` (v1.3.1), 2026-10-09 |
+| cursor/plugins pstack | `skills/` (56), `LICENSE` | `d457567` (v0.15.28), 2026-10-19 |

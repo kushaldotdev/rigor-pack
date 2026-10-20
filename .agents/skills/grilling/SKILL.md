@@ -1,29 +1,29 @@
 ---
 name: grilling
-description: Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.
----
-Interview the user relentlessly until you reach a shared understanding. Map this as a **design tree**: every decision branches into the decisions that hang off it.
-
-Work the tree in **rounds**. The **frontier** is every decision whose prerequisites are already settled: the questions you can ask _now_ without guessing at answers you haven't heard yet. Ask the whole frontier in one round: number each question and give your recommended answer. Then wait for the user's answers before the next round.
-
-Format a round like so:
-
-```
-❓ **Q1** - **<question title>**: <question body, might be multiple paragraphs, including multiple choices>
-
-➡️ <your recommended answer>
-
+description: "Interview the user about a plan, decision, or idea until nothing is assumed. Use when the user wants to stress-test their thinking, says grill, restate, sharpen, or needs a questionnaire for someone else."
 ---
 
-❓ **Q2** - **<question title>**: <question body, might be multiple paragraphs, including multiple choices>
+# Grilling
 
-➡️ <your recommended answer>
-```
+The interview primitive. Facts are your job, decisions are the user's.
 
-Word each question so "yes" accepts your recommended answer.
+## Modes
 
-Each round the user answers reshapes the tree: settled decisions push the frontier outward and unblock questions that depended on them. Recompute the frontier and ask the next round. A question whose answer depends on another question still open in this round belongs to a _later_ round, not this one.
+Read the body for the mode, then follow it.
 
-Finding _facts_ is your job, never the user's. When a frontier question needs a fact from the environment (filesystem, tools, etc.), dispatch a sub-agent to find it; don't ask the user for anything you could look up yourself. Don't block on it: a running exploration is an unsettled prerequisite, so only the questions downstream of it wait for the sub-agent to report; ask the rest of the frontier now. The _decisions_ are the user's: put each to them and wait.
+| Mode | When | Body |
+|---|---|---|
+| grill (default) | Stress-test a plan, decision, or idea | [grilling](references/matt/grilling/grilling.md) |
+| grill with docs | In a repo: also sharpen glossary terms and record ADRs | [grill-with-docs](references/matt/grill-with-docs/grill-with-docs.md), which runs grilling plus the [domain-modeling](../domain-modeling/SKILL.md) skill |
+| grill me | No repo under the plan (stateless) | [grill-me](references/matt/grill-me/grill-me.md) |
+| restate | Before round one: say back the user's goal and problem | [in-your-own-words](references/pstack/in-your-own-words/in-your-own-words.md) |
+| sharpen | Before round one: the expert approach and the right level of specification | [sharpen](references/pstack/sharpen/sharpen.md) |
+| questionnaire | The decision belongs to a third party | [to-questionnaire](references/matt/to-questionnaire/to-questionnaire.md) |
 
-The session is done when the frontier is empty: every branch of the design tree visited, nothing left silently assumed. Do not act on it until the user confirms you have reached a shared understanding.
+The `rigor` interview runs restate, then sharpen, then grill with docs.
+
+## Pack rules
+
+- Upstream bodies name other skills by upstream name ("call the Skill tool with `domain-modeling`"). Resolve each name in [the name index](../rigor/references/INDEX.md).
+- Where a body says `GLOSSARY.md`, use the glossary file that `docs/agents/domain.md` records (`GLOSSARY.md` or `CONTEXT.md`).
+- Grilling needs a human. It belongs to the start of a run, never to its AFK part.
