@@ -27,8 +27,13 @@ const names = manifest.skills.map((s) => s.name);
 const dirs = readdirSync(pack, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name).sort();
 if (manifest.skillCount !== names.length) fail(`manifest skillCount ${manifest.skillCount} != ${names.length} listed`);
 for (const n of names) if (!dirs.includes(n)) fail(`${n}: in manifest, missing from pack`);
-for (const d of dirs) if (!names.includes(d)) fail(`${d}: directory not in manifest`);
-const skillFiles = walkFiles(pack).filter((f) => f.endsWith("/SKILL.md") || f === "SKILL.md");
+// In this checkout every directory is pack-owned. In an installed repo, the repo's
+// own skills (a generated verify-<app>, project skills) sit beside the pack and are
+// left alone by install-harness.mjs, so they are listed, not failed.
+const foreign = dirs.filter((d) => !names.includes(d));
+if (repo === resolve(here)) for (const d of foreign) fail(`${d}: directory not in manifest`);
+else if (foreign.length) console.log(`repo skills (not checked): ${foreign.join(", ")}`);
+const skillFiles = names.filter((n) => existsSync(join(pack, n))).flatMap((n) => walkFiles(join(pack, n))).filter((f) => f.endsWith("/SKILL.md"));
 for (const f of skillFiles) if (!/^[^/]+\/SKILL\.md$/.test(rel(f))) fail(`${rel(f)}: nested SKILL.md (copied bodies must be renamed)`);
 if (skillFiles.length !== names.length) fail(`${skillFiles.length} files named SKILL.md, expected ${names.length}`);
 
