@@ -18,7 +18,7 @@ Never ask what you can observe. Check:
 - `docs/agents/`: prior answers. Treat every answer found there as settled; offer to change it, don't re-ask it.
 - `.scratch/`, monorepo signals (`pnpm-workspace.yaml`, `workspaces` in `package.json`, `packages/*/src`).
 - Tools on PATH: `gh`, `glab`, `bun`, `node`.
-- An existing `verify-*` skill under `.agents/skills/`, `.claude/skills/`, or `.cursor/skills/`.
+- An existing `verify-*` skill under `.agents/skills/` or `.claude/skills/`.
 - `.agents/harness-targets.json` (written by the installer): which harnesses this repo targets.
 - Harness model config already present: pi `agentOverrides` in pi-subagents settings, Claude `.claude/agents/*.md` `model:` fields, Codex `.codex/agents/*.toml` or `~/.codex/agents/*.toml` `model =` lines.
 

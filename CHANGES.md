@@ -1,6 +1,6 @@
 # CHANGES: provenance
 
-Every vendor skill, where its copy lives in the pack, and what was done to it. The machine-checked version of this table is `.agents/skills/manifest.json` (sha256 of every vendor file, its pre-rewrite body and its copy). `node scripts/check-pack.mjs` fails if a copy, a vendor file or the plan drifts from it.
+Every vendor skill, where its copy lives in the pack, and what was done to it. The machine-checked version of this table is `.agents/skills/manifest.json` (sha256 of every vendor file, its pre-rewrite body and its copy; every skipped vendor file with its reason). `node scripts/check-pack.mjs` fails if a copy, a vendor file or the plan drifts from it.
 
 ## Rules
 
@@ -19,7 +19,7 @@ Every vendor skill, where its copy lives in the pack, and what was done to it. T
 | mattpocock/skills | `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d` (v1.3.2), `engineering/` + `productivity/` |
 | cursor/plugins pstack | `6b0300214a09fd6029cfb7077043125758cd1fd2` (v0.15.36), `skills/` |
 
-## Skill bodies (82 copied, 2 dropped, 1 alias resolved)
+## Skill bodies (81 copied, 3 dropped, 1 alias resolved)
 
 "Other files" counts the rest of the vendor folder copied with it (references, templates, scripts, playbooks).
 
@@ -68,8 +68,7 @@ Every vendor skill, where its copy lives in the pack, and what was done to it. T
 | pstack | `maintain-formal-verification-skill` | `verify` | `verify/references/pstack/maintain-formal-verification-skill/maintain-formal-verification-skill.md` | 0 | strip frontmatter, rename |
 | pstack | `maintain-verification-skill` | `verify` | `verify/references/pstack/maintain-verification-skill/maintain-verification-skill.md` | 0 | strip frontmatter, rename |
 | pstack | `no-comments` | `code-review` | `code-review/references/pstack/no-comments/no-comments.md` | 0 | strip frontmatter, rename |
-| pstack | `poteto-help` | `rigor` | `rigor/references/pstack/poteto-help/poteto-help.md` | 2 | strip frontmatter, rename, relink (1 file) |
-| pstack | `poteto-mode` | `rigor` | `rigor/references/pstack/poteto-mode/poteto-mode.md` | 42 | strip frontmatter, rename |
+| pstack | `poteto-mode` | `rigor` | `rigor/references/pstack/poteto-mode/poteto-mode.md` | 37 | strip frontmatter, rename |
 | pstack | `principle-attack-the-premise` | `diagnosing-bugs` | `diagnosing-bugs/references/pstack/principle-attack-the-premise/principle-attack-the-premise.md` | 0 | strip frontmatter, rename, relink (1 file) |
 | pstack | `principle-boundary-discipline` | `codebase-design` | `codebase-design/references/pstack/principle-boundary-discipline/principle-boundary-discipline.md` | 0 | strip frontmatter, rename |
 | pstack | `principle-build-the-lever` | `rigor` | `rigor/references/pstack/principle-build-the-lever/principle-build-the-lever.md` | 0 | strip frontmatter, rename, relink (1 file) |
@@ -99,7 +98,7 @@ Every vendor skill, where its copy lives in the pack, and what was done to it. T
 | pstack | `setup-pstack` | `setup` | `setup/references/pstack/setup-pstack/setup-pstack.md` | 0 | strip frontmatter, rename |
 | pstack | `sharpen` | `grilling` | `grilling/references/pstack/sharpen/sharpen.md` | 0 | strip frontmatter, rename |
 | pstack | `show-me-your-work` | `rigor` | `rigor/references/pstack/show-me-your-work/show-me-your-work.md` | 2 | strip frontmatter, rename |
-| pstack | `statechart` | `verify` | `verify/references/pstack/statechart/statechart.md` | 406 | strip frontmatter, rename |
+| pstack | `statechart` | `verify` | `verify/references/pstack/statechart/statechart.md` | 30 | strip frontmatter, rename |
 | pstack | `swarm` | `rigor` | `rigor/references/pstack/swarm/swarm.md` | 0 | strip frontmatter, rename |
 | pstack | `tdd` | `tdd` | `tdd/references/pstack/tdd/tdd.md` | 0 | strip frontmatter, rename |
 | pstack | `teach` | `teach` | `teach/references/pstack/teach/teach.md` | 0 | strip frontmatter, rename |
@@ -107,16 +106,27 @@ Every vendor skill, where its copy lives in the pack, and what was done to it. T
 | pstack | `typescript-best-practices` | `codebase-design` | `codebase-design/references/pstack/typescript-best-practices/typescript-best-practices.md` | 1 | strip frontmatter, rename |
 | pstack | `unslop` | `writing` | `writing/references/pstack/unslop/unslop.md` | 0 | strip frontmatter, rename |
 | pstack | `why` | `research` | `research/references/pstack/why/why.md` | 12 | strip frontmatter, rename |
-| pstack | `make-bot-ui` | dropped | none | none | Depends on Cursor routines, `update_state` and `SendToUser`; no equivalent on pi, Codex or Claude Code. |
+| pstack | `make-bot-ui` | dropped | none | none | Depends on a routine runtime (`update_state`, `SendToUser`) that pi, Codex and Claude Code lack. |
+| pstack | `poteto-help` | dropped | none | none | pstack's own product help (installing and running pstack in its original editor); no route in this pack uses it. |
 | pstack | `ketchup-video` | dropped | none | none | Renders a slide video with no named renderer or encoder; `ketchup` (in `wait-what`) already covers the catch-up for AFK runs. |
 
-Also copied: Matt's bucket READMEs as `rigor/references/matt/{engineering,productivity}-README.md` (relinked).
+## Skipped files (381 vendor files, not copied, still in `vendors/`)
+
+The build copies only what a run can use. `scripts/pack-layout.mjs` → `SKIPPED` lists the vendor files it leaves behind, and the manifest records each one with its reason (`skipped`); `check-pack` fails if a vendor file is neither copied nor skipped, or if a skip reason drifts from the plan.
+
+| Pattern | Why | Count |
+|---|---|---|
+| `scripts/test/` inside a copied skill | upstream's own test suite: cases, fixtures and their helpers (`statechart`) | 376 |
+| `*.test.ts` | upstream's unit tests; no copied script imports them, only the vendor `package.json` test scripts name them | 4 |
+| `*.test-helper.ts` | fake harness used by the tests above | 1 |
+
+They stay in `vendors/` for the next upgrade. Nothing in an installed pack runs them.
 
 ## Behaviour that differs from upstream, and where it is said
 
 | Upstream behaviour | In this pack | Said in |
 |---|---|---|
-| Two routers (`ask-matt`, `poteto-mode` / `poteto-help`) | One entry, `rigor`; both routers are read as orientation | `rigor/SKILL.md` §1 |
+| Two routers (`ask-matt`, `poteto-mode`; `poteto-help` dropped) | One entry, `rigor`; the routers are read as orientation | `rigor/SKILL.md` §1 |
 | Mid-flow questions (`tdd` seams, `to-tickets` quiz, `code-review` fixed point, `improve-codebase-architecture` pick, …) | Asked once in the opening interview; mid-run they read the brief or decide-and-log | `rigor/INTERVIEW.md`, `rigor/AFK.md` |
 | `setup-matt-pocock-skills` edits whichever of `CLAUDE.md` / `AGENTS.md` exists | `AGENTS.md` canonical plus `CLAUDE.md` importing `@AGENTS.md`, so Codex and Claude both read it | `setup/SKILL.md` §2.4 |
 | `setup-pstack` picks models and writes a Cursor rule | Records the roles each harness already configures; never picks | `setup/SKILL.md` §2.9 |

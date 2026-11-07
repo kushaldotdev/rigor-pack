@@ -4,7 +4,7 @@ Upstream bodies name other skills by their upstream names: "the **how** skill", 
 In this pack, most of those are files, not skills. Resolve a name here and read the file; paths are relative to the skills root (the folder holding `rigor/`).
 A slash form such as `/swarm` or `$swarm` in an upstream body means "read and follow that body", not a command to type.
 Where two vendors share a name (`tdd`, `teach`), the host's SKILL.md says which one applies.
-Dropped: `pstack:make-bot-ui` (Depends on Cursor routines, update_state and SendToUser; no equivalent on pi, Codex or Claude Code.); `pstack:ketchup-video` (Renders a slide video with no named renderer or encoder; ketchup (in wait-what) already covers the catch-up for AFK runs.)
+Dropped: `pstack:make-bot-ui` (Depends on a routine runtime (update_state, SendToUser) that pi, Codex and Claude Code lack.); `pstack:poteto-help` (pstack's own product help (installing and running pstack in its original editor); no route in this pack uses it.); `pstack:ketchup-video` (Renders a slide video with no named renderer or encoder; ketchup (in wait-what) already covers the catch-up for AFK runs.)
 
 | Upstream name | Vendor | Host skill | File |
 |---|---|---|---|
@@ -36,7 +36,6 @@ Dropped: `pstack:make-bot-ui` (Depends on Cursor routines, update_state and Send
 | `maintain-formal-verification-skill` | pstack | verify | [verify/references/pstack/maintain-formal-verification-skill/maintain-formal-verification-skill.md](../../verify/references/pstack/maintain-formal-verification-skill/maintain-formal-verification-skill.md) |
 | `maintain-verification-skill` | pstack | verify | [verify/references/pstack/maintain-verification-skill/maintain-verification-skill.md](../../verify/references/pstack/maintain-verification-skill/maintain-verification-skill.md) |
 | `no-comments` | pstack | code-review | [code-review/references/pstack/no-comments/no-comments.md](../../code-review/references/pstack/no-comments/no-comments.md) |
-| `poteto-help` | pstack | rigor | [rigor/references/pstack/poteto-help/poteto-help.md](../../rigor/references/pstack/poteto-help/poteto-help.md) |
 | `poteto-mode` | pstack | rigor | [rigor/references/pstack/poteto-mode/poteto-mode.md](../../rigor/references/pstack/poteto-mode/poteto-mode.md) |
 | `pr` | matt | writing | [writing/references/matt/pr/pr.md](../../writing/references/matt/pr/pr.md) |
 | `principle-attack-the-premise` | pstack | diagnosing-bugs | [diagnosing-bugs/references/pstack/principle-attack-the-premise/principle-attack-the-premise.md](../../diagnosing-bugs/references/pstack/principle-attack-the-premise/principle-attack-the-premise.md) |

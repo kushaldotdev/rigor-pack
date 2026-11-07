@@ -45,8 +45,6 @@ Each row: the body (path relative to the skills root), a fragment of the interac
 | `rigor/references/matt/to-tickets/to-tickets.md` | until the user approves | interview: checklist 3; new tickets found mid-run are filed as follow-ups, not quizzed |
 | `rigor/references/matt/wayfinder/wayfinder.md` | tell the user to run | interview: rigor §0 |
 | `rigor/references/matt/wayfinder/wayfinder.md` | Stop and ask | interview: wayfinder's map is built in the interview phase |
-| `rigor/references/pstack/poteto-help/poteto-help.md` | ask whether the user | n/a: help text; model roles come from `docs/agents/workflow.md`, never asked in a run |
-| `rigor/references/pstack/poteto-help/poteto-help.md` | unless the user asks to merge | brief: GATES / merge authority (checklist 7) |
 | `rigor/references/pstack/poteto-mode/playbooks/autonomous-run.md` | or use a structured multiple-choice question | n/a: already says never ask |
 | `rigor/references/pstack/poteto-mode/playbooks/bug-fix.md` | ask the user | log + gate: reproduce yourself; when impossible, park a gate and mark the unit `blocked` |
 | `rigor/references/pstack/poteto-mode/playbooks/multi-phase-plan.md` | Ask the operator | brief: DEFAULTS (checklist 16); an unforeseen product call → apply a default, log it, list it at close |

@@ -42,10 +42,8 @@ export const HOSTS = {
     advertised: false,
     sources: ["matt:engineering/ask-matt", "matt:engineering/to-spec", "matt:engineering/to-tickets", "matt:engineering/implement",
       "matt:engineering/implement-spec", "matt:engineering/wayfinder", "matt:engineering/improve-codebase-architecture",
-      "pstack:poteto-mode", "pstack:poteto-help", "pstack:figure-it-out", "pstack:swarm", "pstack:show-me-your-work",
+      "pstack:poteto-mode", "pstack:figure-it-out", "pstack:swarm", "pstack:show-me-your-work",
       ...P("build-the-lever", "outcome-oriented-execution", "experience-first", "sequence-verifiable-units", "guard-the-context-window", "never-block-on-the-human")],
-    // Vendor files outside any skill folder, kept for attribution and routing knowledge.
-    extras: { "matt:engineering/README.md": "references/matt/engineering-README.md", "matt:productivity/README.md": "references/matt/productivity-README.md" },
   },
   triage: { advertised: false, sources: ["matt:engineering/triage"] },
   handoff: { advertised: false, sources: ["matt:productivity/handoff"] },
@@ -77,10 +75,22 @@ export const INTERFACE = {
 };
 
 export const DROPPED = {
-  "pstack:make-bot-ui": "Depends on Cursor routines, update_state and SendToUser; no equivalent on pi, Codex or Claude Code.",
+  "pstack:make-bot-ui": "Depends on a routine runtime (update_state, SendToUser) that pi, Codex and Claude Code lack.",
+  "pstack:poteto-help": "pstack's own product help (installing and running pstack in its original editor); no route in this pack uses it.",
   "pstack:ketchup-video": "Renders a slide video with no named renderer or encoder; ketchup (in wait-what) already covers the catch-up for AFK runs.",
 };
 
 // Vendor files never copied: per-harness interface metadata that the build
 // regenerates per host from the host's own frontmatter.
 export const EXCLUDE = [/(^|\/)agents\/openai\.yaml$/];
+
+// Vendor files never copied because an installed pack cannot use them: upstream's
+// own test suites. No copied script imports them (only the vendor `package.json`
+// test scripts name them), they stay in vendors/ for the next upgrade, and the
+// build records every skip in the manifest so check-pack still accounts for every
+// vendor file. Matched against the path inside the skill folder, first match wins.
+export const SKIPPED = [
+  { match: /(^|\/)scripts\/test\//, reason: "upstream test suite folder (cases, fixtures, their helpers)" },
+  { match: /(^|\/)[^/]+\.test\.ts$/, reason: "upstream unit test" },
+  { match: /(^|\/)[^/]+\.test-helper\.ts$/, reason: "helper for the upstream unit tests" },
+];

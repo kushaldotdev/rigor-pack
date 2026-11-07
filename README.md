@@ -36,7 +36,7 @@ You need two names: run **`setup`** once per repo, then give every task to **`ri
 | `prototype` | model or you | Throwaway code that answers one design question |
 | `writing` | model or you | Writing for agents, PR bodies, technical writing, unslop |
 
-Each host `SKILL.md` is a short hand-written dispatcher. The upstream bodies it uses are copied verbatim under `references/matt/` and `references/pstack/`, and the dispatcher links to them by relative path. All 85 upstream skills are accounted for (82 copied, `make-bot-ui` and `ketchup-video` dropped, and a one-line alias resolved into the skill it names); see [CHANGES.md](CHANGES.md).
+Each host `SKILL.md` is a short hand-written dispatcher. The upstream bodies it uses are copied verbatim under `references/matt/` and `references/pstack/`, and the dispatcher links to them by relative path. All 85 upstream skills are accounted for (81 copied, `make-bot-ui`, `poteto-help` and `ketchup-video` dropped, and a one-line alias resolved into the skill it names); see [CHANGES.md](CHANGES.md).
 
 ```mermaid
 flowchart LR
@@ -202,12 +202,15 @@ node scripts/install-harness.mjs --repo=../my-app --targets=pi,codex,claude
 node scripts/install-harness.mjs --repo=../my-app --check
 ```
 
+The build copies only what a run can use: `scripts/pack-layout.mjs` → `SKIPPED` lists the vendor files it leaves behind (upstream's own test suites, 381 files), each recorded with its reason in `manifest.json`, and `check-pack` fails if a vendor file is neither copied nor skipped.
+
 `check-pack` fails on any of these:
 
 - a broken link
 - a deleted or extra skill (counted against the manifest)
 - an edited copy
 - a vendor file that changed since the build
+- a vendor file neither copied nor skipped, or a skip reason that drifted from the plan
 - an interactive "ask the user" line in AFK scope with no row in `rigor/AFK.md`
 - an `openai.yaml` flag that disagrees with the frontmatter
 - a nested `SKILL.md`

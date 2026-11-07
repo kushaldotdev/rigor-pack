@@ -15,3 +15,5 @@ disable-model-invocation: true
 | workspace | The user asks to learn something over several sessions | [teach (matt)](references/matt/teach/teach.md), with its four `*-FORMAT.md` files |
 
 Use workspace mode only when the user asks to learn over several sessions. Upstream names resolve through [the name index](../rigor/references/INDEX.md).
+
+Pack rule: the workspace's `GLOSSARY.md`, which every explainer and learning record refers to, follows [GLOSSARY-FORMAT](references/matt/teach/GLOSSARY-FORMAT.md).

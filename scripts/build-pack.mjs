@@ -86,6 +86,7 @@ const manifest = {
   advertisedCount: skills.filter((s) => s.visibility === "advertised").length,
   skills,
   dropped: DROPPED,
+  skipped: plan.skipped.sort((a, b) => a.src.localeCompare(b.src)),
   aliasTargets: [...new Set(aliases.values())].sort(),
   generated: ["*/agents/openai.yaml", "rigor/references/INDEX.md", "manifest.json"],
   indexSha256: sha256(Buffer.from(index, "utf8")),

@@ -7,7 +7,7 @@ import { readFileSync, readdirSync, existsSync, lstatSync, readlinkSync } from "
 import { join, dirname, relative, posix, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { copyPlan, render, sha256, readFrontmatter, parseOpenaiYaml, openaiYaml, walkFiles, HOSTS } from "./lib/pack.mjs";
-import { INTERFACE } from "./pack-layout.mjs";
+import { INTERFACE, EXCLUDE } from "./pack-layout.mjs";
 import { unknownNeutralKeys } from "./harness-neutral.mjs";
 
 const args = Object.fromEntries(process.argv.slice(2).map((a) => a.replace(/^--/, "").split("=")));
@@ -78,6 +78,18 @@ if (vendored) {
   for (const k of unknownNeutralKeys(plan)) fail(`harness-neutral key matches no plan entry: ${k}`);
   const planned = new Set(plan.entries.map((e) => e.dest));
   for (const d of listed) if (!planned.has(d)) fail(`${d}: in manifest but not in pack-layout plan (rebuild)`);
+  // Skipped vendor files: recorded with a reason, and every vendor file under a
+  // copied folder is either copied or skipped, so nothing is lost silently.
+  const skipped = new Map((manifest.skipped ?? []).map((s) => [s.src, s.reason]));
+  const planSkipped = new Map(plan.skipped.map((s) => [s.src, s.reason]));
+  for (const [src, reason] of planSkipped) if (skipped.get(src) !== reason) fail(`${src}: skipped by the build plan but not recorded in the manifest (rebuild)`);
+  for (const src of skipped.keys()) if (!planSkipped.has(src)) fail(`${src}: in the manifest's skip list but the build plan no longer skips it (rebuild)`);
+  const copiedSrcs = new Set(plan.entries.map((e) => e.src));
+  for (const { srcFolder } of plan.folders) for (const f of walkFiles(join(repo, srcFolder))) {
+    const src = posix.join(srcFolder, relative(join(repo, srcFolder), f).split("\\").join("/"));
+    if (copiedSrcs.has(src) || skipped.has(src) || EXCLUDE.some((re) => re.test(src.slice(srcFolder.length + 1)))) continue;
+    fail(`${src}: vendor file neither copied nor skipped (rebuild)`);
+  }
   for (const e of plan.entries) {
     if (!listed.has(e.dest)) { fail(`${e.dest}: planned but not in manifest (rebuild)`); continue; }
     const m = manifest.files.find((f) => f.dest === e.dest);
@@ -142,5 +154,5 @@ for (const t of targets) {
   }
 }
 
-console.log(fails ? `CHECKS FAILED (${fails})` : `pack ok: ${names.length} skills (${advertised} advertised), ${manifest.files.length} vendor files hash-checked${vendored ? " and re-rendered" : ""}, targets: ${targets.join(", ") || "none declared"}`);
+console.log(fails ? `CHECKS FAILED (${fails})` : `pack ok: ${names.length} skills (${advertised} advertised), ${manifest.files.length} vendor files hash-checked, ${(manifest.skipped ?? []).length} skipped${vendored ? " and re-rendered" : ""}, targets: ${targets.join(", ") || "none declared"}`);
 process.exit(fails ? 1 : 0);

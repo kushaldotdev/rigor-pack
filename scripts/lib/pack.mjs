@@ -3,7 +3,7 @@
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, dirname, relative, posix } from "node:path";
 import { createHash } from "node:crypto";
-import { VENDORS, HOSTS, DROPPED, EXCLUDE } from "../pack-layout.mjs";
+import { VENDORS, HOSTS, DROPPED, EXCLUDE, SKIPPED } from "../pack-layout.mjs";
 import { NEUTRAL, NEUTRAL_ALL } from "../harness-neutral.mjs";
 
 export const sha256 = (buf) => createHash("sha256").update(buf).digest("hex");
@@ -39,9 +39,12 @@ export function vendorSkills(root) {
 }
 
 // The full copy plan: one entry per vendor file that lands in the pack.
-// src is repo-relative, dest is relative to .agents/skills/.
+// src is repo-relative, dest is relative to .agents/skills/. Files matching
+// EXCLUDE are regenerated per host; files matching SKIPPED are not copied at all
+// and come back in `skipped` with their reason.
 export function copyPlan(root) {
   const entries = [];
+  const skipped = [];
   const folders = []; // { srcFolder, destFolder, name } for path mapping
   for (const [host, spec] of Object.entries(HOSTS)) {
     const vendorsUsed = new Set();
@@ -53,17 +56,16 @@ export function copyPlan(root) {
       for (const f of walkFiles(join(root, folder))) {
         const within = toPosix(relative(join(root, folder), f));
         if (EXCLUDE.some((re) => re.test(within))) continue;
+        const src = posix.join(folder, within);
+        const skip = SKIPPED.find((s) => s.match.test(within));
+        if (skip) { skipped.push({ src, reason: skip.reason }); continue; }
         const dest = within === "SKILL.md" ? `${destFolder}/${name}.md` : `${destFolder}/${within}`;
-        entries.push({ host, source: s, src: posix.join(folder, within), dest, skillBody: within === "SKILL.md" });
+        entries.push({ host, source: s, src, dest, skillBody: within === "SKILL.md" });
       }
     }
     for (const v of vendorsUsed) entries.push({ host, source: `${v}:LICENSE`, src: VENDORS[v].license, dest: `${host}/references/${v}/LICENSE`, skillBody: false });
-    for (const [s, destRel] of Object.entries(spec.extras ?? {})) {
-      const [vendor, path] = s.split(":");
-      entries.push({ host, source: s, src: posix.join(VENDORS[vendor].root, path), dest: `${host}/${destRel}`, skillBody: false });
-    }
   }
-  return { entries, folders, aliases: aliasSkills(root) };
+  return { entries, folders, skipped, aliases: aliasSkills(root) };
 }
 
 // Map a repo-relative vendor path (file or folder) to its pack-relative copy.

@@ -126,9 +126,6 @@ export const NEUTRAL = {
     ["default to `.cursor/skills/<handle>-mode/SKILL.md`", "default to `.agents/skills/<handle>-mode/SKILL.md`"],
     ["(or `~/.cursor/skills/<handle>-mode/` if", "(or the user-level skills directory's `<handle>-mode/` if"],
   ],
-  [P + "poteto-help/SKILL.md"]: [
-    ["| Catch up like `/ketchup`, in a short subtitled video of slides, with the waiting calls as text under it | [`/ketchup-video`](../ketchup-video/SKILL.md) |\n", ""],
-  ],
   [P + "setup-pstack/SKILL.md"]: [
     ["Write `~/.cursor/rules/pstack-models.mdc`, an always-applied rule that sets pstack's model per role.", "Write the model roles in `docs/agents/workflow.md`, one line per role, that set pstack's model per role."],
     ["pass to a `Task` subagent in this session.", "pass to a child agent in this session."],
