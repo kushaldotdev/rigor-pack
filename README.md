@@ -7,6 +7,13 @@ One merged agent-skills pack built from two upstream collections, with one workf
 
 You need two names: run **`setup`** once per repo, then give every task to **`rigor`**. `rigor` interviews you once at the start. After that the run is AFK: it plans, builds, verifies and reviews without asking you anything, and parks anything irreversible as a gate for you to answer at the end.
 
+## Repo rules
+
+1. **`vendors/` is never edited by hand.** It only ever holds an exact upstream copy at the pinned commit. To change it, replace the whole subset with the latest upstream (see [Upgrading upstream](#upgrading-upstream)) and bump the pin. Every change to what the pack says goes in hand-written files or in `scripts/harness-neutral.mjs` (see [CHANGES.md](CHANGES.md) rules 3 and 7).
+2. **Never edit a copy under `.agents/skills/*/references/matt/` or `references/pstack/`.** The build regenerates them, and the check flags any edit.
+3. **The pack names no project and no delegation tool in its method.** Project settings live in the target repo's `docs/agents/workflow.md`. A delegation tool appears only in its adapter, `rigor/delegation/<tool>.md`.
+4. **Never use fast-mode models**, for any role.
+
 ## The pack: 17 skills
 
 | Skill | Who invokes it | What it is for |
@@ -211,6 +218,8 @@ node scripts/install-harness.mjs --repo=../my-app --check
 To change behaviour, edit a host's `SKILL.md`, `rigor/*.md` or `setup/templates/`. Never edit a copy under `references/matt/` or `references/pstack/`: the build overwrites it and the check flags it.
 
 ## Upgrading upstream
+
+Always take upstream HEAD as a whole: never cherry-pick files, never patch a vendor file. If upstream text breaks a harness-neutral rule, refit the rule.
 
 ```bash
 git clone --depth 1 https://github.com/mattpocock/skills /tmp/mp-fresh
