@@ -185,7 +185,7 @@ rigor-pack/
 │   └── install-harness.mjs      ← installs into a repo; per-harness footprint; --check
 ├── vendors/                     ← pristine upstream, never edited
 ├── .agents/skills/              ← the deliverable
-│   ├── manifest.json            ← skills, every copied file with vendor/pre/post sha256
+│   ├── manifest.json            ← skills, copied files with vendor/pre/post sha256, skip patterns with counts
 │   ├── rigor/  SKILL.md CHAIN.md INTERVIEW.md AFK.md harness/ delegation/ scripts/ templates/ references/{INDEX.md,matt,pstack}
 │   ├── setup/  SKILL.md templates/{workflow,difficulty,packet-rules}.md references/...
 │   └── <host>/ SKILL.md agents/openai.yaml references/{matt,pstack}/<name>/<name>.md
@@ -202,7 +202,7 @@ node scripts/install-harness.mjs --repo=../my-app --targets=pi,codex,claude
 node scripts/install-harness.mjs --repo=../my-app --check
 ```
 
-The build copies only what a run can use: `scripts/pack-layout.mjs` → `SKIPPED` lists the vendor files it leaves behind (upstream's own test suites, 381 files), each recorded with its reason in `manifest.json`, and `check-pack` fails if a vendor file is neither copied nor skipped.
+The build copies only what a run can use: `scripts/pack-layout.mjs` → `SKIPPED` holds the patterns for the vendor files it leaves behind (upstream's own test suites: 381 files, 3 patterns), and `manifest.json` records each pattern with its reason and how many files it matches. `check-pack` recomputes that count and fails if it moved, or if a vendor file is neither copied nor skipped.
 
 `check-pack` fails on any of these:
 
@@ -210,7 +210,7 @@ The build copies only what a run can use: `scripts/pack-layout.mjs` → `SKIPPED
 - a deleted or extra skill (counted against the manifest)
 - an edited copy
 - a vendor file that changed since the build
-- a vendor file neither copied nor skipped, or a skip reason that drifted from the plan
+- a vendor file neither copied nor skipped, or a skip pattern whose reason or match count drifted from the plan
 - an interactive "ask the user" line in AFK scope with no row in `rigor/AFK.md`
 - an `openai.yaml` flag that disagrees with the frontmatter
 - a nested `SKILL.md`

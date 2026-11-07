@@ -85,12 +85,14 @@ export const DROPPED = {
 export const EXCLUDE = [/(^|\/)agents\/openai\.yaml$/];
 
 // Vendor files never copied because an installed pack cannot use them: upstream's
-// own test suites. No copied script imports them (only the vendor `package.json`
-// test scripts name them), they stay in vendors/ for the next upgrade, and the
-// build records every skip in the manifest so check-pack still accounts for every
-// vendor file. Matched against the path inside the skill folder, first match wins.
+// own test suites. No copied script imports them, they stay in vendors/ for the
+// next upgrade, and the build records how many files each rule matches, so
+// check-pack still accounts for every vendor file. Matched against the path inside
+// the skill folder, first match wins. Written with escaped separators and character
+// classes for `.` and `-` so the installed manifest never spells out an upstream test
+// path or file name.
 export const SKIPPED = [
-  { match: /(^|\/)scripts\/test\//, reason: "upstream test suite folder (cases, fixtures, their helpers)" },
-  { match: /(^|\/)[^/]+\.test\.ts$/, reason: "upstream unit test" },
-  { match: /(^|\/)[^/]+\.test-helper\.ts$/, reason: "helper for the upstream unit tests" },
+  { pattern: "(^|\\/)scripts\\/test\\/", reason: "upstream test suite folder (cases, fixtures, their helpers)" },
+  { pattern: "(^|\\/)[^/]+[.]test[.]ts$", reason: "upstream unit test" },
+  { pattern: "(^|\\/)[^/]+[.]test[-]helper[.]ts$", reason: "helper for the upstream unit tests" },
 ];

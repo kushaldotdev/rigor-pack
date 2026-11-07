@@ -1,12 +1,12 @@
 # CHANGES: provenance
 
-Every vendor skill, where its copy lives in the pack, and what was done to it. The machine-checked version of this table is `.agents/skills/manifest.json` (sha256 of every vendor file, its pre-rewrite body and its copy; every skipped vendor file with its reason). `node scripts/check-pack.mjs` fails if a copy, a vendor file or the plan drifts from it.
+Every vendor skill, where its copy lives in the pack, and what was done to it. The machine-checked version of this table is `.agents/skills/manifest.json` (sha256 of every vendor file, its pre-rewrite body and its copy; each skip pattern with its reason and how many vendor files it matches; the number of dropped skills). `node scripts/check-pack.mjs` fails if a copy, a vendor file or the plan drifts from it.
 
 ## Rules
 
 1. `vendors/` is never edited. The build reads it and writes copies under `.agents/skills/<host>/references/<vendor>/<name>/`.
 2. A copied `SKILL.md` becomes `<name>.md` in the same folder, with its YAML frontmatter stripped, so no harness lists it as a second skill. The trigger phrases from the stripped `description` reappear in the host's Modes table.
-3. Bodies change in three ways only. **Relink**: a relative markdown link or inline-code path that pointed at another vendor file is rewritten to that file's new relative location. **Alias resolution** (rule 4). **Harness-neutral rewrites**: exact `[old, new]` pairs listed in `scripts/harness-neutral.mjs`, each of which must match exactly once or the build fails. Links that were already dangling upstream (pstack's unvendored `docs/`, illustrative example paths) are left as they are and listed in the manifest as `danglingUpstream`.
+3. Bodies change in three ways only. **Relink**: a relative markdown link or inline-code path that pointed at another vendor file is rewritten to that file's new relative location. **Alias resolution** (rule 4). **Harness-neutral rewrites**: exact `[old, new]` pairs listed in `scripts/harness-neutral.mjs`, each of which must match exactly once or the build fails. Links that were already dangling upstream (pstack's unvendored `docs/`, illustrative example paths) are left as they are and listed in the manifest as `danglingUpstream`. Non-markdown copies are byte-identical, except that the same rules may drop a field naming a file the pack does not ship (a copied script's `test` script); a rewritten `.json` must still parse.
 4. A vendor skill whose whole body is one line, `Call the Skill tool with "<name>"`, is an **alias**, not a skill: nothing is copied for it, no row appears here, and its name is rewritten to `<name>` wherever a copied body mentions it. `vendors/` keeps the alias folder. One alias resolves this way today (into `grilling`).
 5. Vendor `agents/openai.yaml` files are not copied. Each host gets a generated one from its own frontmatter.
 6. Each host carries the `LICENSE` of every vendor it copies from (`references/<vendor>/LICENSE`).
@@ -112,15 +112,15 @@ Every vendor skill, where its copy lives in the pack, and what was done to it. T
 
 ## Skipped files (381 vendor files, not copied, still in `vendors/`)
 
-The build copies only what a run can use. `scripts/pack-layout.mjs` → `SKIPPED` lists the vendor files it leaves behind, and the manifest records each one with its reason (`skipped`); `check-pack` fails if a vendor file is neither copied nor skipped, or if a skip reason drifts from the plan.
+The build copies only what a run can use. `scripts/pack-layout.mjs` → `SKIPPED` holds three patterns for the vendor files it leaves behind, and the manifest records each pattern with its reason and how many files it matches (`skipped`); `check-pack` recomputes both and fails if a count or a reason drifts from the plan, or if a vendor file is neither copied nor skipped.
 
 | Pattern | Why | Count |
 |---|---|---|
 | `scripts/test/` inside a copied skill | upstream's own test suite: cases, fixtures and their helpers (`statechart`) | 376 |
-| `*.test.ts` | upstream's unit tests; no copied script imports them, only the vendor `package.json` test scripts name them | 4 |
+| `*.test.ts` | upstream's unit tests; no copied script imports them, so there is nothing to run | 4 |
 | `*.test-helper.ts` | fake harness used by the tests above | 1 |
 
-They stay in `vendors/` for the next upgrade. Nothing in an installed pack runs them.
+They stay in `vendors/` for the next upgrade. Nothing in an installed pack runs them, and nothing in an installed pack names them either: the two copied `package.json` files whose `test` script named those files (`poteto-mode/scripts`, `statechart/scripts`) lose that script through a `scripts/harness-neutral.mjs` rule, and the build fails if the rewrite leaves invalid JSON.
 
 ## Behaviour that differs from upstream, and where it is said
 

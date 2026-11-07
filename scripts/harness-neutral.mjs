@@ -1,10 +1,12 @@
-// Harness-specific wording in the upstream pstack bodies, rewritten into neutral
-// wording when render() in lib/pack.mjs copies them. The pack runs on pi, Codex CLI
-// and Claude Code, so Cursor tool names, Cursor paths and hard-coded model slugs
-// must not reach the copies. Keys are repo-relative vendor paths (the same as
-// entry.src). Each value is an ordered list of [oldString, newString] pairs, applied
-// after relinking. Every oldString must occur exactly once in that text, so upstream
-// drift fails the build loudly instead of shipping Cursor wording.
+// Wording in the upstream pstack bodies that only makes sense in Cursor, rewritten
+// into neutral wording when render() in lib/pack.mjs copies them. The pack runs on
+// pi, Codex CLI and Claude Code, so Cursor tool names, Cursor paths and hard-coded
+// model slugs must not reach the copies. Keys are repo-relative vendor paths (the
+// same as entry.src). Each value is an ordered list of [oldString, newString] pairs,
+// applied after relinking. Every oldString must occur exactly once in that text, so
+// upstream drift fails the build loudly instead of shipping Cursor wording. A key
+// may also name a non-markdown file (a copied script's package.json) to drop a field
+// that names files the pack does not ship; a rewritten .json must still parse.
 const P = "vendors/poteto/pstack/skills/";
 
 // Phrases rewritten in every copied body, wherever they occur. The pack never runs
@@ -241,6 +243,14 @@ export const NEUTRAL = {
   ],
   [P + "maintain-verification-skill/SKILL.md"]: [
     ["(usually `.cursor/skills/verify-*/`)", "(usually `.agents/skills/verify-*/`)"],
+  ],
+  // Copied scripts' package.json: their `test` script names upstream test files that
+  // SKIPPED (pack-layout.mjs) leaves behind, so an installed copy could not run it.
+  [P + "poteto-mode/scripts/package.json"]: [
+    ["    \"test\": \"bun test watch-pr check-plan.test.ts\",\n", ""],
+  ],
+  [P + "statechart/scripts/package.json"]: [
+    ["  \"scripts\": {\n    \"test\": \"node --disable-warning=ExperimentalWarning --test test/*.test.ts\"\n  },\n", ""],
   ],
 };
 

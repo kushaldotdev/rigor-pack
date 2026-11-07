@@ -8,7 +8,7 @@ import { writeFileSync, mkdirSync, rmSync, existsSync, readFileSync, statSync, c
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { copyPlan, render, sha256, readFrontmatter, openaiYaml, vendorSkills, aliasSkills, HOSTS, DROPPED, VENDORS } from "./lib/pack.mjs";
-import { INTERFACE } from "./pack-layout.mjs";
+import { INTERFACE, SKIPPED } from "./pack-layout.mjs";
 import { unknownNeutralKeys, NEUTRAL_ALL } from "./harness-neutral.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -58,7 +58,8 @@ for (const [host, spec] of Object.entries(HOSTS)) {
 }
 
 // Name index: upstream bodies name siblings by upstream name ("the **how**
-// skill", `/setup-pstack`); this resolves each name to its copy.
+// skill", `/setup-pstack`); this resolves each name to its copy. Dropped skills are
+// not named here: the human record is CHANGES.md, outside the installed pack.
 const bodies = files.filter((f) => f.transforms[0] === "strip-frontmatter");
 const rows = bodies.map((f) => {
   const name = f.dest.split("/").at(-1).replace(/\.md$/, "");
@@ -71,7 +72,6 @@ Upstream bodies name other skills by their upstream names: "the **how** skill", 
 In this pack, most of those are files, not skills. Resolve a name here and read the file; paths are relative to the skills root (the folder holding \`rigor/\`).
 A slash form such as \`/swarm\` or \`$swarm\` in an upstream body means "read and follow that body", not a command to type.
 Where two vendors share a name (\`tdd\`, \`teach\`), the host's SKILL.md says which one applies.
-Dropped: ${Object.entries(DROPPED).map(([k, v]) => `\`${k}\` (${v})`).join("; ")}
 
 | Upstream name | Vendor | Host skill | File |
 |---|---|---|---|
@@ -79,14 +79,17 @@ ${rows.join("\n")}
 `;
 writeFileSync(join(pack, "rigor", "references", "INDEX.md"), index);
 
+const skippedCounts = new Map();
+for (const s of plan.skipped) skippedCounts.set(s.pattern, (skippedCounts.get(s.pattern) ?? 0) + 1);
+
 const manifest = {
   generatedBy: "scripts/build-pack.mjs",
   vendors: Object.fromEntries(Object.entries(VENDORS).map(([k, v]) => [k, { root: v.root, pin: v.pin }])),
   skillCount: skills.length,
   advertisedCount: skills.filter((s) => s.visibility === "advertised").length,
   skills,
-  dropped: DROPPED,
-  skipped: plan.skipped.sort((a, b) => a.src.localeCompare(b.src)),
+  droppedCount: Object.keys(DROPPED).length,
+  skipped: SKIPPED.map((s) => ({ pattern: s.pattern, reason: s.reason, count: skippedCounts.get(s.pattern) ?? 0 })),
   aliasTargets: [...new Set(aliases.values())].sort(),
   generated: ["*/agents/openai.yaml", "rigor/references/INDEX.md", "manifest.json"],
   indexSha256: sha256(Buffer.from(index, "utf8")),

@@ -8,6 +8,7 @@ import { NEUTRAL, NEUTRAL_ALL } from "../harness-neutral.mjs";
 
 export const sha256 = (buf) => createHash("sha256").update(buf).digest("hex");
 const toPosix = (p) => p.split("\\").join("/");
+const SKIP_RULES = SKIPPED.map((s) => ({ ...s, re: new RegExp(s.pattern) }));
 
 export function walkFiles(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
@@ -41,7 +42,7 @@ export function vendorSkills(root) {
 // The full copy plan: one entry per vendor file that lands in the pack.
 // src is repo-relative, dest is relative to .agents/skills/. Files matching
 // EXCLUDE are regenerated per host; files matching SKIPPED are not copied at all
-// and come back in `skipped` with their reason.
+// and come back in `skipped` with the pattern that matched and its reason.
 export function copyPlan(root) {
   const entries = [];
   const skipped = [];
@@ -57,8 +58,8 @@ export function copyPlan(root) {
         const within = toPosix(relative(join(root, folder), f));
         if (EXCLUDE.some((re) => re.test(within))) continue;
         const src = posix.join(folder, within);
-        const skip = SKIPPED.find((s) => s.match.test(within));
-        if (skip) { skipped.push({ src, reason: skip.reason }); continue; }
+        const skip = SKIP_RULES.find((s) => s.re.test(within));
+        if (skip) { skipped.push({ src, pattern: skip.pattern, reason: skip.reason }); continue; }
         const dest = within === "SKILL.md" ? `${destFolder}/${name}.md` : `${destFolder}/${within}`;
         entries.push({ host, source: s, src, dest, skillBody: within === "SKILL.md" });
       }
@@ -117,10 +118,33 @@ function relink(token, srcFile, destFile, map, root) {
   return next === path ? null : { next: next + hash };
 }
 
+// Apply one list of [old, new] pairs. Every old must occur exactly once, so upstream
+// drift fails the build loudly instead of shipping stale wording.
+function applyRules(src, text, pairs) {
+  for (const [from, to] of pairs) {
+    const n = text.split(from).length - 1;
+    if (n !== 1) throw new Error(`harness-neutral: ${src}: ${JSON.stringify(from)} occurs ${n} times, expected exactly once`);
+    text = text.replace(from, () => to);
+  }
+  return text;
+}
+
+// Non-markdown files (a copied script's package.json) are copied byte for byte,
+// except where NEUTRAL names them. A rewritten JSON file must still parse.
+function renderData(entry, raw) {
+  const rules = NEUTRAL[entry.src] ?? [];
+  if (!rules.length) return { bytes: raw, transforms: [], pre: sha256(raw), dangling: [], globalHits: [] };
+  const text = applyRules(entry.src, raw.toString("utf8"), rules);
+  if (entry.src.endsWith(".json")) {
+    try { JSON.parse(text); } catch (e) { throw new Error(`harness-neutral: ${entry.src}: rewrite left invalid JSON: ${e.message}`); }
+  }
+  return { bytes: Buffer.from(text, "utf8"), transforms: [`drop ${rules.length} upstream-only field(s)`], pre: sha256(raw), dangling: [], globalHits: [] };
+}
+
 // Produce the bytes for one plan entry plus the transforms applied to them.
 export function render(entry, plan, root) {
   const raw = readFileSync(join(root, entry.src));
-  if (!entry.src.endsWith(".md")) return { bytes: raw, transforms: [], pre: sha256(raw), dangling: [], globalHits: [] };
+  if (!entry.src.endsWith(".md")) return renderData(entry, raw);
   let text = raw.toString("utf8");
   const transforms = [];
   if (entry.skillBody) {
@@ -155,11 +179,7 @@ export function render(entry, plan, root) {
   if (relinked) transforms.push(`relink ${relinked} relative path(s) to the copied location`);
   // Harness-specific wording -> neutral wording. Drift in upstream text throws here.
   const rules = NEUTRAL[entry.src] ?? [];
-  for (const [from, to] of rules) {
-    const n = text.split(from).length - 1;
-    if (n !== 1) throw new Error(`harness-neutral: ${entry.src}: ${JSON.stringify(from)} occurs ${n} times, expected exactly once`);
-    text = text.replace(from, () => to);
-  }
+  text = applyRules(entry.src, text, rules);
   if (rules.length) transforms.push(`neutralize ${rules.length} harness-specific phrase(s)`);
   const globalHits = [];
   NEUTRAL_ALL.forEach(([from, to], i) => {

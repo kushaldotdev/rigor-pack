@@ -4,7 +4,6 @@ Upstream bodies name other skills by their upstream names: "the **how** skill", 
 In this pack, most of those are files, not skills. Resolve a name here and read the file; paths are relative to the skills root (the folder holding `rigor/`).
 A slash form such as `/swarm` or `$swarm` in an upstream body means "read and follow that body", not a command to type.
 Where two vendors share a name (`tdd`, `teach`), the host's SKILL.md says which one applies.
-Dropped: `pstack:make-bot-ui` (Depends on a routine runtime (update_state, SendToUser) that pi, Codex and Claude Code lack.); `pstack:poteto-help` (pstack's own product help (installing and running pstack in its original editor); no route in this pack uses it.); `pstack:ketchup-video` (Renders a slide video with no named renderer or encoder; ketchup (in wait-what) already covers the catch-up for AFK runs.)
 
 | Upstream name | Vendor | Host skill | File |
 |---|---|---|---|
