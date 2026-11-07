@@ -1,4 +1,4 @@
-# skills-harness
+# rigor-pack
 
 One merged agent-skills pack built from two upstream collections, with one workflow. It installs into any repo and runs on **pi**, **OpenAI Codex CLI** and **Claude Code** from the same files.
 
@@ -166,7 +166,7 @@ Checked on 2026-10-20 from a fresh repo: each harness lists exactly the 10 adver
 ## Layout
 
 ```
-skills-harness/
+rigor-pack/
 ├── README.md, CHANGES.md        ← this file; per-skill provenance
 ├── scripts/
 │   ├── pack-layout.mjs          ← which vendor skill goes in which host (the plan)
