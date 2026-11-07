@@ -41,7 +41,8 @@ Where a chain run differs from `## Authority` above. Every number here is a sett
 - Hard tickets: `<n>` implementer fix round, then a takeover
 - Solo band: `hard` <!-- or: critical, or none. A ticket at or above it runs alone in its own session -->
 - Review depth: a post-land delta over `<n>` lines is re-reviewed
-- Heartbeat: every `<n>` minutes; a progress line older than `<n>` minutes, or the same step on `<n>` lines in a row, is stuck
+- L0 heartbeat: every 15 minutes <!-- default -->; a progress line older than `<n>` minutes, or the same step on `<n>` lines in a row, is stuck
+- L1/L2 wait slice: 10 minutes max <!-- default; never an unbounded wait -->
 - Reviewer fallback: none <!-- or: a named model when the first is out of quota -->
 - Red/green: `<command that runs one test path, red on the base and green on the tip>`
 - Mutation check: `<command>` <!-- or: none -->

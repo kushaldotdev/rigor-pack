@@ -11,7 +11,12 @@
    only when the scope is unclear. Pass agent names only, never a model. Without child agents, do
    the steps yourself in that order. Load your harness's subagent policy first, if the PROJECT RULES
    name one. This packet's fence, red-first and commit rules are the prescribed workflow. This is a
-   headless run-to-completion contract: NEVER end your turn while a child runs. Wait for it, then report.
+   headless run-to-completion contract: NEVER end your turn while a child runs. Wait in bounded
+   slices of 10 minutes or less, never an unbounded wait (your harness's wait call and the full rule
+   are in its subagent policy). After each slice, handle what finished or needs attention. On a
+   timeout, check each running child's progress once, nudge or interrupt one whose output has not
+   moved, append a progress-log line, then wait again. Any child that has children of its own waits
+   the same way. Report only when every child has finished.
 6. SELF-REVIEW before the report: run {wt}/.agents/skills/code-review/SKILL.md (both axes, fresh
    read-only reviewer children if you have them) over task base..last commit. Write it to
    {wt}/tmp/cr-{ticket}.md, fix every act-on finding, and list fixed / deferred / rejected with
