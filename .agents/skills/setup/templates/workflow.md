@@ -48,7 +48,7 @@ Where a chain run differs from `## Authority` above. Every number here is a sett
 - Mutation check: `<command>` <!-- or: none -->
 - Full gate: `<command, run on the staged squash>`
 - Verify skill: `.agents/skills/verify-<app>/SKILL.md`<!-- or: none -->
-- Packet project rules: `docs/agents/packet-rules.md`
+- Packet project rules: `docs/agents/packet-rules.md` <!-- mkpacket.mjs reads this path; for another file, pass it as --project-rules -->
 - Cleanup at landing: `<worktree, workspace, agents, branch, stage ref>`
 
 ### Models per role
@@ -84,12 +84,27 @@ The exact command for this repo's tool, with the rest of its gotchas, is in `.ag
 
 ## Model roles
 
+Each skill body looks up its role here by the exact name in the first column (for example `interrogate` reads `interrogate reviewers`), in its own harness's column. Keep the names as they are: a renamed or merged row is never found, and that body falls back to its default. A comma-separated value is a list; the body says how it uses it (one runner per entry, or a judge pool tried in order).
+
 | Role | pi | Claude Code | Codex |
 |---|---|---|---|
+| feature, refactoring | inherit-parent | inherit-parent | inherit-parent |
+| bug-fix | inherit-parent | inherit-parent | inherit-parent |
+| perf-issue | inherit-parent | inherit-parent | inherit-parent |
+| hillclimb | inherit-parent | inherit-parent | inherit-parent |
 | judgment and prose | inherit-parent | inherit-parent | inherit-parent |
-| code | inherit-parent | inherit-parent | inherit-parent |
-| reviewers (interrogate, arena judge, trail review) | inherit-parent | inherit-parent | inherit-parent |
-| verifier (≠ author family when possible) | inherit-parent | inherit-parent | inherit-parent |
+| hardest tasks | inherit-parent | inherit-parent | inherit-parent |
+| how explorer | inherit-parent | inherit-parent | inherit-parent |
+| how explainer | inherit-parent | inherit-parent | inherit-parent |
+| why investigators | inherit-parent | inherit-parent | inherit-parent |
+| why synthesizer | inherit-parent | inherit-parent | inherit-parent |
+| reflect tooling | inherit-parent | inherit-parent | inherit-parent |
+| reflect judgment, divergent, synthesizer | inherit-parent | inherit-parent | inherit-parent |
+| arena runners | inherit-parent, inherit-parent | inherit-parent, inherit-parent | inherit-parent, inherit-parent |
+| arena cross-judge pool | inherit-parent, inherit-parent | inherit-parent, inherit-parent | inherit-parent, inherit-parent |
+| swarm workers | inherit-parent | inherit-parent | inherit-parent |
+| architect runners | inherit-parent, inherit-parent | inherit-parent, inherit-parent | inherit-parent, inherit-parent |
+| interrogate reviewers | inherit-parent, inherit-parent | inherit-parent, inherit-parent | inherit-parent, inherit-parent |
 
 `inherit-parent` = no override configured; the child runs on the parent's model (omit the child's `model`). One family everywhere means reviews are "single-family".
 

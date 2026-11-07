@@ -1,6 +1,6 @@
 # Project rules for implementer packets
 
-Build it into every implementer packet: `scripts/mkpacket.mjs` reads this file when the chain section of `docs/agents/workflow.md` doesn't name another. It binds as much as the pack's own packet rules. Replace every `<...>` and delete any line that doesn't apply.
+Build it into every implementer packet: `scripts/mkpacket.mjs` reads this file unless it is passed `--project-rules <file>`. It binds as much as the pack's own packet rules. Replace every `<...>` and delete any line that doesn't apply.
 
 ## Environment and secrets
 
