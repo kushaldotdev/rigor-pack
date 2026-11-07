@@ -24,7 +24,7 @@ Each item names the upstream mid-flow ask it replaces.
 | 5 | Spec location for the review's spec axis | `code-review` §2 "ask the user where the spec is" |
 | 6 | One-way doors this work may cross, each with a one-line blast radius, pre-approved or not | poteto-mode Autonomy "Always pause"; `never-block-on-the-human` |
 | 7 | Gates: merge, operator review, deploy; merge authority if setup granted none | `autopilot-full.md`; `babysit.md` step 9; `multi-phase-plan.md` review gate |
-| 8 | Budget: wall-clock time and number of units | orchestrate Frame; figure-it-out Phase A |
+| 8 | Budget: wall-clock time and number of units | orchestrate opening; figure-it-out Phase A |
 | 9 | Verify surface: which `verify-<app>` flow, or "no startable app" | `prototype`, `bug-fix.md` reproduce step |
 | 10 | Architecture work: which candidate to take | `improve-codebase-architecture` "Which of these would you like to explore?" |
 | 11 | Explicitly out of scope | (new) |
@@ -32,7 +32,7 @@ Each item names the upstream mid-flow ask it replaces.
 | 13 | Files, directories, branches, systems that are off limits | (new) |
 | 14 | Known dead ends from earlier attempts | (new) |
 | 15 | Commit and PR conventions, if different from workflow.md | (new) |
-| 16 | Product or preference calls already foreseeable, with the user's default | orchestrate Escalation |
+| 16 | Product or preference calls already foreseeable, with the user's default | orchestrate Supervision |
 
 ## Brief: `.audit/<slug>.brief.md` (committed)
 

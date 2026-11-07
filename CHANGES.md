@@ -17,9 +17,9 @@ Every vendor skill, where its copy lives in the pack, and what was done to it. T
 | Vendor | Ref |
 |---|---|
 | mattpocock/skills | `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d` (v1.3.2), `engineering/` + `productivity/` |
-| cursor/plugins pstack | `d457567332aa6989e753ea289f30ea2bfbc80bc0` (v0.15.28), `skills/` |
+| cursor/plugins pstack | `6b0300214a09fd6029cfb7077043125758cd1fd2` (v0.15.36), `skills/` |
 
-## Skill bodies (81 copied, 1 dropped, 1 alias resolved)
+## Skill bodies (82 copied, 2 dropped, 1 alias resolved)
 
 "Other files" counts the rest of the vendor folder copied with it (references, templates, scripts, playbooks).
 
@@ -63,13 +63,13 @@ Every vendor skill, where its copy lives in the pack, and what was done to it. T
 | pstack | `figure-it-out` | `rigor` | `rigor/references/pstack/figure-it-out/figure-it-out.md` | 0 | strip frontmatter, rename |
 | pstack | `how` | `research` | `research/references/pstack/how/how.md` | 2 | strip frontmatter, rename |
 | pstack | `in-your-own-words` | `grilling` | `grilling/references/pstack/in-your-own-words/in-your-own-words.md` | 0 | strip frontmatter, rename |
-| pstack | `interrogate` | `code-review` | `code-review/references/pstack/interrogate/interrogate.md` | 4 | strip frontmatter, rename |
+| pstack | `interrogate` | `code-review` | `code-review/references/pstack/interrogate/interrogate.md` | 0 | strip frontmatter, rename |
 | pstack | `ketchup` | `wait-what` | `wait-what/references/pstack/ketchup/ketchup.md` | 0 | strip frontmatter, rename, relink (1 file) |
 | pstack | `maintain-formal-verification-skill` | `verify` | `verify/references/pstack/maintain-formal-verification-skill/maintain-formal-verification-skill.md` | 0 | strip frontmatter, rename |
 | pstack | `maintain-verification-skill` | `verify` | `verify/references/pstack/maintain-verification-skill/maintain-verification-skill.md` | 0 | strip frontmatter, rename |
 | pstack | `no-comments` | `code-review` | `code-review/references/pstack/no-comments/no-comments.md` | 0 | strip frontmatter, rename |
 | pstack | `poteto-help` | `rigor` | `rigor/references/pstack/poteto-help/poteto-help.md` | 2 | strip frontmatter, rename, relink (1 file) |
-| pstack | `poteto-mode` | `rigor` | `rigor/references/pstack/poteto-mode/poteto-mode.md` | 45 | strip frontmatter, rename |
+| pstack | `poteto-mode` | `rigor` | `rigor/references/pstack/poteto-mode/poteto-mode.md` | 42 | strip frontmatter, rename |
 | pstack | `principle-attack-the-premise` | `diagnosing-bugs` | `diagnosing-bugs/references/pstack/principle-attack-the-premise/principle-attack-the-premise.md` | 0 | strip frontmatter, rename, relink (1 file) |
 | pstack | `principle-boundary-discipline` | `codebase-design` | `codebase-design/references/pstack/principle-boundary-discipline/principle-boundary-discipline.md` | 0 | strip frontmatter, rename |
 | pstack | `principle-build-the-lever` | `rigor` | `rigor/references/pstack/principle-build-the-lever/principle-build-the-lever.md` | 0 | strip frontmatter, rename, relink (1 file) |
@@ -99,6 +99,7 @@ Every vendor skill, where its copy lives in the pack, and what was done to it. T
 | pstack | `setup-pstack` | `setup` | `setup/references/pstack/setup-pstack/setup-pstack.md` | 0 | strip frontmatter, rename |
 | pstack | `sharpen` | `grilling` | `grilling/references/pstack/sharpen/sharpen.md` | 0 | strip frontmatter, rename |
 | pstack | `show-me-your-work` | `rigor` | `rigor/references/pstack/show-me-your-work/show-me-your-work.md` | 2 | strip frontmatter, rename |
+| pstack | `statechart` | `verify` | `verify/references/pstack/statechart/statechart.md` | 406 | strip frontmatter, rename |
 | pstack | `swarm` | `rigor` | `rigor/references/pstack/swarm/swarm.md` | 0 | strip frontmatter, rename |
 | pstack | `tdd` | `tdd` | `tdd/references/pstack/tdd/tdd.md` | 0 | strip frontmatter, rename |
 | pstack | `teach` | `teach` | `teach/references/pstack/teach/teach.md` | 0 | strip frontmatter, rename |
@@ -107,6 +108,7 @@ Every vendor skill, where its copy lives in the pack, and what was done to it. T
 | pstack | `unslop` | `writing` | `writing/references/pstack/unslop/unslop.md` | 0 | strip frontmatter, rename |
 | pstack | `why` | `research` | `research/references/pstack/why/why.md` | 12 | strip frontmatter, rename |
 | pstack | `make-bot-ui` | dropped | none | none | Depends on Cursor routines, `update_state` and `SendToUser`; no equivalent on pi, Codex or Claude Code. |
+| pstack | `ketchup-video` | dropped | none | none | Renders a slide video with no named renderer or encoder; `ketchup` (in `wait-what`) already covers the catch-up for AFK runs. |
 
 Also copied: Matt's bucket READMEs as `rigor/references/matt/{engineering,productivity}-README.md` (relinked).
 
@@ -125,12 +127,13 @@ Also copied: Matt's bucket READMEs as `rigor/references/matt/{engineering,produc
 | Cursor `Task`, `poteto-agent`, cloud agents, `/loop`, `cursor-team-kit`, `agent-transcripts/` | Per-harness primitive and fallback | `rigor/harness/*.md`, `rigor/SKILL.md` §3 |
 | `create-verification-skill` writes `.cursor/skills/verify-<app>/` | Writes `.agents/skills/verify-<app>/` | `verify/SKILL.md` |
 | `show-me-your-work` trail local by default | Committed under `.audit/` so a run resumes from any clone | `rigor/SKILL.md` §3-§4 |
+| `orchestrate` keeps program state in the Project tracker and the Project store | State lives in the tracker and `.audit/<slug>/` | `rigor/SKILL.md` §1-§4, `rigor/AFK.md` |
 | `handoff` writes to the OS temp dir | Inside a rigor run, `.audit/<slug>.handoff.md` | `handoff/SKILL.md` |
 | `no-comments` spawns Cursor's Comment Sicko | Apply its rules directly | `code-review/SKILL.md` |
 | poteto-mode playbooks split across concerns | Kept whole under `rigor/references/pstack/poteto-mode/` so their internal links work; other hosts link into it | host Modes tables |
 
 ## Lost on purpose
 
-- Direct slash entry to `/architect`, `/interrogate`, `/blast-radius`, `/how`, `/why`, `/swarm`, `/arena`, `/figure-it-out`, `/correct`, `/benchmark-checklist`. Reach them through their host skill's mode or a `rigor` route.
+- Direct slash entry to `/architect`, `/interrogate`, `/blast-radius`, `/how`, `/why`, `/swarm`, `/arena`, `/figure-it-out`, `/correct`, `/benchmark-checklist`, `/statechart`. Reach them through their host skill's mode or a `rigor` route.
 - Each principle leaf's own description, and with it independent model-triggering of principles.
 - Cursor cloud agents and Bugbot, with no replacement.

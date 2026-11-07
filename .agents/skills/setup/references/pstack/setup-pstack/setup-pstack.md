@@ -24,7 +24,7 @@ The default role-to-model mapping is the shape shown in step 5 below. If `docs/a
 
 **(b) Apply it.** Build the working table from the skill defaults, and on a re-run keep any role you changed by family, list, or alias (`inherit-parent`, `auto`). `unlimited`, `large`, `medium`, and `small` set the effort token of every real slug, panel entries included, to `max`, `xhigh`, `high`, or `medium`. Never write a `-fast` slug; use the same family's standard-speed slug. The effort token is the last token on the ladder `max` > `xhigh` > `high` > `medium` > `low`. If the result is not a detected slug, use the same family's detected slug with the highest effort at or below the target, else mark the role as needing a choice. `inherit-parent` and `auto` do not change. So `unlimited` turns a `-xhigh` slug into its `-max` twin. A family that tops out at `xhigh` stays at `xhigh` under `unlimited`. `large` keeps the defaults. `small` turns them into their `-medium` slugs.
 
-**(c) Show the roles and confirm.** Show every role with its model, marking any real slug not in the detected set as needing a choice. Also list each line step 2 dropped. Ask whether to accept as-is or change specific roles, offering the detected models plus `inherit-parent` and `auto` (both mean: this role runs on the parent chat model) as the options. Prefer a structured multiple-choice question (the harness's question tool, if any) over free text. For panel roles (arena runners, architect runners, interrogate reviewers) the value is a list, and one subagent runs per entry, alias entries included, so the list length sets the count. `arena cross-judge pool` is also a list, but Arena selects one value from it whose model family differs from the parent's when possible. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
+**(c) Show the roles and confirm.** Show every role with its model, marking any real slug not in the detected set as needing a choice. Also list each line step 2 dropped. Ask whether to accept as-is or change specific roles, offering the detected models plus `inherit-parent` and `auto` (both mean: this role runs on the parent chat model) as the options. Prefer a structured multiple-choice question (the harness's question tool, if any) over free text. For panel roles (arena runners, architect runners, interrogate reviewers) the value is a list, and one subagent runs per entry, alias entries included, so the list length sets the count. `arena cross-judge pool` is also a list, but Arena runs one judge. It tries only values from a family other than the parent's, in list order, so order it by preference. An `inherit-parent` or `auto` value never judges. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
 
 ### 4. Validate
 
@@ -40,7 +40,7 @@ description: pstack per-role model choices (overrides skill defaults)
 alwaysApply: true
 ---
 # pstack model configuration. One line per role. Delete a line to fall back to the skill default.
-# `inherit-parent` or `auto` as a value: the role runs on the parent chat model (omit Task `model`). Alias entries in a panel list still count toward its fan-out.
+# `inherit-parent` or `auto` as a value: the role runs on the parent chat model (omit the child's `model`). Alias entries in a panel list still count toward its fan-out.
 # budget: large (xhigh)
 feature, refactoring: inherit-parent
 bug-fix: inherit-parent

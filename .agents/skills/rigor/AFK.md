@@ -9,7 +9,7 @@ AFK scope: every body under `rigor`, `tdd`, `code-review`, `diagnosing-bugs`, `c
 | Situation mid-run | Behaviour |
 |---|---|
 | Reversible ambiguity | Choose the conservative option. Log `decision` + `why` to the trail. |
-| Irreversible step not pre-approved in the brief | Park it in `.audit/<slug>.gates.md` (question, options, the default on no answer) and route around it ([orchestrate](references/pstack/poteto-mode/playbooks/orchestrate.md) §Escalation). If nothing else can proceed, stop cleanly: write state, mark the unit `blocked`, end with the close report. |
+| Irreversible step not pre-approved in the brief | Park it in `.audit/<slug>.gates.md` (question, options, the default on no answer) and route around it ([orchestrate](references/pstack/poteto-mode/playbooks/orchestrate.md) §Supervision). If nothing else can proceed, stop cleanly: write state, mark the unit `blocked`, end with the close report. |
 | A blocking review finding survives the brief's last round | Unit `blocked`, state written, reported. |
 | Verify shows no evidence | Back to build. Never mark the unit verified. |
 | Verify impossible (no startable app) | Unit `unverified`; the run continues; the close report leads with it. |
@@ -27,7 +27,7 @@ Each row: the body (path relative to the skills root), a fragment of the interac
 | `code-review/references/matt/code-review/code-review.md` | tell the user to run | interview: rigor §0 stops before the run when setup is missing |
 | `code-review/references/matt/code-review/code-review.md` | ask for it | brief: REVIEW fixed point (checklist 4) |
 | `code-review/references/matt/code-review/code-review.md` | ask the user where the spec is | brief: REVIEW spec location (checklist 5); none recorded → Spec axis reports "no spec available" |
-| `code-review/references/pstack/interrogate/interrogate.md` | ask the user before | brief: GOAL is the intent; still unsure → log the intent you assumed |
+| `code-review/references/pstack/interrogate/interrogate.md` | Ask the user when the intent is unclear | brief: GOAL is the intent; still unsure → log the intent you assumed |
 | `code-review/references/pstack/no-comments/no-comments.md` | wait for their approval | brief: an encoding offer counts as approved only when DOORS or DEFAULTS pre-approves it; otherwise delete the comment and report the constraint open |
 | `codebase-design/references/pstack/architect/architect.md` | pause for sign-off | brief: only if the interview asked for a design checkpoint; otherwise no checkpoint |
 | `codebase-design/references/pstack/principle-redesign-from-first-principles/principle-redesign-from-first-principles.md` | Ask: "if we were writing | n/a: a question to yourself |
@@ -52,6 +52,7 @@ Each row: the body (path relative to the skills root), a fragment of the interac
 | `rigor/references/pstack/poteto-mode/playbooks/multi-phase-plan.md` | Ask the operator | brief: DEFAULTS (checklist 16); an unforeseen product call → apply a default, log it, list it at close |
 | `rigor/references/pstack/poteto-mode/playbooks/multi-phase-plan.md` | wait for the operator | brief: GATES (checklist 7); a review gate parks in gates.md, work continues around it |
 | `rigor/references/pstack/poteto-mode/playbooks/multi-phase-plan.md` | Wait for the operator | brief: GATES; stop at merge-ready, report |
+| `rigor/references/pstack/poteto-mode/playbooks/orchestrate.md` | Ask the user only for a real decision | brief: GATES (checklist 7); a stated irreversible step parks in gates.md and the run continues around it |
 | `rigor/references/pstack/poteto-mode/playbooks/visual-parity.md` | stop and ask | log + gate: never edit the baseline; park a gate, mark the unit `blocked` |
 | `rigor/references/pstack/poteto-mode/poteto-mode.md` | About to ask a structured multiple-choice question | log: classify per the line; a genuine preference call gets the brief's default or a logged default, never a question |
 | `rigor/references/pstack/poteto-mode/playbooks/babysit.md` | approval is a wait | brief: GATES; owner approval parks in gates.md |
@@ -62,3 +63,4 @@ Each row: the body (path relative to the skills root), a fragment of the interac
 | `verify/references/pstack/create-formal-verification-skill/create-formal-verification-skill.md` | do not change product code unless the user asks | brief: SCOPE; a property violation is a finding, reported at close |
 | `verify/references/pstack/create-verification-skill/create-verification-skill.md` | only ask the user what you cannot observe | interview: generation runs during setup; mid-run, log the assumption |
 | `verify/references/pstack/maintain-formal-verification-skill/maintain-formal-verification-skill.md` | unless the user asks | n/a: describes a user request; the brief's SCOPE decides |
+| `verify/references/pstack/statechart/statechart.md` | When the user asks for an image | brief: VERIFY surface; without an image request, show the Mermaid text from `chart.mmd` |

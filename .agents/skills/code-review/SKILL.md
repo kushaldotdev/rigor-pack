@@ -12,14 +12,14 @@ Each lens reports in its own section. No lens ranks or filters another (the same
 | Lens | When | Body |
 |---|---|---|
 | standards + spec (default) | Every review | [code-review](references/matt/code-review/code-review.md) |
-| interrogate | Contested design, or before shipping a nontrivial change | [interrogate](references/pstack/interrogate/interrogate.md) and its references |
+| interrogate | Contested design, or before shipping a nontrivial change | [interrogate](references/pstack/interrogate/interrogate.md) |
 | blast radius | A small diff you don't trust; what breaks beyond it | [blast-radius](references/pstack/blast-radius/blast-radius.md) |
 | comments | Before review: keep only non-obvious *why* comments | [no-comments](references/pstack/no-comments/no-comments.md) |
 | bot review triage | Bugbot or an automated reviewer commented | [bugbot-triage](../rigor/references/pstack/poteto-mode/references/bugbot-triage.md) |
 
 ## Precedence
 
-- `interrogate` keeps its upstream premise: model diversity first. Personas are the single-family fallback, labeled "single-family" in the verdict.
+- `interrogate` keeps only findings a rerun proves, and its adversaries run on the `interrogate reviewers` role (a second model family when the harness has one, labeled "single-family" otherwise). The caller sorts the verified findings into act on, consider, noted, and dismissed with a reason.
 - `no-comments` spawns a reviewer child agent. Where the harness has no child agents, apply the rules yourself. The rule it enforces is the Comments section of [poteto-mode](../rigor/references/pstack/poteto-mode/poteto-mode.md).
-- "In the foreground" in the base body means: wait for both reviewers before aggregating. Running them as background children and waiting is equivalent.
+- "In the foreground" in the base body means: wait for every reviewer before aggregating. Running them as background children and waiting is equivalent.
 - Upstream names resolve through [the name index](../rigor/references/INDEX.md). Inside a `rigor` run, [AFK.md](../rigor/AFK.md) supplies the fixed point and the spec and overrides every "ask the user" line.

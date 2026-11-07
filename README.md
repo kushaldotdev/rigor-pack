@@ -29,7 +29,7 @@ You need two names: run **`setup`** once per repo, then give every task to **`ri
 | `prototype` | model or you | Throwaway code that answers one design question |
 | `writing` | model or you | Writing for agents, PR bodies, technical writing, unslop |
 
-Each host `SKILL.md` is a short hand-written dispatcher. The upstream bodies it uses are copied verbatim under `references/matt/` and `references/pstack/`, and the dispatcher links to them by relative path. All 83 upstream skills are accounted for (81 copied, `make-bot-ui` dropped, and a one-line alias resolved into the skill it names); see [CHANGES.md](CHANGES.md).
+Each host `SKILL.md` is a short hand-written dispatcher. The upstream bodies it uses are copied verbatim under `references/matt/` and `references/pstack/`, and the dispatcher links to them by relative path. All 85 upstream skills are accounted for (82 copied, `make-bot-ui` and `ketchup-video` dropped, and a one-line alias resolved into the skill it names); see [CHANGES.md](CHANGES.md).
 
 ```mermaid
 flowchart LR
@@ -224,4 +224,4 @@ node scripts/build-pack.mjs && node scripts/check-pack.mjs
 | Vendor | Kept | Ref |
 |---|---|---|
 | mattpocock/skills | `skills/engineering/` (20), `skills/productivity/` (7), bucket READMEs, `LICENSE` | `4ae2317` (v1.3.2), 2026-10-31 |
-| cursor/plugins pstack | `skills/` (56), `LICENSE` | `d457567` (v0.15.28), 2026-10-19 |
+| cursor/plugins pstack | `skills/` (58), `LICENSE` | `6b03002` (v0.15.36), 2026-11-06 |

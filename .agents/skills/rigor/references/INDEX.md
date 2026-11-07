@@ -4,7 +4,7 @@ Upstream bodies name other skills by their upstream names: "the **how** skill", 
 In this pack, most of those are files, not skills. Resolve a name here and read the file; paths are relative to the skills root (the folder holding `rigor/`).
 A slash form such as `/swarm` or `$swarm` in an upstream body means "read and follow that body", not a command to type.
 Where two vendors share a name (`tdd`, `teach`), the host's SKILL.md says which one applies.
-Dropped: `pstack:make-bot-ui` (Depends on Cursor routines, update_state and SendToUser; no equivalent on pi, Codex or Claude Code.)
+Dropped: `pstack:make-bot-ui` (Depends on Cursor routines, update_state and SendToUser; no equivalent on pi, Codex or Claude Code.); `pstack:ketchup-video` (Renders a slide video with no named renderer or encoder; ketchup (in wait-what) already covers the catch-up for AFK runs.)
 
 | Upstream name | Vendor | Host skill | File |
 |---|---|---|---|
@@ -72,6 +72,7 @@ Dropped: `pstack:make-bot-ui` (Depends on Cursor routines, update_state and Send
 | `setup-pstack` | pstack | setup | [setup/references/pstack/setup-pstack/setup-pstack.md](../../setup/references/pstack/setup-pstack/setup-pstack.md) |
 | `sharpen` | pstack | grilling | [grilling/references/pstack/sharpen/sharpen.md](../../grilling/references/pstack/sharpen/sharpen.md) |
 | `show-me-your-work` | pstack | rigor | [rigor/references/pstack/show-me-your-work/show-me-your-work.md](../../rigor/references/pstack/show-me-your-work/show-me-your-work.md) |
+| `statechart` | pstack | verify | [verify/references/pstack/statechart/statechart.md](../../verify/references/pstack/statechart/statechart.md) |
 | `swarm` | pstack | rigor | [rigor/references/pstack/swarm/swarm.md](../../rigor/references/pstack/swarm/swarm.md) |
 | `tdd` | matt | tdd | [tdd/references/matt/tdd/tdd.md](../../tdd/references/matt/tdd/tdd.md) |
 | `tdd` | pstack | tdd | [tdd/references/pstack/tdd/tdd.md](../../tdd/references/pstack/tdd/tdd.md) |

@@ -34,7 +34,7 @@ Classify the task, pick a route, and say which one in one line. Orientation: Mat
 | Agent-behaviour or skill change | [eval](references/pstack/poteto-mode/playbooks/eval.md) / [authoring-a-skill](references/pstack/poteto-mode/playbooks/authoring-a-skill.md) with the [writing](../writing/SKILL.md) skill |
 | Codebase upkeep | [improve-codebase-architecture](references/matt/improve-codebase-architecture/improve-codebase-architecture.md); the candidate pick is an interview question |
 | Large migration or no playbook fits | [figure-it-out](references/pstack/figure-it-out/figure-it-out.md) |
-| Program: many PRs, many days | [orchestrate](references/pstack/poteto-mode/playbooks/orchestrate.md) (store under `.audit/<slug>/`), [autopilot-full](references/pstack/poteto-mode/playbooks/autopilot-full.md) or [autopilot-stack](references/pstack/poteto-mode/playbooks/autopilot-stack.md) |
+| Program: many PRs, many days | [orchestrate](references/pstack/poteto-mode/playbooks/orchestrate.md) (state in `.audit/<slug>/` and the tracker), [autopilot-full](references/pstack/poteto-mode/playbooks/autopilot-full.md) or [autopilot-stack](references/pstack/poteto-mode/playbooks/autopilot-stack.md) |
 | Drive one predicate to done | [autonomous-run](references/pstack/poteto-mode/playbooks/autonomous-run.md) |
 | A PR to get green / land | [babysit](references/pstack/poteto-mode/playbooks/babysit.md) / [shipping](references/pstack/poteto-mode/playbooks/shipping.md) (merging needs merge authority in the brief) |
 | Disk cleanup of worktrees | [worktree-cleanup](references/pstack/poteto-mode/playbooks/worktree-cleanup.md) |
@@ -52,7 +52,7 @@ The interview ends when the user confirms the brief. From that moment the run is
 
 [AFK.md](AFK.md) governs everything from here: it maps every interactive line in every body to "answered in the brief" or "decide, log, surface at close", and fixes the outcome for every mid-run situation. Re-read it at each phase boundary.
 
-Standing orders: `.audit/<slug>.preferences.md` (authority from `docs/agents/workflow.md`, plus run-specific lines). Paste them verbatim into every child brief, and use the brief shape from [orchestrate](references/pstack/poteto-mode/playbooks/orchestrate.md) §The brief (GOAL / SCOPE / CONTEXT / ACCEPTANCE / VERIFY / TIMEBOX / FORBIDDEN / REPORT / STANDING), sized to the unit.
+Standing orders: `.audit/<slug>.preferences.md` (authority from `docs/agents/workflow.md`, plus run-specific lines). Paste them verbatim into every child brief and every resume: a directive that is not repeated decays, and each dropped one costs a turn. Every brief names these nine fields, sized to the unit: GOAL (the outcome in one sentence), SCOPE (paths it may and may not write, its worktree or branch), CONTEXT (files and PRs to read, upstream reports pasted in full), ACCEPTANCE (checkable criteria, one per line), VERIFY (the exact command or the control path), TIMEBOX (a rough cap, on expiry return partial findings and stop), FORBIDDEN (retargets, merges, rebases, force-pushes, edits outside scope), REPORT (status, branch, head SHA, PRs, verdict, what was run, deviations, follow-ups), STANDING (the standing orders pasted verbatim). A one-command unit collapses the shape to a paragraph that still names the goal, the scope, the verify command and the report shape.
 
 Trail: one TSV per run at `.audit/<slug>.tsv` via [show-me-your-work](references/pstack/show-me-your-work/show-me-your-work.md) and its `scripts/log.sh`. Unit name in `phase`, result word in `result`. Every phase transition writes a row.
 
@@ -77,7 +77,7 @@ Fix rounds after review go to a fresh child with consolidated scope (poteto-mode
 ### Precedence where bodies disagree
 
 - **tdd.** Matt `tdd` defines a good test; seams were agreed in the interview. pstack `tdd` decides whether a bug fix gets a new test. Prefer no test over a bad test, never over missing proof.
-- **review.** `code-review` axes and `interrogate` are separate lenses in separate sections; neither ranks the other. `interrogate` keeps model diversity first; personas are the labeled single-family fallback.
+- **review.** `code-review` axes and `interrogate` are separate lenses in separate sections; neither ranks the other. `interrogate` keeps only findings a rerun proves, and its adversaries run on the `interrogate reviewers` role (a second model family when the harness has one, labeled single-family otherwise). The caller sorts the verified findings into act on, consider, noted, and dismissed with a reason.
 - **verify vs benchmark.** `verify-<app>` says how to drive the app; `benchmark-checklist` says what counts as a measured number. Both must pass for `verified` on a perf claim.
 - **worktrees.** One worktree per writer ([implement-spec](references/matt/implement-spec/implement-spec.md), separate-before-serializing-shared-state), when workflow.md allows worktrees; otherwise disjoint file sets with a serial step for shared files.
 - **tickets vs parallel build.** A ticket built in parallel must name the files it owns.

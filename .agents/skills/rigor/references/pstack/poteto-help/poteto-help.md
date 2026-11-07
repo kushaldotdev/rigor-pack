@@ -62,7 +62,7 @@ The default answer is `/poteto-mode`, which runs most of the others when its ste
 |---|---|
 | Do any non-trivial task with rigor | [`/poteto-mode`](../poteto-mode/poteto-mode.md) |
 | Check that the agent understood their goal and the problem before it starts | [`/in-your-own-words`](../../../../grilling/references/pstack/in-your-own-words/in-your-own-words.md) |
-| Aim a task higher before starting: more expert, more outcome-focused, not overspecified | [`/sharpen`](../../../../grilling/references/pstack/sharpen/sharpen.md) |
+| Get a prompt rewritten deeper, not bigger, before sending it: what a top professional would add, their raw material and methods, and an outside check. It returns the prompt and doesn't do the task | [`/sharpen`](../../../../grilling/references/pstack/sharpen/sharpen.md) |
 | Know how code works now, or where new code should live | [`/how`](../../../../research/references/pstack/how/how.md) |
 | Know why code is shaped this way, or where a number came from | [`/why`](../../../../research/references/pstack/why/why.md) |
 | Understand a change or subsystem, explained plainly | [`/teach`](../../../../teach/references/pstack/teach/teach.md) |
@@ -83,6 +83,7 @@ The default answer is `/poteto-mode`, which runs most of the others when its ste
 | Bring a verification skill and its feature map back in line with the app | [`/maintain-verification-skill`](../../../../verify/references/pstack/maintain-verification-skill/maintain-verification-skill.md) |
 | Formally verify a race, invariant, or other property that tests rarely reach | [`/create-formal-verification-skill`](../../../../verify/references/pstack/create-formal-verification-skill/create-formal-verification-skill.md) |
 | Bring a formal verification back in line after the code it covers changed, and learn whether a failure is drift or a bug | [`/maintain-formal-verification-skill`](../../../../verify/references/pstack/maintain-formal-verification-skill/maintain-formal-verification-skill.md) |
+| Show a PM or designer what the user sees as a chart checked by a TLA+ model, with the shortest path to each state that breaks a rule | [`/statechart`](../../../../verify/references/pstack/statechart/statechart.md) |
 | Vet a performance number before reporting or acting on it | [`/benchmark-checklist`](../../../../verify/references/pstack/benchmark-checklist/benchmark-checklist.md) |
 | Run a large or cross-cutting change, or one to review after stepping away | [`/figure-it-out`](../figure-it-out/figure-it-out.md) |
 | Keep a decision log during a run, and review it afterward | [`/show-me-your-work`](../show-me-your-work/show-me-your-work.md) |
@@ -118,7 +119,7 @@ Playbooks are step lists inside `/poteto-mode`, not skills, so they have no slas
 - "land the stack" runs Shipping.
 - "take over this branch" runs Session pickup.
 - "pause safely" runs Pause safely.
-- "full autopilot on this queue" runs Autopilot-full. "stack them, don't ship" runs Autopilot-stack.
+- "full autopilot on this queue" runs Autopilot-full. "autopilot, don't merge" runs Autopilot-stack.
 - "run the eval playbook" runs Eval.
 
 Without `/poteto-mode`, a phrase such as "babysit this pr" can start Cursor's own skill for the same job instead. The Playbooks section of [`poteto-mode`](../poteto-mode/poteto-mode.md) lists every playbook and when it applies. [Guide page 6](../../docs/guide/06-verify-and-ship.md) covers opening, babysitting, and landing a PR.

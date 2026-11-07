@@ -14,6 +14,7 @@ description: "Prove a change works on the real artifact: generate or maintain a 
 | maintain verify skill | Keep the verify skill and its feature map honest | [maintain-verification-skill](references/pstack/maintain-verification-skill/maintain-verification-skill.md) |
 | create formal verification | Concurrency, retries, state machines, parsers need more than tests | [create-formal-verification-skill](references/pstack/create-formal-verification-skill/create-formal-verification-skill.md) |
 | maintain formal verification | Verified code changed since it was last checked | [maintain-formal-verification-skill](references/pstack/maintain-formal-verification-skill/maintain-formal-verification-skill.md) |
+| statechart | Show a TLA+ model's states as a chart, or a bug as the shortest path through states; read a TLA+ check's results | [statechart](references/pstack/statechart/statechart.md) |
 | vet a number | You measured a perf number or eval result | [benchmark-checklist](references/pstack/benchmark-checklist/benchmark-checklist.md) and [principle-explain-the-number](references/pstack/principle-explain-the-number/principle-explain-the-number.md) |
 
 ## Pack rules

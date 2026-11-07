@@ -16,7 +16,7 @@ Read the body for the mode, then follow it.
 | grill (default) | Stress-test a plan, decision, or idea | [grilling](references/matt/grilling/grilling.md) |
 | grill with docs | In a repo: also sharpen glossary terms and record ADRs | [grill-with-docs](references/matt/grill-with-docs/grill-with-docs.md), which runs grilling plus the [domain-modeling](../domain-modeling/SKILL.md) skill |
 | restate | Before round one: say back the user's goal and problem | [in-your-own-words](references/pstack/in-your-own-words/in-your-own-words.md) |
-| sharpen | Before round one: the expert approach and the right level of specification | [sharpen](references/pstack/sharpen/sharpen.md) |
+| sharpen | Before round one: rewrite the task prompt deeper (not bigger) and return it; it does not do the task | [sharpen](references/pstack/sharpen/sharpen.md) |
 | questionnaire | The decision belongs to a third party | [to-questionnaire](references/matt/to-questionnaire/to-questionnaire.md) |
 
 The `rigor` interview runs restate, then sharpen, then grill with docs.

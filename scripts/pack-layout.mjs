@@ -8,7 +8,7 @@
 
 export const VENDORS = {
   matt: { root: "vendors/mattpocock/skills", license: "vendors/mattpocock/skills/LICENSE", pin: "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d (v1.3.2)" },
-  pstack: { root: "vendors/poteto/pstack/skills", license: "vendors/poteto/pstack/LICENSE", pin: "d457567332aa6989e753ea289f30ea2bfbc80bc0 (v0.15.28)" },
+  pstack: { root: "vendors/poteto/pstack/skills", license: "vendors/poteto/pstack/LICENSE", pin: "6b0300214a09fd6029cfb7077043125758cd1fd2 (v0.15.36)" },
 };
 
 const P = (...names) => names.map((n) => `pstack:principle-${n}`);
@@ -30,7 +30,7 @@ export const HOSTS = {
   verify: {
     advertised: true,
     sources: ["pstack:create-verification-skill", "pstack:maintain-verification-skill", "pstack:create-formal-verification-skill",
-      "pstack:maintain-formal-verification-skill", "pstack:benchmark-checklist", ...P("prove-it-works", "explain-the-number")],
+      "pstack:maintain-formal-verification-skill", "pstack:statechart", "pstack:benchmark-checklist", ...P("prove-it-works", "explain-the-number")],
   },
   research: { advertised: true, sources: ["matt:engineering/research", "pstack:how", "pstack:why", "pstack:recall"] },
   prototype: { advertised: true, sources: ["matt:engineering/prototype"] },
@@ -78,6 +78,7 @@ export const INTERFACE = {
 
 export const DROPPED = {
   "pstack:make-bot-ui": "Depends on Cursor routines, update_state and SendToUser; no equivalent on pi, Codex or Claude Code.",
+  "pstack:ketchup-video": "Renders a slide video with no named renderer or encoder; ketchup (in wait-what) already covers the catch-up for AFK runs.",
 };
 
 // Vendor files never copied: per-harness interface metadata that the build
