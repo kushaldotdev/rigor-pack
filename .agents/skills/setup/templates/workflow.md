@@ -39,6 +39,7 @@ Where a chain run differs from `## Authority` above. Every number here is a sett
 - Context ceilings: implementer `<n>k`, long session `<n>k`
 - Attempts per task: `<n>` (`<n>` to get it right, `<n>` for review findings), then a takeover
 - Hard tickets: `<n>` implementer fix round, then a takeover
+- Solo band: `hard` <!-- or: critical, or none. A ticket at or above it runs alone in its own session -->
 - Review depth: a post-land delta over `<n>` lines is re-reviewed
 - Heartbeat: every `<n>` minutes; a progress line older than `<n>` minutes, or the same step on `<n>` lines in a row, is stuck
 - Reviewer fallback: none <!-- or: a named model when the first is out of quota -->

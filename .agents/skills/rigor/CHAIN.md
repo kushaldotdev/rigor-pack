@@ -21,7 +21,7 @@ Every setting (models per role, concurrency caps, attempt counts, context ceilin
 ## Session start
 
 1. If `.audit/<slug>.stop` exists, do nothing; reply with the resume prompt.
-2. Read the brief, preferences, handoff, the trail's last rows and `gates.md`. Record the brief's resume answers as the `start` row.
+2. Read the brief, preferences, handoff, the trail's last rows and `gates.md`. Record the brief's resume answers as the `start` row. A successor's briefing names its scope; when that scope is a solo ticket, it is that ticket alone.
 3. List the map's open children (per `docs/agents/issue-tracker.md`) and check each against `ORDER.md`. A ticket missing from the order is still work.
 4. Clean up leftovers from tickets that already landed (worktrees, workspaces, agents).
 5. Start the watch heartbeat before the first delegation (The delegation adapter).
@@ -38,6 +38,8 @@ Every setting (models per role, concurrency caps, attempt counts, context ceilin
 ## The loop for one ticket
 
 1. **Pick** the first open, unblocked, unparked ticket in order; an approved hard or critical ticket goes first. Finish every opened ticket before starting a new one. Keep one hard or critical ticket in flight at a time. Before briefing, re-check the ticket's premise and scope against main.
+
+   A ticket at or above the solo band (`docs/agents/workflow.md` → Chain efforts, default hard) runs alone, in a fresh session. If this session has already landed or opened work, it does not start the solo ticket: it finishes what is in flight, runs Session end, and hands over to a successor whose scope is that ticket alone. With self-continuing off, it pauses with the resume prompt naming that ticket. A session that runs a solo ticket closes and hands over right after landing it, and picks nothing else. A solo ticket parked on plan approval blocks nothing: the rule covers implementing the ticket, so while it is parked easy and medium work still runs. Easy and medium tickets still share sessions.
 2. **Halt check** by band (`docs/agents/difficulty.md`):
 
    | Band | Rule |
@@ -112,7 +114,7 @@ Autosquash fixups, rewrite the handoff, add the trail row, commit both on main, 
 Only when workflow.md enables it. The closing session starts a successor as a **new top-level session** through the adapter (the start call is in workflow.md) only if all of these hold:
 1. Session-end steps are done.
 2. No stop is recorded: no `.audit/<slug>.stop`, no owner "stop" this session, no hold in the handoff.
-3. The next session has runnable work: approved plans for its hard tickets, or unblocked easy and medium work.
+3. The next session has runnable work: approved plans for its hard tickets, or unblocked easy and medium work. When its session plan row is a solo ticket, that row holds only that ticket.
 4. The done predicate is still false.
 5. No other session of this chain is running: list the running sessions by label through the adapter and find none but this one.
 6. No model the chain needs is out of quota (a reviewer with a named fallback excepted).
