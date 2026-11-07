@@ -133,7 +133,7 @@ test("mkpacket: substitutes placeholders in task, prefs and rules; none survive"
   assert.match(text, /prefs body: scratch in \/home\/u\/wt\/repo\/u22\/tmp/);
   assert.match(text, /7\. COMMITS on u22-fix only/);
   assert.match(text, /l1-progress\.log/); // pack rules reached the packet
-  const left = [...text.matchAll(/\{(wt|base|branch|slug|ref|ticket|task|commit_subject|commit_trailer)\}/g)];
+  const left = [...text.matchAll(/\{(wt|base|branch|slug|ref|ticket|task|commit_subject|commit_trailer|lenses)\}/g)];
   assert.deepEqual(left, []);
   assert.ok(text.indexOf("STANDING ORDERS (binding):") < text.indexOf("\nRULES:\n"));
   assert.ok(text.indexOf("\nRULES:\n") < text.indexOf("\nPROJECT RULES:\n"));
@@ -157,4 +157,63 @@ test("mkpacket: a missing preferences file fails with exit 2", () => {
   const { r } = packet(dir);
   assert.equal(r.status, 2);
   assert.match(r.stderr, /no preferences at .*\.audit/);
+});
+
+const LENS_LINE = "- Self-review lenses: `standards+spec always; blast-radius at medium; interrogate at hard and critical` <!-- comment -->\n";
+const withWorkflow = (line = LENS_LINE) => {
+  const dir = repo();
+  mkdirSync(join(dir, "docs", "agents"), { recursive: true });
+  writeFileSync(join(dir, "docs", "agents", "workflow.md"), `# Workflow\n\n## Chain efforts\n\n- Solo band: \`hard\`\n${line}`);
+  return dir;
+};
+// The lens list packet rule 6 names, by short name.
+const lensesIn = (text) => {
+  const m = text.match(/with these lenses: ([\s\S]*?)\. Use fresh/);
+  assert.ok(m, "rule 6 lens list not found");
+  return [...m[1].matchAll(/(standards \+ spec|blast radius|interrogate) \(/g)].map((x) => x[1]);
+};
+
+test("mkpacket: --band fills rule 6 with that band's lenses from workflow.md", () => {
+  const dir = withWorkflow();
+  const want = { easy: ["standards + spec"], medium: ["standards + spec", "blast radius"], hard: ["standards + spec", "interrogate"], critical: ["standards + spec", "interrogate"] };
+  for (const [band, lenses] of Object.entries(want)) {
+    const { r, text } = packet(dir, ["--ref", "364", "--band", band]);
+    assert.equal(r.status, 0, r.stderr);
+    assert.deepEqual(lensesIn(text), lenses, band);
+    assert.match(text, /tmp\/cr-364-t1\.md, one section per lens/);
+    assert.doesNotMatch(text, /\{lenses\}/);
+  }
+  assert.match(packet(dir, ["--band", "hard"]).text, /Findings and Dropped lists/);
+});
+
+test("mkpacket: without --band, or without the setting, self-review is standards+spec only", () => {
+  assert.deepEqual(lensesIn(packet(withWorkflow()).text), ["standards + spec"]);
+  const noLine = packet(withWorkflow(""), ["--band", "critical"]);
+  assert.equal(noLine.r.status, 0, noLine.r.stderr);
+  assert.deepEqual(lensesIn(noLine.text), ["standards + spec"]);
+  assert.match(noLine.r.stderr, /no "Self-review lenses" line/);
+  assert.deepEqual(lensesIn(packet(repo(), ["--band", "hard"]).text), ["standards + spec"]); // no workflow.md
+});
+
+test("mkpacket: the setting's first backticked value wins over a trailing note", () => {
+  const dir = withWorkflow("- Self-review lenses: `standards+spec always; blast-radius at medium; interrogate at hard and critical` (owner, 2026-11-07). The cheap self-review runs first; `not, a value`\n");
+  const { r, text } = packet(dir, ["--band", "critical"]);
+  assert.equal(r.status, 0, r.stderr);
+  assert.deepEqual(lensesIn(text), ["standards + spec", "interrogate"]);
+  assert.deepEqual(lensesIn(packet(withWorkflow("- Self-review lenses: blast-radius at easy <!-- note -->\n"), ["--band", "easy"]).text), ["standards + spec", "blast radius"]); // no backticks
+});
+
+test("mkpacket: a bad band, lens or clause exits 2", () => {
+  const bad = packet(withWorkflow(), ["--band", "extreme"]);
+  assert.equal(bad.r.status, 2);
+  assert.match(bad.r.stderr, /--band must be one of easy, medium, hard, critical: extreme/);
+  const lens = packet(withWorkflow("- Self-review lenses: fuzzing at hard\n"), ["--band", "hard"]);
+  assert.equal(lens.r.status, 2);
+  assert.match(lens.r.stderr, /unknown lens .*: fuzzing/);
+  const bandIn = packet(withWorkflow("- Self-review lenses: interrogate at hardest\n"), ["--band", "hard"]);
+  assert.equal(bandIn.r.status, 2);
+  assert.match(bandIn.r.stderr, /unknown band .*: hardest/);
+  const clause = packet(withWorkflow("- Self-review lenses: interrogate\n"), ["--band", "hard"]);
+  assert.equal(clause.r.status, 2);
+  assert.match(clause.r.stderr, /bad clause .*: interrogate/);
 });

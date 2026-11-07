@@ -1,12 +1,19 @@
 #!/usr/bin/env node
 // Build an implementer packet: task text + chain preferences + pack rules + project rules.
 //   node mkpacket.mjs --slug S --wt W --base B --branch BR --task FILE --out FILE
-//                     [--ref R] [--task-id T] [--project-rules FILE] [--repo DIR]
-// --repo (default cwd) supplies .audit/<slug>.preferences.md (required) and
-// docs/agents/packet-rules.md (used when --project-rules is absent).
+//                     [--ref R] [--task-id T] [--band B] [--project-rules FILE] [--repo DIR]
+// --repo (default cwd) supplies .audit/<slug>.preferences.md (required),
+// docs/agents/packet-rules.md (used when --project-rules is absent) and
+// docs/agents/workflow.md (read for the "Self-review lenses" line when --band is given).
 // <ref> is a tracker issue number ("364") or a unit id ("U2").
 // <task-id> names the task inside the ticket ("T2", default "T1"); it fills {task}, so the
 // self-review file {wt}/tmp/cr-{ticket}-{task}.md is one per task.
+// <band> is the ticket's band: easy, medium, hard or critical. It fills {lenses} in packet rule 6
+// from the workflow.md line "Self-review lenses: standards+spec always; blast-radius at medium;
+// interrogate at hard and critical" (clauses split on ";", each "<lens> always" or
+// "<lens> at <band>[, <band>][ and <band>]"); when the line has a backticked span, only the first
+// one is read, so a trailing note is ignored. standards+spec always runs. Without --band, or
+// without that line, the self-review is standards+spec only. A bad band, lens or clause exits 2.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -44,6 +51,38 @@ const task = read(args.task, "task");
 const ref = args.ref;
 const taskId = args["task-id"] ?? "T1";
 if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(taskId)) die(`--task-id must be letters, digits, ".", "_" or "-": ${taskId}`);
+const BANDS = ["easy", "medium", "hard", "critical"];
+const LENSES = { // order here is the order rule 6 lists them in
+  "standards+spec": "standards + spec (the default lens, both axes)",
+  "blast-radius": "blast radius (for each safety fact, the step you proved it to, or unproven)",
+  "interrogate": "interrogate (adversaries on the `interrogate reviewers` role; put its Findings and Dropped lists in the file)",
+};
+const band = args.band;
+if (band !== undefined && !BANDS.includes(band)) die(`--band must be one of ${BANDS.join(", ")}: ${band}`);
+
+// Lenses the band requires, from workflow.md's "Self-review lenses" line.
+function lensesFor(band) {
+  const chosen = new Set(["standards+spec"]);
+  if (band === undefined) return chosen;
+  const wfPath = join(repo, "docs", "agents", "workflow.md");
+  const line = existsSync(wfPath) && read(wfPath, "workflow").split("\n").find((l) => /^\s*-\s*Self-review lenses:/.test(l));
+  if (!line) { console.error(`mkpacket: no "Self-review lenses" line in ${wfPath}; self-review is standards+spec only`); return chosen; }
+  const rest = line.replace(/^\s*-\s*Self-review lenses:/, "");
+  const ticked = rest.match(/`([^`]*)`/); // the value is the first backticked span; anything after it is a note
+  const value = (ticked ? ticked[1] : rest.replace(/<!--.*?-->/g, "")).trim();
+  for (const clause of value.split(";").map((c) => c.trim()).filter(Boolean)) {
+    const m = clause.match(/^(\S+)\s+(always|at\s+(.+))$/);
+    if (!m) die(`bad clause in "Self-review lenses": ${clause}`);
+    const [, lens, when, list] = m;
+    if (!(lens in LENSES)) die(`unknown lens in "Self-review lenses": ${lens} (known: ${Object.keys(LENSES).join(", ")})`);
+    const bands = when === "always" ? BANDS : list.split(/\s*,\s*|\s+and\s+/).map((b) => b.trim());
+    for (const b of bands) if (!BANDS.includes(b)) die(`unknown band in "Self-review lenses": ${b}`);
+    if (bands.includes(band)) chosen.add(lens);
+  }
+  return chosen;
+}
+const lenses = lensesFor(band);
+
 const slug = args.slug;
 const vars = {
   wt: args.wt,
@@ -55,6 +94,7 @@ const vars = {
   task: taskId.toLowerCase(),
   commit_subject: "",
   commit_trailer: "",
+  lenses: Object.keys(LENSES).filter((k) => lenses.has(k)).map((k) => LENSES[k]).join("; "),
 };
 if (ref && /^\d+$/.test(ref)) { // tracker issue
   vars.ticket = ref;
