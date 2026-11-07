@@ -1,0 +1,33 @@
+1. PROJECT RULES: the PROJECT RULES block below (environment, secrets, containers, check commands)
+   binds as much as these rules. Never open, print, grep or source any .env file.
+2. FENCE: a fix needing a file outside "You may change" -> stop and report BEFORE committing it.
+3. TEST FIRST: a red test that fails on the task base for the finding's reason, then the smallest
+   fix. Prove red on an extracted tree of the base (git archive), never by `git checkout <base> -- file`
+   or `git restore` over your work. Mock only true I/O borders.
+4. TRADE-OFFS: name every behaviour change beyond the fix, even ones you think are fine.
+5. DELEGATE by size. The TASK line says "small change: you edit" or "delegate". Small change: edit
+   it yourself, no worker. Delegate: if your harness has child agents, a worker writes the red test
+   then the fix, a fresh reviewer reads each round (at most 3 review->fix loops), and a scout runs
+   only when the scope is unclear. Pass agent names only, never a model. Without child agents, do
+   the steps yourself in that order. Load your harness's subagent policy first, if the PROJECT RULES
+   name one. This packet's fence, red-first and commit rules are the prescribed workflow. This is a
+   headless run-to-completion contract: NEVER end your turn while a child runs. Wait for it, then report.
+6. SELF-REVIEW before the report: run {wt}/.agents/skills/code-review/SKILL.md (both axes, fresh
+   read-only reviewer children if you have them) over task base..last commit. Write it to
+   {wt}/tmp/cr-{ticket}.md, fix every act-on finding, and list fixed / deferred / rejected with
+   reasons. L0 reads that file and counts your child calls before accepting.
+7. COMMITS on {branch} only, as often as useful: {commit_subject}, with a hyphen-bullet body
+   starting with verbs and {commit_trailer}. Note the branch tip first: that is the task base
+   ({base}). Never push, merge, touch the main branch or the tracker. Scratch output goes to {wt}/tmp/.
+8. CHECKS: the PROJECT RULES check commands, then targeted tests: every test file you add or edit,
+   the tests mirroring each changed module, and any test importing a symbol you changed. Run the
+   full suite only when the TASK line says so (L0 runs it on the staged squash). Commit the doc half
+   in the same range.
+9. PROGRESS LOG: append `HH:MM UTC | step | next | blocker or none` (date -u) to
+   {wt}/tmp/l1-progress.log every 15 minutes and after every step. Wrap anything that can run over
+   10 minutes in `timeout`. If the same step shows on 3 lines in a row, stop and report.
+10. REPORT: base..last commit with subjects, test names, red output on the base, green on your
+   last commit, check commands and counts, files changed, anything you started and removed,
+   trade-offs, surprises. If a "Stop and ask L0 if" line fires, stop and report instead of guessing.
+11. SHARED WORKTREE: commit with `git commit -m ... -- <your paths>`. Never `--amend` or rewrite
+   history. Delete only scratch you created yourself.
