@@ -16,7 +16,7 @@ Every vendor skill, where its copy lives in the pack, and what was done to it. T
 
 | Vendor | Ref |
 |---|---|
-| mattpocock/skills | `49dd158d1076134a641b33efb035946536778336` (v1.3.1), `engineering/` + `productivity/` |
+| mattpocock/skills | `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d` (v1.3.2), `engineering/` + `productivity/` |
 | cursor/plugins pstack | `d457567332aa6989e753ea289f30ea2bfbc80bc0` (v0.15.28), `skills/` |
 
 ## Skill bodies (81 copied, 1 dropped, 1 alias resolved)

@@ -7,7 +7,7 @@
 // SKILL.md renamed to <name>.md and its frontmatter stripped.
 
 export const VENDORS = {
-  matt: { root: "vendors/mattpocock/skills", license: "vendors/mattpocock/skills/LICENSE", pin: "49dd158d1076134a641b33efb035946536778336 (v1.3.1)" },
+  matt: { root: "vendors/mattpocock/skills", license: "vendors/mattpocock/skills/LICENSE", pin: "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d (v1.3.2)" },
   pstack: { root: "vendors/poteto/pstack/skills", license: "vendors/poteto/pstack/LICENSE", pin: "d457567332aa6989e753ea289f30ea2bfbc80bc0 (v0.15.28)" },
 };
 

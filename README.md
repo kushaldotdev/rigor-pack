@@ -223,5 +223,5 @@ node scripts/build-pack.mjs && node scripts/check-pack.mjs
 
 | Vendor | Kept | Ref |
 |---|---|---|
-| mattpocock/skills | `skills/engineering/` (20), `skills/productivity/` (7), bucket READMEs, `LICENSE` | `49dd158` (v1.3.1), 2026-10-09 |
+| mattpocock/skills | `skills/engineering/` (20), `skills/productivity/` (7), bucket READMEs, `LICENSE` | `4ae2317` (v1.3.2), 2026-10-31 |
 | cursor/plugins pstack | `skills/` (56), `LICENSE` | `d457567` (v0.15.28), 2026-10-19 |

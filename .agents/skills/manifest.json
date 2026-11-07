@@ -3,7 +3,7 @@
   "vendors": {
     "matt": {
       "root": "vendors/mattpocock/skills",
-      "pin": "49dd158d1076134a641b33efb035946536778336 (v1.3.1)"
+      "pin": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d (v1.3.2)"
     },
     "pstack": {
       "root": "vendors/poteto/pstack/skills",
@@ -214,9 +214,9 @@
       "dest": "code-review/references/matt/code-review/code-review.md",
       "src": "vendors/mattpocock/skills/engineering/code-review/SKILL.md",
       "source": "matt:engineering/code-review",
-      "vendorSha256": "09eb147f793e4647949edd32dbad278f0554dfb56e0d46b699cd4c2c55bf0357",
-      "preRewriteSha256": "c0a9f99686ecd046db8625b9ca249a6add6e90dcf268154422915cc5430177da",
-      "sha256": "c0a9f99686ecd046db8625b9ca249a6add6e90dcf268154422915cc5430177da",
+      "vendorSha256": "9c921a8d88138a41401d8897ca1bb852088ab1b7b605cdd04edc13e3e8aab6dd",
+      "preRewriteSha256": "4cf9f6f3447ebf8ca67ec3f3c80ffed3a11b24b47999b25fc239801ae307b7a5",
+      "sha256": "4cf9f6f3447ebf8ca67ec3f3c80ffed3a11b24b47999b25fc239801ae307b7a5",
       "transforms": [
         "strip-frontmatter",
         "rename SKILL.md -> code-review.md"
@@ -343,9 +343,9 @@
       "dest": "codebase-design/references/matt/codebase-design/DESIGN-IT-TWICE.md",
       "src": "vendors/mattpocock/skills/engineering/codebase-design/DESIGN-IT-TWICE.md",
       "source": "matt:engineering/codebase-design",
-      "vendorSha256": "52b52e75655a27aea59c6966b410bac82448968ad46ef1ebb9f07c274e3ae010",
-      "preRewriteSha256": "52b52e75655a27aea59c6966b410bac82448968ad46ef1ebb9f07c274e3ae010",
-      "sha256": "fe7d947099dacd974b39d48316a3e91ce1b2b047e0360df62f0afa091dd60c46",
+      "vendorSha256": "c222ab5a82e0405672eb9062d62496139a08828e45d07fc5f18e4952c10fac1a",
+      "preRewriteSha256": "c222ab5a82e0405672eb9062d62496139a08828e45d07fc5f18e4952c10fac1a",
+      "sha256": "a56aee71df4974c7d524a9cb02cf3a88257171bbda2d6d669962dd5999edec72",
       "transforms": [
         "relink 2 relative path(s) to the copied location"
       ]
@@ -726,9 +726,9 @@
       "dest": "grilling/references/matt/grilling/grilling.md",
       "src": "vendors/mattpocock/skills/productivity/grilling/SKILL.md",
       "source": "matt:productivity/grilling",
-      "vendorSha256": "befdff1e27a1dfe2a294d5871169ac1afe16d983911daa4f32627514a48c1e15",
-      "preRewriteSha256": "176cf0bcbae1b34d6db8d849bb9b2c28b0c26db1de313f7860585412cbee6167",
-      "sha256": "176cf0bcbae1b34d6db8d849bb9b2c28b0c26db1de313f7860585412cbee6167",
+      "vendorSha256": "a146842ed93ca43d833550fa9adf02e58cb63c83fea9d4b4522995b82242d4e2",
+      "preRewriteSha256": "34b5c30ba8b488abd732bbfdd5af30120288680798ba4c736312b7609122c40c",
+      "sha256": "34b5c30ba8b488abd732bbfdd5af30120288680798ba4c736312b7609122c40c",
       "transforms": [
         "strip-frontmatter",
         "rename SKILL.md -> grilling.md"
@@ -865,9 +865,9 @@
       "dest": "research/references/matt/research/research.md",
       "src": "vendors/mattpocock/skills/engineering/research/SKILL.md",
       "source": "matt:engineering/research",
-      "vendorSha256": "985569f15739c713d6784887c3d186d4ef9ac85bec5ad9c068d25bf0739928e4",
-      "preRewriteSha256": "24ad336b28f61d2ac49f31531fadd45047b8682a15b30825cafac886d3543cb9",
-      "sha256": "24ad336b28f61d2ac49f31531fadd45047b8682a15b30825cafac886d3543cb9",
+      "vendorSha256": "1f629e18ab899412683bc6a1c4efb4339999e27c2fdac328f26ee10a8c031d33",
+      "preRewriteSha256": "fd906cffcab959bfc8aef3c60baa132eb0e1c791e072dda0b07bab88e1f535b1",
+      "sha256": "fd906cffcab959bfc8aef3c60baa132eb0e1c791e072dda0b07bab88e1f535b1",
       "transforms": [
         "strip-frontmatter",
         "rename SKILL.md -> research.md"
@@ -1224,9 +1224,9 @@
       "dest": "rigor/references/matt/implement-spec/implement-spec.md",
       "src": "vendors/mattpocock/skills/engineering/implement-spec/SKILL.md",
       "source": "matt:engineering/implement-spec",
-      "vendorSha256": "7a22dd2e60b8fcece478ced9d2533582adf3520d695acd3ab715341535c9e56d",
-      "preRewriteSha256": "b8309da590064b1bb88386d84d88eb5984d2a8b63c31c5551c0d09975aa228e3",
-      "sha256": "b8309da590064b1bb88386d84d88eb5984d2a8b63c31c5551c0d09975aa228e3",
+      "vendorSha256": "1993a473cec40ac85d081c112cdffdc63ec3267c2e412055ad09e013a2f623d1",
+      "preRewriteSha256": "d28950e6f09ad48d8756991019695bcf011166d35b72f5af2c49bf8a1f31edb7",
+      "sha256": "d28950e6f09ad48d8756991019695bcf011166d35b72f5af2c49bf8a1f31edb7",
       "transforms": [
         "strip-frontmatter",
         "rename SKILL.md -> implement-spec.md"
@@ -1257,9 +1257,9 @@
       "dest": "rigor/references/matt/improve-codebase-architecture/improve-codebase-architecture.md",
       "src": "vendors/mattpocock/skills/engineering/improve-codebase-architecture/SKILL.md",
       "source": "matt:engineering/improve-codebase-architecture",
-      "vendorSha256": "552240a5ab5cec6b67c15dd1ad6e9f6962b1bca6ce870059a8c2713760c20392",
-      "preRewriteSha256": "9e53b3e14f746a820ee5915dd4644c810e2437c675ff8a314c7307df97c93ed5",
-      "sha256": "9e53b3e14f746a820ee5915dd4644c810e2437c675ff8a314c7307df97c93ed5",
+      "vendorSha256": "35b03a3db61e0f5aa333ea59b54963e45a3d2ace6649b2ef4f9576603e2582a6",
+      "preRewriteSha256": "0d154784c4981aefff1b4bf347c4d7b57ca2e1996b91919815489f48dd7d0f68",
+      "sha256": "0d154784c4981aefff1b4bf347c4d7b57ca2e1996b91919815489f48dd7d0f68",
       "transforms": [
         "strip-frontmatter",
         "rename SKILL.md -> improve-codebase-architecture.md"
@@ -1314,9 +1314,9 @@
       "dest": "rigor/references/matt/wayfinder/wayfinder.md",
       "src": "vendors/mattpocock/skills/engineering/wayfinder/SKILL.md",
       "source": "matt:engineering/wayfinder",
-      "vendorSha256": "9be7b478c389605a24517d27752f278933588da97a1b5921b165f455edf4c5b7",
-      "preRewriteSha256": "71afa056378bda85102f72a5e2b69409221ff1fc74f1e3380c51d8fd700ba3e3",
-      "sha256": "71afa056378bda85102f72a5e2b69409221ff1fc74f1e3380c51d8fd700ba3e3",
+      "vendorSha256": "0c9fa96791aebf3b7d654cf35c6aadde97d81f57c17b07d13b27c14d9c46561f",
+      "preRewriteSha256": "81f50f74c71b6f9e4cc2237722f163aca03a9fddf66bc58f2810b36f94dbcc3d",
+      "sha256": "81f50f74c71b6f9e4cc2237722f163aca03a9fddf66bc58f2810b36f94dbcc3d",
       "transforms": [
         "strip-frontmatter",
         "rename SKILL.md -> wayfinder.md"
@@ -1999,18 +1999,18 @@
       "dest": "setup/references/matt/setup-matt-pocock-skills/issue-tracker-github.md",
       "src": "vendors/mattpocock/skills/engineering/setup-matt-pocock-skills/issue-tracker-github.md",
       "source": "matt:engineering/setup-matt-pocock-skills",
-      "vendorSha256": "f0653fe106dd8ee7b33be27bd7fe3104b40555896cb45f61997aed20467020c3",
-      "preRewriteSha256": "f0653fe106dd8ee7b33be27bd7fe3104b40555896cb45f61997aed20467020c3",
-      "sha256": "f0653fe106dd8ee7b33be27bd7fe3104b40555896cb45f61997aed20467020c3",
+      "vendorSha256": "6fdb3e9b00b7b0b115ecac3b1c00e3790f637f190abf598815368722c0a94692",
+      "preRewriteSha256": "6fdb3e9b00b7b0b115ecac3b1c00e3790f637f190abf598815368722c0a94692",
+      "sha256": "6fdb3e9b00b7b0b115ecac3b1c00e3790f637f190abf598815368722c0a94692",
       "transforms": []
     },
     {
       "dest": "setup/references/matt/setup-matt-pocock-skills/issue-tracker-gitlab.md",
       "src": "vendors/mattpocock/skills/engineering/setup-matt-pocock-skills/issue-tracker-gitlab.md",
       "source": "matt:engineering/setup-matt-pocock-skills",
-      "vendorSha256": "591a9e7057382aaccdfbed3f7ea3f2ad07e0cd29f012d18b82ee4e485fd81e24",
-      "preRewriteSha256": "591a9e7057382aaccdfbed3f7ea3f2ad07e0cd29f012d18b82ee4e485fd81e24",
-      "sha256": "591a9e7057382aaccdfbed3f7ea3f2ad07e0cd29f012d18b82ee4e485fd81e24",
+      "vendorSha256": "947602d33a80f98f939fb990995b8f95a3459b114b919c4221d08bd75d7cffe0",
+      "preRewriteSha256": "947602d33a80f98f939fb990995b8f95a3459b114b919c4221d08bd75d7cffe0",
+      "sha256": "947602d33a80f98f939fb990995b8f95a3459b114b919c4221d08bd75d7cffe0",
       "transforms": []
     },
     {
@@ -2026,9 +2026,9 @@
       "dest": "setup/references/matt/setup-matt-pocock-skills/setup-matt-pocock-skills.md",
       "src": "vendors/mattpocock/skills/engineering/setup-matt-pocock-skills/SKILL.md",
       "source": "matt:engineering/setup-matt-pocock-skills",
-      "vendorSha256": "f148858ffb7f63c03c06fca06e6fdb1d91a35c6b293244b8fdfacd5f4cc028c4",
-      "preRewriteSha256": "e9a5fa7109c6cc587aef8243e850590dfcf2c24289bb3606d152515f2d38486a",
-      "sha256": "e9a5fa7109c6cc587aef8243e850590dfcf2c24289bb3606d152515f2d38486a",
+      "vendorSha256": "b01e05bfe8c323171275c6ceec78b12f1bd4c62dfd26c2cfe8be806d3883f1ed",
+      "preRewriteSha256": "b744986ed033076ec8a80cce22cc5fad4088c8975c7d4aeefc23e9cd3fa1d187",
+      "sha256": "b744986ed033076ec8a80cce22cc5fad4088c8975c7d4aeefc23e9cd3fa1d187",
       "transforms": [
         "strip-frontmatter",
         "rename SKILL.md -> setup-matt-pocock-skills.md"
