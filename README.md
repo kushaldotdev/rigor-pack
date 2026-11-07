@@ -148,6 +148,8 @@ sequenceDiagram
 
 Planning and building share a session by default (Continue is the first branch to rule out). Start a fresh session per ticket for multi-session builds, when the context budget is short, or for a wayfinder effort. State never lives in chat: a fresh session in any clone reaches full working state from `.audit/`, the tracker and git. To move to another harness or a colleague mid-phase, use `handoff`.
 
+A recorded chain of tickets resumes with `continue <slug>`: [rigor/CHAIN.md](.agents/skills/rigor/CHAIN.md) runs the tickets back to back, AFK, until a halt rule stops it. Its settings live in `docs/agents/workflow.md` → Chain efforts, and the delegation tool sits behind an adapter in [rigor/delegation/](.agents/skills/rigor/delegation/README.md).
+
 ## Per-harness differences
 
 The skill bodies, references, playbooks and scripts are byte-identical on every harness. Only these differ:
@@ -177,8 +179,8 @@ rigor-pack/
 ├── vendors/                     ← pristine upstream, never edited
 ├── .agents/skills/              ← the deliverable
 │   ├── manifest.json            ← skills, every copied file with vendor/pre/post sha256
-│   ├── rigor/  SKILL.md INTERVIEW.md AFK.md harness/ references/{INDEX.md,matt,pstack}
-│   ├── setup/  SKILL.md templates/workflow.md references/...
+│   ├── rigor/  SKILL.md CHAIN.md INTERVIEW.md AFK.md harness/ delegation/ scripts/ templates/ references/{INDEX.md,matt,pstack}
+│   ├── setup/  SKILL.md templates/{workflow,difficulty,packet-rules}.md references/...
 │   └── <host>/ SKILL.md agents/openai.yaml references/{matt,pstack}/<name>/<name>.md
 ├── .agents/harness-targets.json ← targets this checkout installs for
 └── .claude/skills/<name>        ← symlinks for Claude Code

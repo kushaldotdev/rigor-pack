@@ -24,6 +24,56 @@ Canonical: `AGENTS.md`. `CLAUDE.md` imports it with `@AGENTS.md`.
 5. Worktrees, one per writer: allowed
 6. Never: force-push shared branches, deploy, delete data, message customers
 
+## Chain efforts
+
+<!-- delete this whole section if you don't run chains: "continue <slug>", rigor/CHAIN.md -->
+
+Where a chain run differs from `## Authority` above. Every number here is a setting. Leave one out and CHAIN.md's method still holds.
+
+- Delegation tool: `paseo` <!-- adapter: .agents/skills/rigor/delegation/paseo.md. Delete the line to run chains degraded, in-session and serially -->
+- Landing: one squash commit per ticket on `main`
+- Push: only when the owner asks in that session <!-- or: push each landing -->
+- PRs: none <!-- or: one per ticket -->
+- Plan approval: owner <!-- or: L0 for the owner (delegated), listed at every close for overturning -->
+- Concurrency caps: `<n>` implementers, `<n>` ticket worktrees, `<n>` reviewer sessions at once
+- Context ceilings: implementer `<n>k`, long session `<n>k`
+- Attempts per task: `<n>` (`<n>` to get it right, `<n>` for review findings), then a takeover
+- Hard tickets: `<n>` implementer fix round, then a takeover
+- Review depth: a post-land delta over `<n>` lines is re-reviewed
+- Heartbeat: every `<n>` minutes; a progress line older than `<n>` minutes, or the same step on `<n>` lines in a row, is stuck
+- Reviewer fallback: none <!-- or: a named model when the first is out of quota -->
+- Red/green: `<command that runs one test path, red on the base and green on the tip>`
+- Mutation check: `<command>` <!-- or: none -->
+- Full gate: `<command, run on the staged squash>`
+- Verify skill: `.agents/skills/verify-<app>/SKILL.md`<!-- or: none -->
+- Packet project rules: `docs/agents/packet-rules.md`
+- Cleanup at landing: `<worktree, workspace, agents, branch, stage ref>`
+
+### Models per role
+
+| Role | Model | Thinking |
+|---|---|---|
+| L1 implementer, L2 worker | `<provider/model>` | `<level>` |
+| L2 scout | `<provider/model>` | `<level>` |
+| L2 reviewer | `<provider/model>` | `<level>` |
+| L0 reviewers | `<provider/model>` | `<level>` |
+| reviewer fallback | none | |
+| planner | `<provider/model>` | `<level>` |
+| takeover | `<provider/model>` | `<level>` |
+| verify driver | `<provider/model>` | `<level>` |
+
+### Self-continuing sessions
+
+<!-- off by default. Delete this section unless sessions should start the next one -->
+
+State: off <!-- or: on -->
+
+Successor start, as the last action of a session:
+
+`<the delegation adapter's successor-start call: provider/model, mode, cwd = the main checkout, title "<slug> S<n+1>: <tickets>", labels effort=<slug> and session=<n+1>, prompt = the briefing from rigor/CHAIN.md>`
+
+The exact command for this repo's tool, with the rest of its gotchas, is in `.agents/skills/rigor/delegation/<tool>.md`.
+
 ## Verification
 
 - App verify skill: `.agents/skills/verify-<app>/SKILL.md` <!-- or: none -->

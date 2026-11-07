@@ -1,7 +1,7 @@
 ---
 name: rigor
 description: "The one workflow. Give it any engineering task (an idea, an issue, a spec, a bug, a migration, a review range): it interviews you once, then plans, builds, verifies, and reviews without interrupting you, across as many sessions as the work needs."
-argument-hint: "the task, an issue/ticket reference, or 'resume <slug>'"
+argument-hint: "the task, an issue/ticket reference, or 'resume <slug>' / 'continue <slug>'"
 disable-model-invocation: true
 ---
 
@@ -16,7 +16,7 @@ Paths below are relative to this file's folder. When you hand a file to a child 
 1. Read `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, `docs/agents/workflow.md` (and `triage-labels.md` if present).
 2. If any is missing, **stop before the run starts.** Tell the user setup has not run and ask them to invoke the `setup` skill (or offer to run it now). Assume no defaults. Start only after setup has written its answers.
 3. Read your harness notes: [harness/pi.md](harness/pi.md), [harness/claude.md](harness/claude.md), or [harness/codex.md](harness/codex.md). They say how to spawn children, wait, loop, and where transcripts live, and what to do when a feature is missing.
-4. If the argument is `resume <slug>`, or `.audit/<slug>.brief.md` exists for this task, go to §5 Resume.
+4. If the argument is `resume <slug>` or `continue <slug>`, or `.audit/<slug>.brief.md` exists for this task, go to §5 Resume.
 
 ## 1. Route
 
@@ -34,6 +34,7 @@ Classify the task, pick a route, and say which one in one line. Orientation: Mat
 | Agent-behaviour or skill change | [eval](references/pstack/poteto-mode/playbooks/eval.md) / [authoring-a-skill](references/pstack/poteto-mode/playbooks/authoring-a-skill.md) with the [writing](../writing/SKILL.md) skill |
 | Codebase upkeep | [improve-codebase-architecture](references/matt/improve-codebase-architecture/improve-codebase-architecture.md); the candidate pick is an interview question |
 | Large migration or no playbook fits | [figure-it-out](references/pstack/figure-it-out/figure-it-out.md) |
+| Continue a recorded chain of tickets (brief + order + tracker map exist) | [CHAIN.md](CHAIN.md): L0 runs the tickets AFK to a halt rule |
 | Program: many PRs, many days | [orchestrate](references/pstack/poteto-mode/playbooks/orchestrate.md) (state in `.audit/<slug>/` and the tracker), [autopilot-full](references/pstack/poteto-mode/playbooks/autopilot-full.md) or [autopilot-stack](references/pstack/poteto-mode/playbooks/autopilot-stack.md) |
 | Drive one predicate to done | [autonomous-run](references/pstack/poteto-mode/playbooks/autonomous-run.md) |
 | A PR to get green / land | [babysit](references/pstack/poteto-mode/playbooks/babysit.md) / [shipping](references/pstack/poteto-mode/playbooks/shipping.md) (merging needs merge authority in the brief) |
@@ -83,17 +84,18 @@ Fix rounds after review go to a fresh child with consolidated scope (poteto-mode
 - **tickets vs parallel build.** A ticket built in parallel must name the files it owns.
 - **unslop.** Always on for prose surfaces.
 - **merge.** Babysit and shipping stop at merge-ready unless the brief grants merge authority.
+- **chain.** In a chain run, [CHAIN.md](CHAIN.md) wins: fix rounds go to the same implementer while it is under its context ceiling, implementers run targeted checks and L0 runs the full gate once on the staged squash, and tickets land as squash commits (PRs only when workflow.md says so).
 - **glossary.** Bodies say `GLOSSARY.md`; use the filename `docs/agents/domain.md` records.
 
 ## 4. Sessions
 
 Planning and building share one session by default: Continue is the first branch to rule out ([PHASE-BOUNDARIES](references/matt/ask-matt/PHASE-BOUNDARIES.md)). Start a fresh session when the context budget is short, per ticket on multi-session routes ([to-tickets](references/matt/to-tickets/to-tickets.md): one ticket fits one fresh window), or for a wayfinder effort.
 
-State lives only in: tracker tickets, `.audit/<slug>.brief.md`, `.audit/<slug>.preferences.md`, `.audit/<slug>.tsv`, `.audit/<slug>.gates.md`, and the git branch. Never in chat history. Before ending a session mid-run, commit `.audit/` and write the next ready unit as the trail's last row. A fresh session reaches full working state from repo and tracker alone.
+State lives only in: tracker tickets, `.audit/<slug>.brief.md`, `.audit/<slug>.preferences.md`, `.audit/<slug>.tsv`, `.audit/<slug>.gates.md`, `.audit/<slug>.handoff.md`, and the git branch. Never in chat history. Before ending a session mid-run, commit `.audit/` and write the next ready unit as the trail's last row. A fresh session reaches full working state from repo and tracker alone.
 
 ## 5. Resume
 
-Read the brief, the preferences, the trail's last rows, `gates.md`, `git log` on the run branch, and the tracker's open tickets. Then ask exactly three questions, in one message, with a recommended answer each:
+Read the brief, the preferences, the trail's last rows, `gates.md`, `git log` on the run branch, and the tracker's open tickets. If the brief pre-records the answers (a chain does), record them and skip the questions; a chain then follows [CHAIN.md](CHAIN.md). Otherwise ask exactly three questions, in one message, with a recommended answer each:
 
 1. Has the premise changed since the brief?
 2. Any new one-way doors or approvals (including answers to open gates)?

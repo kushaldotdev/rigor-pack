@@ -35,6 +35,7 @@ Lead each section with the recommended answer so the user can accept it in a wor
 7. **Default authority.** Commit (yes), push the branch (yes), open a PR (yes if a forge exists), merge (no: runs stop at merge-ready unless granted here), worktrees allowed (yes). These become standing orders in every run.
 8. **Verify skill.** If no `verify-*` skill exists, offer once to generate one now with [create-verification-skill](../verify/references/pstack/create-verification-skill/create-verification-skill.md) (it interviews the repo, so it needs the human). Then offer once a formal verification skill ([create-formal-verification-skill](../verify/references/pstack/create-formal-verification-skill/create-formal-verification-skill.md)). Write generated skills under `.agents/skills/`.
 9. **Model roles.** Record what is configured, never pick. List the roles from [setup-pstack](references/pstack/setup-pstack/setup-pstack.md) §5 (judgment and prose, code, reviewers, explorers, verifier) and write the model each harness already maps to it, or `inherit-parent` where nothing is configured. Never record a fast-mode or `-fast` model. Never ask about models during a run.
+10. **Chains.** Recommended: no. "Will you run chains (`rigor` CHAIN.md) instead of one-off tasks?" If yes, the answers go into `docs/agents/workflow.md` → `## Chain efforts` (delegation tool, models per role, caps, check commands), plus `docs/agents/difficulty.md` and `docs/agents/packet-rules.md`. If no, write none of the three and delete that section from `workflow.md`.
 
 Human-only provisioning found along the way (secrets, dashboards, a cutover) gets a [wizard](references/matt/wizard/wizard.md) script, not an agent attempt.
 
@@ -44,6 +45,7 @@ Show drafts of every file, let the user edit, then write:
 
 - `docs/agents/issue-tracker.md`, `docs/agents/triage-labels.md`, `docs/agents/domain.md` from Matt's templates in [references/matt/setup-matt-pocock-skills/](references/matt/setup-matt-pocock-skills/). In `domain.md`, replace `GLOSSARY.md` with the recorded filename if it differs.
 - `docs/agents/workflow.md` from [templates/workflow.md](templates/workflow.md): sections 4-9 above.
+- If section 10 said yes: the `## Chain efforts` section of `workflow.md` from the same template, `docs/agents/difficulty.md` from [templates/difficulty.md](templates/difficulty.md), and `docs/agents/packet-rules.md` from [templates/packet-rules.md](templates/packet-rules.md). If it said no, write none of the three.
 - The `## Agent skills` block in the canonical instruction file: Matt's block plus one line `### Workflow` → `Start work with the rigor skill. See docs/agents/workflow.md.`
 - Labels on GitHub/GitLab as Matt's §4 describes.
 

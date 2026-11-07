@@ -10,7 +10,7 @@ Every vendor skill, where its copy lives in the pack, and what was done to it. T
 4. A vendor skill whose whole body is one line, `Call the Skill tool with "<name>"`, is an **alias**, not a skill: nothing is copied for it, no row appears here, and its name is rewritten to `<name>` wherever a copied body mentions it. `vendors/` keeps the alias folder. One alias resolves this way today (into `grilling`).
 5. Vendor `agents/openai.yaml` files are not copied. Each host gets a generated one from its own frontmatter.
 6. Each host carries the `LICENSE` of every vendor it copies from (`references/<vendor>/LICENSE`).
-7. Anything that differs from upstream behaviour is said once, in a hand-written file: the host `SKILL.md` (modes, precedence), `rigor/AFK.md` (what each interactive line means in an AFK run), `rigor/INTERVIEW.md`, `rigor/harness/*.md`, `setup/templates/workflow.md`. Those files are the complete list of new prose.
+7. Anything that differs from upstream behaviour is said once, in a hand-written file: the host `SKILL.md` (modes, precedence), `rigor/AFK.md` (what each interactive line means in an AFK run), `rigor/INTERVIEW.md`, `rigor/CHAIN.md` (chain runs), `rigor/delegation/*.md` (one adapter per delegation tool), `rigor/harness/*.md`, `setup/templates/*.md`. Pack-owned tools are hand-written too: `rigor/scripts/*.mjs` and `rigor/templates/packet-rules.txt`. Those files are the complete list of new prose.
 
 ## Upstream pins
 
@@ -130,7 +130,12 @@ Also copied: Matt's bucket READMEs as `rigor/references/matt/{engineering,produc
 | `orchestrate` keeps program state in the Project tracker and the Project store | State lives in the tracker and `.audit/<slug>/` | `rigor/SKILL.md` §1-§4, `rigor/AFK.md` |
 | `handoff` writes to the OS temp dir | Inside a rigor run, `.audit/<slug>.handoff.md` | `handoff/SKILL.md` |
 | `no-comments` spawns Cursor's Comment Sicko | Apply its rules directly | `code-review/SKILL.md` |
+| No chain method in either vendor | `rigor/CHAIN.md` is the method; every setting lives in `workflow.md` → Chain efforts; the delegation tool sits behind an adapter | `rigor/CHAIN.md`, `rigor/delegation/README.md`, `setup/SKILL.md` §2.10 |
 | poteto-mode playbooks split across concerns | Kept whole under `rigor/references/pstack/poteto-mode/` so their internal links work; other hosts link into it | host Modes tables |
+
+## Chain runs
+
+`rigor/CHAIN.md` comes from no vendor: it is a method worked out over real ticket chains in 2026-10 and 2026-11, with every project setting lifted out. Every number, model id and command lives in the target repo's `docs/agents/workflow.md` → Chain efforts, written by `setup`. The delegation tool sits behind an adapter in `rigor/delegation/`, so the method names no tool.
 
 ## Lost on purpose
 
