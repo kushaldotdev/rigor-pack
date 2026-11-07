@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 // Build an implementer packet: task text + chain preferences + pack rules + project rules.
 //   node mkpacket.mjs --slug S --wt W --base B --branch BR --task FILE --out FILE
-//                     [--ref R] [--project-rules FILE] [--repo DIR]
+//                     [--ref R] [--task-id T] [--project-rules FILE] [--repo DIR]
 // --repo (default cwd) supplies .audit/<slug>.preferences.md (required) and
 // docs/agents/packet-rules.md (used when --project-rules is absent).
 // <ref> is a tracker issue number ("364") or a unit id ("U2").
+// <task-id> names the task inside the ticket ("T2", default "T1"); it fills {task}, so the
+// self-review file {wt}/tmp/cr-{ticket}-{task}.md is one per task.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -40,6 +42,8 @@ const proj = existsSync(projPath) ? read(projPath, "project rules") : "none";
 const task = read(args.task, "task");
 
 const ref = args.ref;
+const taskId = args["task-id"] ?? "T1";
+if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(taskId)) die(`--task-id must be letters, digits, ".", "_" or "-": ${taskId}`);
 const slug = args.slug;
 const vars = {
   wt: args.wt,
@@ -48,6 +52,7 @@ const vars = {
   slug,
   ref: ref ?? "",
   ticket: ref ?? slug,
+  task: taskId.toLowerCase(),
   commit_subject: "",
   commit_trailer: "",
 };

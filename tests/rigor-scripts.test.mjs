@@ -95,7 +95,7 @@ test("mkpacket: digits ref is a tracker ticket", () => {
   assert.equal(r.status, 0, r.stderr);
   assert.match(text, /`<type>\(<scope>\): <imperative> #364`/);
   assert.match(text, /`Refs #364`/);
-  assert.match(text, /tmp\/cr-364\.md/);
+  assert.match(text, /tmp\/cr-364-t1\.md/);
   assert.match(r.stdout, new RegExp(`${out}: \\d+ task chars, \\d+ total chars`));
 });
 
@@ -104,7 +104,7 @@ test("mkpacket: unit ref is a chain unit, no issue number", () => {
   const { text } = packet(dir, ["--ref", "U2"]);
   assert.match(text, /`<type>\(<scope>\): <imperative> \(u22-fix U2\)`/);
   assert.match(text, /`Refs u22-fix U2`/);
-  assert.match(text, /cr-u2\.md/);
+  assert.match(text, /cr-u2-t1\.md/);
   assert.doesNotMatch(text, /#\d/);
 });
 
@@ -113,7 +113,17 @@ test("mkpacket: no ref falls back to the slug and no trailer", () => {
   const { text } = packet(dir);
   assert.match(text, /`<type>\(<scope>\): <imperative>`/);
   assert.match(text, /and no trailer\./);
-  assert.match(text, /tmp\/cr-u22-fix\.md/);
+  assert.match(text, /tmp\/cr-u22-fix-t1\.md/);
+});
+
+test("mkpacket: --task-id gives each task of a ticket its own self-review file", () => {
+  const dir = repo();
+  const { text } = packet(dir, ["--ref", "364", "--task-id", "T2"]);
+  assert.match(text, /tmp\/cr-364-t2\.md/);
+  assert.doesNotMatch(text, /cr-364-t1\.md/);
+  const bad = packet(dir, ["--ref", "364", "--task-id", "../x"]);
+  assert.equal(bad.r.status, 2);
+  assert.match(bad.r.stderr, /--task-id must be/);
 });
 
 test("mkpacket: substitutes placeholders in task, prefs and rules; none survive", () => {
@@ -123,7 +133,7 @@ test("mkpacket: substitutes placeholders in task, prefs and rules; none survive"
   assert.match(text, /prefs body: scratch in \/home\/u\/wt\/repo\/u22\/tmp/);
   assert.match(text, /7\. COMMITS on u22-fix only/);
   assert.match(text, /l1-progress\.log/); // pack rules reached the packet
-  const left = [...text.matchAll(/\{(wt|base|branch|slug|ref|ticket|commit_subject|commit_trailer)\}/g)];
+  const left = [...text.matchAll(/\{(wt|base|branch|slug|ref|ticket|task|commit_subject|commit_trailer)\}/g)];
   assert.deepEqual(left, []);
   assert.ok(text.indexOf("STANDING ORDERS (binding):") < text.indexOf("\nRULES:\n"));
   assert.ok(text.indexOf("\nRULES:\n") < text.indexOf("\nPROJECT RULES:\n"));

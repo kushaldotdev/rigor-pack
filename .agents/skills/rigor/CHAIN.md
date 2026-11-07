@@ -76,8 +76,8 @@ Every setting (models per role, concurrency caps, attempt counts, context ceilin
 
 1. **Proof, not summary.** A report points at its proof and is never the proof (step 4.2).
 2. **One task per implementer.** A short packet with its own fence. Bundles overflow context.
-3. **The implementer delegates by size; L0 checks it did.** Waste-sized work (one or two files, or shorter than a child's brief) the L1 does itself. Everything else goes to a worker plus a fresh reviewer per round.
-4. **The implementer reviews its own work first.** Every task ends with `code-review` (both axes, fresh read-only children) over its range, written to `<wt>/tmp/cr-<ticket>-<task>.md`, act-on findings fixed. L0 rejects a report without that file.
+3. **The implementer delegates by size; L0 checks it did.** Waste-sized work (one or two files, or shorter than a child's brief) the L1 does itself. Everything else goes to a worker plus a fresh reviewer per round, within the review->fix loop cap in packet rule 5 (`templates/packet-rules.txt`). That cap bounds one attempt inside the L1; the workflow.md attempt count bounds L0's re-briefs.
+4. **The implementer reviews its own work first.** Every task ends with `code-review` (both axes, fresh read-only children) over its range, written to `<wt>/tmp/cr-<ticket>-<task>.md` (the packet fills in both parts), act-on findings fixed. L0 rejects a report without that file.
 5. **Green full suite before hand-back in the top bands.** Below them, the gate on the staged squash is the first full run. L0 runs the gate before landing at every band.
 6. **Shared-worktree writers keep to their own paths.** Commit with `git commit -- <paths>`. Never amend or rewrite history. Delete only your own scratch. L0 names the other writer in both packets.
 7. **L0 orchestrates; implementers work.** Investigation, code, tests and prose go to an implementer or scout.
@@ -163,7 +163,7 @@ Resolution comment (posted before closing):
 
 ## The implementer packet
 
-Build it with `scripts/mkpacket.mjs`: the task block, then the preferences, then the pack's generic rules (`templates/packet-rules.txt`), then the project rules file `docs/agents/packet-rules.md`. The implementer starts with no project instructions, so the packet carries everything, with absolute paths.
+Build one packet per task with `scripts/mkpacket.mjs`, passing `--task-id <task id>` (`T1`, `T2`, …; default `T1`) so each task gets its own self-review file. The packet holds the task block, then the preferences, then the pack's generic rules (`templates/packet-rules.txt`), then the project rules file `docs/agents/packet-rules.md`. The implementer starts with no project instructions, so the packet carries everything, with absolute paths.
 
 The packet names the ticket, the worktree, the branch and the task base, marks the task's size ("small change: you edit" or "delegate"), and repeats the fence, red-first, commit and report rules. A `delegate` task whose session shows no worker call goes back to the same implementer (step 4.2).
 

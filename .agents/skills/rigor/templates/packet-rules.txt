@@ -19,7 +19,7 @@
    the same way. Report only when every child has finished.
 6. SELF-REVIEW before the report: run {wt}/.agents/skills/code-review/SKILL.md (both axes, fresh
    read-only reviewer children if you have them) over task base..last commit. Write it to
-   {wt}/tmp/cr-{ticket}.md, fix every act-on finding, and list fixed / deferred / rejected with
+   {wt}/tmp/cr-{ticket}-{task}.md, fix every act-on finding, and list fixed / deferred / rejected with
    reasons. L0 reads that file and counts your child calls before accepting.
 7. COMMITS on {branch} only, as often as useful: {commit_subject}, with a hyphen-bullet body
    starting with verbs and {commit_trailer}. Note the branch tip first: that is the task base
