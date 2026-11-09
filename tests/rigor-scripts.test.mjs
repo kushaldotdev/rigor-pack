@@ -1,5 +1,5 @@
 // Tests for the rigor chain tools: pi-delegation.mjs and mkpacket.mjs.
-// Run: node --test tests/
+// Run: node --test tests/*.test.mjs
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { mkdtempSync, writeFileSync, mkdirSync, readFileSync, utimesSync, existsSync } from "node:fs";
