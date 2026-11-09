@@ -17,12 +17,16 @@
 // <kind> is code (default) or assessment: a task whose product is an outcome, a report or a doc of
 // claims. assessment adds the interrogate lens whatever the band; nothing else the band drives
 // changes. A bad kind exits 2.
+// <base> must be an ancestor of, or equal to, <branch>'s tip in <wt> (git merge-base --is-ancestor),
+// so a packet built with a stale base fails here instead of in the implementer's run; it exits 2,
+// and so does a base, branch or worktree git cannot resolve.
 // {lens_briefs} in packet rule 6 becomes one reviewer-child brief per required lens, naming that
 // lens's body under {wt}/.agents/skills/code-review/references/, so the implementer copies it
 // instead of briefing a child from its own summary.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
 
 const die = (m) => { console.error(`mkpacket: ${m}`); process.exit(2); };
 
@@ -37,6 +41,10 @@ for (let i = 0; i < argv.length; i++) {
   i++;
 }
 for (const k of ["slug", "wt", "base", "branch", "task", "out"]) if (!args[k]) die(`--${k} is required`);
+
+const anc = spawnSync("git", ["-C", args.wt, "merge-base", "--is-ancestor", args.base, args.branch], { encoding: "utf8" });
+if (anc.status === 1) die(`--base ${args.base} is not an ancestor of ${args.branch}'s tip in ${args.wt}: the base is stale; take the branch tip again`);
+if (anc.status !== 0) die(`cannot check --base ${args.base} against ${args.branch} in ${args.wt}: ${(anc.stderr || anc.error?.message || "").trim()}`);
 
 const repo = resolve(args.repo ?? process.cwd());
 const script = dirname(fileURLToPath(import.meta.url));

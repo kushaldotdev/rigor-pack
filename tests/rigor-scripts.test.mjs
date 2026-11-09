@@ -68,8 +68,24 @@ test("pi-delegation exits 2 when no session file is found", () => {
 });
 
 const SLUG = "u22-fix";
-const WT = "/home/u/wt/repo/u22";
-const BASE = "abc1234";
+// A real worktree: main holds BASE, branch u22-fix adds TIP on top, branch side forks from BASE
+// with SIDE, which is no ancestor of u22-fix.
+const git = (cwd, ...a) => {
+  const r = spawnSync("git", ["-C", cwd, "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", ...a], { encoding: "utf8" });
+  assert.equal(r.status, 0, r.stderr);
+  return r.stdout.trim();
+};
+const WT = tmp();
+git(WT, "init", "-q", "-b", "main");
+git(WT, "commit", "-q", "--allow-empty", "-m", "base");
+const BASE = git(WT, "rev-parse", "--short", "HEAD");
+git(WT, "checkout", "-q", "-b", "side");
+git(WT, "commit", "-q", "--allow-empty", "-m", "side");
+const SIDE = git(WT, "rev-parse", "HEAD");
+git(WT, "checkout", "-q", "-b", "u22-fix", BASE);
+git(WT, "commit", "-q", "--allow-empty", "-m", "tip");
+const TIP = git(WT, "rev-parse", "HEAD");
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
 
 function repo(prefs = "prefs body: scratch in {wt}/tmp, no .env\n", project = null) {
   const dir = tmp();
@@ -83,9 +99,9 @@ function repo(prefs = "prefs body: scratch in {wt}/tmp, no .env\n", project = nu
   return dir;
 }
 
-function packet(dir, extra = []) {
+function packet(dir, extra = [], { wt = WT, base = BASE } = {}) {
   const out = join(dir, "packet.md");
-  const r = run("mkpacket.mjs", ["--slug", SLUG, "--wt", WT, "--base", BASE, "--branch", "u22-fix", "--task", join(dir, "task.md"), "--out", out, "--repo", dir, ...extra]);
+  const r = run("mkpacket.mjs", ["--slug", SLUG, "--wt", wt, "--base", base, "--branch", "u22-fix", "--task", join(dir, "task.md"), "--out", out, "--repo", dir, ...extra]);
   return { r, out, text: r.status === 0 ? readFileSync(out, "utf8") : "" };
 }
 
@@ -129,8 +145,8 @@ test("mkpacket: --task-id gives each task of a ticket its own self-review file",
 test("mkpacket: substitutes placeholders in task, prefs and rules; none survive", () => {
   const dir = repo();
   const { text } = packet(dir, ["--ref", "U2"]);
-  assert.match(text, /TASK: fix it in \/home\/u\/wt\/repo\/u22 on u22-fix \(base abc1234\)\./);
-  assert.match(text, /prefs body: scratch in \/home\/u\/wt\/repo\/u22\/tmp/);
+  assert.match(text, new RegExp(`TASK: fix it in ${esc(WT)} on u22-fix \\(base ${BASE}\\)\\.`));
+  assert.match(text, new RegExp(`prefs body: scratch in ${esc(WT)}/tmp`));
   assert.match(text, /7\. COMMITS on u22-fix only/);
   assert.match(text, /l1-progress\.log/); // pack rules reached the packet
   const left = [...text.matchAll(/\{(wt|base|branch|slug|ref|ticket|task|commit_subject|commit_trailer|lenses)\}/g)];
@@ -271,4 +287,19 @@ test("mkpacket: rule 6 puts named deliverables in scope and asks for runs behind
   assert.match(text, /base\.\.last commit AND every deliverable file the task names, committed or not/);
   assert.match(text, /behavioural claim and every worked number[\s\S]*?command and its output in the self-review file/);
   assert.match(text, /fix round's reviewer re-reads every changed deliverable whole[\s\S]*?claim the rewrite newly makes/);
+});
+
+test("mkpacket: --base must be an ancestor of, or equal to, --branch's tip in --wt", () => {
+  const dir = repo();
+  for (const base of [BASE, TIP]) assert.equal(packet(dir, [], { base }).r.status, 0, base);
+  const stale = packet(repo(), [], { base: SIDE });
+  assert.equal(stale.r.status, 2);
+  assert.match(stale.r.stderr, new RegExp(`--base ${SIDE} is not an ancestor of u22-fix's tip in ${esc(WT)}`));
+  assert.ok(!existsSync(stale.out), "no packet is written for a stale base");
+  const unknown = packet(dir, [], { base: "0123abc" });
+  assert.equal(unknown.r.status, 2);
+  assert.match(unknown.r.stderr, /cannot check --base 0123abc against u22-fix/);
+  const notGit = packet(dir, [], { wt: tmp() });
+  assert.equal(notGit.r.status, 2);
+  assert.match(notGit.r.stderr, /cannot check --base/);
 });
