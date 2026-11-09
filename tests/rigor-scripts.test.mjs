@@ -2,7 +2,7 @@
 // Run: node --test tests/
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync, mkdirSync, readFileSync, utimesSync } from "node:fs";
+import { mkdtempSync, writeFileSync, mkdirSync, readFileSync, utimesSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -216,4 +216,59 @@ test("mkpacket: a bad band, lens or clause exits 2", () => {
   const clause = packet(withWorkflow("- Self-review lenses: interrogate\n"), ["--band", "hard"]);
   assert.equal(clause.r.status, 2);
   assert.match(clause.r.stderr, /bad clause .*: interrogate/);
+});
+
+test("mkpacket: --kind assessment adds interrogate whatever the band, and changes nothing else", () => {
+  const dir = withWorkflow();
+  const want = { easy: ["standards + spec", "interrogate"], medium: ["standards + spec", "blast radius", "interrogate"], hard: ["standards + spec", "interrogate"], critical: ["standards + spec", "interrogate"] };
+  for (const [band, lenses] of Object.entries(want)) {
+    const a = packet(dir, ["--ref", "364", "--band", band, "--kind", "assessment"]);
+    assert.equal(a.r.status, 0, a.r.stderr);
+    assert.deepEqual(lensesIn(a.text), lenses, band);
+    // Apart from the interrogate lens and its brief, the packet is the code packet of the same band.
+    const c = packet(dir, ["--ref", "364", "--band", band, "--kind", "code"]);
+    const strip = (t) => t.replace(/; interrogate \([^)]*\)/, "").replace(/ interrogate \([^)]*\);?/, "").split("\n").filter((l) => !/Lens: interrogate\./.test(l)).join("\n");
+    assert.equal(strip(a.text), strip(c.text), band);
+  }
+  assert.deepEqual(lensesIn(packet(repo(), ["--kind", "assessment"]).text), ["standards + spec", "interrogate"]); // no band, no workflow.md
+  assert.deepEqual(lensesIn(packet(dir, ["--band", "easy"]).text), ["standards + spec"]); // default kind is code
+});
+
+test("mkpacket: a bad --kind exits 2", () => {
+  const { r } = packet(repo(), ["--kind", "essay"]);
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /--kind must be one of code, assessment: essay/);
+});
+
+const BODIES = {
+  "standards + spec": "code-review/references/matt/code-review/code-review.md",
+  "blast radius": "code-review/references/pstack/blast-radius/blast-radius.md",
+  "interrogate": "code-review/references/pstack/interrogate/interrogate.md",
+};
+const briefsIn = (text) => [...text.matchAll(/^\s*- (Lens: .*)$/gm)].map((m) => m[1]);
+
+test("mkpacket: the packet carries one filled reviewer-child brief per required lens, naming its body path", () => {
+  const dir = withWorkflow();
+  for (const [band, kind] of [["easy", "code"], ["medium", "code"], ["hard", "code"], ["easy", "assessment"], ["medium", "assessment"]]) {
+    const { r, text } = packet(dir, ["--ref", "364", "--band", band, "--kind", kind]);
+    assert.equal(r.status, 0, r.stderr);
+    const lenses = lensesIn(text);
+    const briefs = briefsIn(text);
+    assert.equal(briefs.length, lenses.length, `${band}/${kind}`);
+    lenses.forEach((lens, i) => {
+      assert.equal(briefs[i], `Lens: ${lens}. Read ${WT}/.agents/skills/${BODIES[lens]} in full first, then review ${BASE}..HEAD in ${WT} and every deliverable the task names: <deliverable paths, or none>. Read-only: edit nothing, run nothing that writes.`);
+    });
+  }
+});
+
+test("mkpacket: every lens body a brief names exists in the pack", () => {
+  const skills = fileURLToPath(new URL("../.agents/skills/", import.meta.url));
+  for (const rel of Object.values(BODIES)) assert.ok(existsSync(join(skills, rel)), rel);
+});
+
+test("mkpacket: rule 6 puts named deliverables in scope and asks for runs behind claims", () => {
+  const text = packet(repo()).text;
+  assert.match(text, /base\.\.last commit AND every deliverable file the task names, committed or not/);
+  assert.match(text, /behavioural claim and every worked number[\s\S]*?command and its output in the self-review file/);
+  assert.match(text, /fix round's reviewer re-reads every changed deliverable whole[\s\S]*?claim the rewrite newly makes/);
 });

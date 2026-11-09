@@ -18,10 +18,20 @@
    moved, append a progress-log line, then wait again. Any child that has children of its own waits
    the same way. Report only when every child has finished.
 6. SELF-REVIEW before the report: run {wt}/.agents/skills/code-review/SKILL.md over task
-   base..last commit with these lenses: {lenses}. Use fresh read-only reviewer children if you
-   have them. Write it to {wt}/tmp/cr-{ticket}-{task}.md, one section per lens (no lens ranks
-   another), fix every act-on finding, and list fixed / deferred / rejected with reasons. L0
-   checks that file has every lens above and counts your child calls before accepting.
+   base..last commit AND every deliverable file the task names, committed or not (an outcome or
+   report under {wt}/tmp/, a plan, a draft), with these lenses: {lenses}. Use fresh read-only
+   reviewer children if you have them, one per lens. Start each child's task with its brief below,
+   copied verbatim, with the deliverable paths filled in; a child briefed from your own summary of
+   a lens has not run it. Without children, read each lens body named below in full yourself:
+{lens_briefs}
+   Back every behavioural claim and every worked number in the work or the report with a run: a
+   scratch command in a throwaway copy, with the command and its output in the self-review file. A
+   line citation alone does not count; rerun a claim a child disputes before you count or dismiss
+   it. A fix round's reviewer re-reads every changed deliverable whole, not only the lines the
+   findings name, and lists each claim the rewrite newly makes; run each one. Write the review to
+   {wt}/tmp/cr-{ticket}-{task}.md, one section per lens (no lens ranks another), fix every act-on
+   finding, and list fixed / deferred / rejected with reasons. L0 checks that file has every lens
+   above and counts your child calls before accepting.
 7. COMMITS on {branch} only, as often as useful: {commit_subject}, with a hyphen-bullet body
    starting with verbs and {commit_trailer}. Note the branch tip first: that is the task base
    ({base}). Never push, merge, touch the main branch or the tracker. Scratch output goes to {wt}/tmp/.

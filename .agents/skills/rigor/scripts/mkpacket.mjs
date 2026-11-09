@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Build an implementer packet: task text + chain preferences + pack rules + project rules.
 //   node mkpacket.mjs --slug S --wt W --base B --branch BR --task FILE --out FILE
-//                     [--ref R] [--task-id T] [--band B] [--project-rules FILE] [--repo DIR]
+//                     [--ref R] [--task-id T] [--band B] [--kind K] [--project-rules FILE] [--repo DIR]
 // --repo (default cwd) supplies .audit/<slug>.preferences.md (required),
 // docs/agents/packet-rules.md (used when --project-rules is absent) and
 // docs/agents/workflow.md (read for the "Self-review lenses" line when --band is given).
@@ -14,6 +14,12 @@
 // "<lens> at <band>[, <band>][ and <band>]"); when the line has a backticked span, only the first
 // one is read, so a trailing note is ignored. standards+spec always runs. Without --band, or
 // without that line, the self-review is standards+spec only. A bad band, lens or clause exits 2.
+// <kind> is code (default) or assessment: a task whose product is an outcome, a report or a doc of
+// claims. assessment adds the interrogate lens whatever the band; nothing else the band drives
+// changes. A bad kind exits 2.
+// {lens_briefs} in packet rule 6 becomes one reviewer-child brief per required lens, naming that
+// lens's body under {wt}/.agents/skills/code-review/references/, so the implementer copies it
+// instead of briefing a child from its own summary.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -57,8 +63,16 @@ const LENSES = { // order here is the order rule 6 lists them in
   "blast-radius": "blast radius (for each safety fact, the step you proved it to, or unproven)",
   "interrogate": "interrogate (adversaries on the `interrogate reviewers` role; put its Findings and Dropped lists in the file)",
 };
+const BODIES = { // each lens's body, under {wt}/.agents/skills/code-review/references/
+  "standards+spec": ["standards + spec", "matt/code-review/code-review.md"],
+  "blast-radius": ["blast radius", "pstack/blast-radius/blast-radius.md"],
+  "interrogate": ["interrogate", "pstack/interrogate/interrogate.md"],
+};
+const KINDS = ["code", "assessment"];
 const band = args.band;
 if (band !== undefined && !BANDS.includes(band)) die(`--band must be one of ${BANDS.join(", ")}: ${band}`);
+const kind = args.kind ?? "code";
+if (!KINDS.includes(kind)) die(`--kind must be one of ${KINDS.join(", ")}: ${kind}`);
 
 // Lenses the band requires, from workflow.md's "Self-review lenses" line.
 function lensesFor(band) {
@@ -82,6 +96,8 @@ function lensesFor(band) {
   return chosen;
 }
 const lenses = lensesFor(band);
+if (kind === "assessment") lenses.add("interrogate");
+const required = Object.keys(LENSES).filter((k) => lenses.has(k));
 
 const slug = args.slug;
 const vars = {
@@ -94,7 +110,11 @@ const vars = {
   task: taskId.toLowerCase(),
   commit_subject: "",
   commit_trailer: "",
-  lenses: Object.keys(LENSES).filter((k) => lenses.has(k)).map((k) => LENSES[k]).join("; "),
+  lenses: required.map((k) => LENSES[k]).join("; "),
+  lens_briefs: required.map((k) => {
+    const [name, body] = BODIES[k];
+    return `   - Lens: ${name}. Read ${args.wt}/.agents/skills/code-review/references/${body} in full first, then review ${args.base}..HEAD in ${args.wt} and every deliverable the task names: <deliverable paths, or none>. Read-only: edit nothing, run nothing that writes.`;
+  }).join("\n"),
 };
 if (ref && /^\d+$/.test(ref)) { // tracker issue
   vars.ticket = ref;
