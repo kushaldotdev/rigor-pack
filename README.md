@@ -169,7 +169,7 @@ flowchart TD
   I --> SR["L1 self-review, one fresh child per lens:<br/>standards + spec = read-only reviewer<br/>blast radius, interrogate = probe child that runs its attacks"]
   SR --> R["L1 reports the range, the red and green output, the self-review file"]
   R --> C["L0 checks the report: reruns red on the base and green on the tip,<br/>reads the self-review file, counts child calls"]
-  C --> RV["L0 review, sized by band: each act-on finding gets a class"]
+  C --> RV["L0 review, sized by band (hard and critical: reviewers A and B on the same tip,<br/>one fix round for both): each act-on finding gets a class"]
   RV -- "act on" --> FX["Fix round to the same implementer: name the class,<br/>list every site or input shape, fix the list, one test over it"]
   FX --> RV
   RV -- "same class a second time,<br/>or attempts used up" --> TK["Takeover with a structural brief:<br/>the property to hold over the whole class"]
