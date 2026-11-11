@@ -125,7 +125,7 @@ flowchart TD
   RU --> MORE{"more units?"}
   MORE -- yes --> U
   MORE -- no --> C["close: re-check done predicate on the real artifact<br/>PR body (recorded template) + unslop · ketchup-style report"]
-  X["Irreversible step not pre-approved"] -. park in gates.md, route around .-> U
+  X["Irreversible step not pre-approved"] -. "park in gates.md, route around" .-> U
 ```
 
 Mid-run rules ([rigor/AFK.md](.agents/skills/rigor/AFK.md)): a reversible ambiguity gets the conservative choice and a logged reason. An unapproved irreversible step becomes a gate. A missing harness feature gets the documented fallback, logged as `degraded: ...`. Unit results are only `verified`, `unverified`, `blocked`, `reverted` or `skipped`.
@@ -155,7 +155,42 @@ sequenceDiagram
 
 Planning and building share a session by default (Continue is the first branch to rule out). Start a fresh session per ticket for multi-session builds, when the context budget is short, or for a wayfinder effort. State never lives in chat: a fresh session in any clone reaches full working state from `.audit/`, the tracker and git. To move to another harness or a colleague mid-phase, use `handoff`.
 
-A recorded chain of tickets resumes with `continue <slug>`: [rigor/CHAIN.md](.agents/skills/rigor/CHAIN.md) runs the tickets back to back, AFK, until a halt rule stops it. Its settings live in `docs/agents/workflow.md` → Chain efforts, and the delegation tool sits behind an adapter in [rigor/delegation/](.agents/skills/rigor/delegation/README.md).
+## 6. Chain runs
+
+A recorded chain of tickets resumes with `continue <slug>`: [rigor/CHAIN.md](.agents/skills/rigor/CHAIN.md) runs the tickets back to back, AFK, until a halt rule stops it. Its settings (models per role, caps, attempt counts, commands) live in `docs/agents/workflow.md` → Chain efforts, and the delegation tool sits behind an adapter in [rigor/delegation/](.agents/skills/rigor/delegation/README.md).
+
+Three levels do the work. **L0**, the lead session, picks tickets, briefs, reruns every proof, reviews and lands; it never implements. **L1**, one implementer agent per task, does the task or delegates it. **L2**, the implementer's children, are a worker, a read-only reviewer, a scout, and a probe child that runs attacks in a throwaway copy.
+
+```mermaid
+flowchart TD
+  P["L0 picks the next ticket in order<br/>halt check by band: easy go · medium post a plan ·<br/>hard and critical park until the plan is approved"] --> O["Task block per task: fence, ORACLE, required test,<br/>'Earlier reviews found' classes"]
+  O --> K["mkpacket builds the packet: task, standing orders, pack rules, project rules<br/>(exits 2 on a stale base or a task with no ORACLE)"]
+  K --> I["L1 implements: red test from the ORACLE, then the fix<br/>(differential against the base for a today's-behaviour table)"]
+  I --> SR["L1 self-review, one fresh child per lens:<br/>standards + spec = read-only reviewer<br/>blast radius, interrogate = probe child that runs its attacks"]
+  SR --> R["L1 reports the range, the red and green output, the self-review file"]
+  R --> C["L0 checks the report: reruns red on the base and green on the tip,<br/>reads the self-review file, counts child calls"]
+  C --> RV["L0 review, sized by band: each act-on finding gets a class"]
+  RV -- "act on" --> FX["Fix round to the same implementer: name the class,<br/>list every site or input shape, fix the list, one test over it"]
+  FX --> RV
+  RV -- "same class a second time,<br/>or attempts used up" --> TK["Takeover with a structural brief:<br/>the property to hold over the whole class"]
+  TK --> RV
+  RV -- accepted --> N{"more tasks?"}
+  N -- yes --> O
+  N -- no --> G["Staged squash, full gate on it, verify for user-visible changes<br/>land only the tree the gate ran on"]
+  G --> CL["Squash commit, resolution comment, close the ticket, clean up"]
+  CL --> P
+```
+
+What keeps a chain from going in circles:
+
+- **The ORACLE.** Every task block says what right looks like in a form a test can check: today's behaviour per input shape, a guard's input forms, one observable scenario, or the claims to run. It is text the planner or L0 writes, not an agent. The implementer turns it into tests and the reviewers judge against it.
+- **Fix the class, not the case.** A fix round covers every site or input shape of the finding's class. A second finding in a class already fixed once ends the rounds and starts a takeover.
+- **L0 states the failing case, never the design.** A fix L0 dictates skips the implementer's own review.
+- **Findings travel.** The class of every act-on finding goes into the later and sibling task packets of the ticket.
+- **Proof, not summary.** L0 reruns red and green itself, and a probe child's finding counts only with its command and output.
+- **Suites run on settled commits.** A full suite starts only when the self-review's act-on list is empty, the gate only when every review is accepted, and a fold after the gate means a new stage.
+
+Sessions end by rewriting the handoff and the trail. With self-continuing on, a session starts its successor as a new top-level session after six checks (CHAIN.md → Self-continuing sessions); a stop file or an owner "stop" pauses the chain with a resume prompt.
 
 ## Per-harness differences
 
