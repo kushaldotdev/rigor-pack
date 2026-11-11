@@ -1,49 +1,55 @@
 1. PROJECT RULES: the PROJECT RULES block below (environment, secrets, containers, check commands)
    binds as much as these rules. Never open, print, grep or source any .env file.
 2. FENCE: a fix needing a file outside "You may change" -> stop and report BEFORE committing it.
-3. TEST FIRST: a red test that fails on the task base for the finding's reason, then the smallest
-   fix. Prove red on an extracted tree of the base (git archive), never by `git checkout <base> -- file`
-   or `git restore` over your work. Mock only true I/O borders.
-4. TRADE-OFFS: name every behaviour change beyond the fix, even ones you think are fine.
+3. TEST FIRST, FROM THE ORACLE: the task's ORACLE section says what right looks like. Write its
+   rows as tests that fail on the task base for the finding's reason, then the smallest fix. For a
+   "today's behaviour" table the test is differential: each row's input, the output the base gives
+   (recorded from a run on the base, never from reading the code), and the same output on your
+   tip. An input shape the ORACLE does not list: add the row with the base's output from a run,
+   keep the base's behaviour, and name the added rows in the report. Prove red on an extracted
+   tree of the base (git archive), never by `git checkout <base> -- file` or `git restore` over
+   your work. Mock only true I/O borders.
+4. TRADE-OFFS: name every behaviour change beyond the fix, even ones you think are fine. A result
+   that differs from an ORACLE row is not a trade-off: stop and report it (rule 10).
 5. DELEGATE by size. The TASK line says "small change: you edit" or "delegate". Small change: edit
    it yourself, no worker. Delegate: if your harness has child agents, a worker writes the red test
    then the fix, a fresh reviewer reads each round (at most 3 review->fix loops), and a scout runs
    only when the scope is unclear. Pass agent names only, never a model. Without child agents, do
-   the steps yourself in that order. Load your harness's subagent policy first, if the PROJECT RULES
-   name one. This packet's fence, red-first and commit rules are the prescribed workflow. This is a
-   headless run-to-completion contract: NEVER end your turn while a child runs. Wait in bounded
-   slices of 10 minutes or less, never an unbounded wait (your harness's wait call and the full rule
-   are in its subagent policy). After each slice, handle what finished or needs attention. On a
-   timeout, check each running child's progress once, nudge or interrupt one whose output has not
-   moved, append a progress-log line, then wait again. Any child that has children of its own waits
-   the same way. Report only when every child has finished.
-6. SELF-REVIEW before the report: run {wt}/.agents/skills/code-review/SKILL.md over task
-   base..last commit AND every deliverable file the task names, committed or not (an outcome or
-   report under {wt}/tmp/, a plan, a draft), with these lenses: {lenses}. Use fresh read-only
-   reviewer children if you have them, one per lens. Start each child's task with its brief below,
-   copied verbatim, with the deliverable paths filled in; a child briefed from your own summary of
-   a lens has not run it. Without children, read each lens body named below in full yourself:
+   the steps yourself in that order. Load your harness's subagent policy first, if the PROJECT
+   RULES name one. NEVER end your turn while a child runs: wait in slices of 10 minutes or less,
+   never an unbounded wait. After each slice handle what finished; on a timeout check each running
+   child once, nudge or interrupt one whose output has not moved, append a progress-log line, wait
+   again. A child with children of its own waits the same way. Report only when every child has
+   finished.
+6. SELF-REVIEW before the report, by the method in
+   {wt}/.agents/skills/rigor/templates/self-review.txt (read it first), over task
+   base..last commit AND every deliverable file the task names, committed or not, with these
+   lenses: {lenses}. Use fresh children, one per lens, each started with its brief below copied verbatim, followed by the
+   task's ORACLE section:
 {lens_briefs}
-   Back every behavioural claim and every worked number in the work or the report with a run: a
-   scratch command in a throwaway copy, with the command and its output in the self-review file. A
-   line citation alone does not count; rerun a claim a child disputes before you count or dismiss
-   it. A fix round's reviewer re-reads every changed deliverable whole, not only the lines the
-   findings name, and lists each claim the rewrite newly makes; run each one. Write the review to
-   {wt}/tmp/cr-{ticket}-{task}.md, one section per lens (no lens ranks another), fix every act-on
-   finding, and list fixed / deferred / rejected with reasons. L0 checks that file has every lens
-   above and counts your child calls before accepting.
+   Write the review to {wt}/tmp/cr-{ticket}-{task}.md, one section per lens (no lens ranks
+   another), fix every act-on finding, and list fixed / deferred / rejected with reasons. L0 checks
+   that file has every lens above and counts your child calls before accepting.
 7. COMMITS on {branch} only, as often as useful: {commit_subject}, with a hyphen-bullet body
    starting with verbs and {commit_trailer}. Note the branch tip first: that is the task base
    ({base}). Never push, merge, touch the main branch or the tracker. Scratch output goes to {wt}/tmp/.
 8. CHECKS: the PROJECT RULES check commands, then targeted tests: every test file you add or edit,
-   the tests mirroring each changed module, and any test importing a symbol you changed. Run the
-   full suite only when the TASK line says so (L0 runs it on the staged squash). Commit the doc half
-   in the same range.
+   the tests mirroring each changed module, and any test that imports or calls a symbol you
+   changed (grep for it; a changed signature breaks callers outside your fence). Run the full
+   suite only when the TASK line says so, once, on a commit whose self-review act-on list is
+   empty, never on a commit you already know you will change. Commit the doc half in the same
+   range.
 9. PROGRESS LOG: append `HH:MM UTC | step | next | blocker or none` (date -u) to
    {wt}/tmp/l1-progress.log every 15 minutes and after every step. Wrap anything that can run over
    10 minutes in `timeout`. If the same step shows on 3 lines in a row, stop and report.
 10. REPORT: base..last commit with subjects, test names, red output on the base, green on your
    last commit, check commands and counts, files changed, anything you started and removed,
-   trade-offs, surprises. If a "Stop and ask L0 if" line fires, stop and report instead of guessing.
+   trade-offs, ORACLE rows you added, surprises. If a "Stop and ask L0 if" line fires, stop and
+   report instead of guessing.
 11. SHARED WORKTREE: commit with `git commit -m ... -- <your paths>`. Never `--amend` or rewrite
    history. Delete only scratch you created yourself.
+12. FIX ROUND (any re-brief after a review): a finding is one case of a class. For each finding,
+   name the class, list every site or input shape of that class in the code this task owns (from a
+   grep or a run, pasted in the report), fix the whole list, and pin it with one test that walks
+   the list. A round that fixes only the cited case comes back. Then run rule 6 on the round's
+   range.

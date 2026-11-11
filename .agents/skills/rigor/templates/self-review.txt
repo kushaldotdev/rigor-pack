@@ -1,0 +1,39 @@
+SELF-REVIEW METHOD (packet rule 6 points here; the packet names your lenses, briefs and file)
+
+WHO RUNS A LENS
+- standards + spec: a read-only reviewer child. It reads; it runs nothing that writes.
+- blast radius, interrogate: a probe child, which is a child that can run commands (your harness's
+  worker). Never the child that wrote this task's code. It works only in a throwaway copy of your
+  last commit under <worktree>/tmp/probe-<lens>/, never in the worktree, and runs every attack
+  itself. Where a lens body calls for several adversaries and the child cannot start children, it
+  plays each adversary in turn.
+- No child agents: run each lens yourself, in the packet's order, reading its body in full first.
+
+WHAT EVERY CHILD GETS
+- Its packet brief, copied verbatim. A child briefed from your summary of a lens has not run it.
+- The task's ORACLE section, verbatim, and the PROJECT RULES section on running tests in isolation
+  (a probe child needs it to run anything).
+- Never your account of what the change does. The child judges the work against the ORACLE and
+  against what the task base does, not against your reading of the task.
+
+WHAT IS IN SCOPE
+- The range task base..last commit, and every deliverable file the task names, committed or not:
+  an outcome or report under tmp/, a plan, a draft.
+- Every consumer of a value, default or rule the change moves, in whatever module it lives. A
+  consumer outside your fence is a finding to report, not to fix.
+
+WHAT COUNTS AS A FINDING
+- A probe child's finding carries the command it ran and the output. One with no run is listed as
+  "unproven" and is not counted until a run shows it.
+- Back every behavioural claim and every worked number in the work or the report with a run: a
+  scratch command in a throwaway copy, with the command and its output in the self-review file. A
+  line citation alone does not count. Rerun a claim a child disputes before you count or dismiss it.
+- Name each finding's class, then look for its siblings before you fix (packet rule 12).
+
+A FIX ROUND'S REVIEW
+- The reviewer re-reads every changed deliverable whole, not only the lines the findings name,
+  and lists each claim the rewrite newly makes. Run each one.
+
+THE FILE
+- One section per lens; no lens ranks another. Per finding: class, proof (command and output),
+  and fixed / deferred / rejected with the reason.

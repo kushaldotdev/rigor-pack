@@ -91,7 +91,7 @@ function repo(prefs = "prefs body: scratch in {wt}/tmp, no .env\n", project = nu
   const dir = tmp();
   mkdirSync(join(dir, ".audit"), { recursive: true });
   if (prefs !== null) writeFileSync(join(dir, ".audit", `${SLUG}.preferences.md`), prefs);
-  writeFileSync(join(dir, "task.md"), "TASK: fix it in {wt} on {branch} (base {base}).\n");
+  writeFileSync(join(dir, "task.md"), "TASK: fix it in {wt} on {branch} (base {base}).\nORACLE: none (fixture)\n");
   if (project !== null) {
     mkdirSync(join(dir, "docs", "agents"), { recursive: true });
     writeFileSync(join(dir, "docs", "agents", "packet-rules.md"), project);
@@ -184,7 +184,7 @@ const withWorkflow = (line = LENS_LINE) => {
 };
 // The lens list packet rule 6 names, by short name.
 const lensesIn = (text) => {
-  const m = text.match(/with these lenses: ([\s\S]*?)\. Use fresh/);
+  const m = text.match(/with these\s+lenses: ([\s\S]*?)\. Use fresh/);
   assert.ok(m, "rule 6 lens list not found");
   return [...m[1].matchAll(/(standards \+ spec|blast radius|interrogate) \(/g)].map((x) => x[1]);
 };
@@ -272,7 +272,10 @@ test("mkpacket: the packet carries one filled reviewer-child brief per required 
     const briefs = briefsIn(text);
     assert.equal(briefs.length, lenses.length, `${band}/${kind}`);
     lenses.forEach((lens, i) => {
-      assert.equal(briefs[i], `Lens: ${lens}. Read ${WT}/.agents/skills/${BODIES[lens]} in full first, then review ${BASE}..HEAD in ${WT} and every deliverable the task names: <deliverable paths, or none>. Read-only: edit nothing, run nothing that writes.`);
+      const how = lens === "standards + spec"
+        ? "Read-only: edit nothing, run nothing that writes."
+        : `Probe child: work only in a throwaway copy of HEAD under ${WT}/tmp/probe-${lens.replace(" ", "-")}/, never edit ${WT}; run every attack yourself and report each finding with its command and output; a finding with no run is "unproven".`;
+      assert.equal(briefs[i], `Lens: ${lens}. Read ${WT}/.agents/skills/${BODIES[lens]} in full first, then review ${BASE}..HEAD in ${WT} and every deliverable the task names: none. ${how}`);
     });
   }
 });
@@ -285,8 +288,39 @@ test("mkpacket: every lens body a brief names exists in the pack", () => {
 test("mkpacket: rule 6 puts named deliverables in scope and asks for runs behind claims", () => {
   const text = packet(repo()).text;
   assert.match(text, /base\.\.last commit AND every deliverable file the task names, committed or not/);
-  assert.match(text, /behavioural claim and every worked number[\s\S]*?command and its output in the self-review file/);
-  assert.match(text, /fix round's reviewer re-reads every changed deliverable whole[\s\S]*?claim the rewrite newly makes/);
+  assert.match(text, /by the method in\s+\S+\/\.agents\/skills\/rigor\/templates\/self-review\.txt/);
+  const method = readFileSync(fileURLToPath(new URL("../.agents/skills/rigor/templates/self-review.txt", import.meta.url)), "utf8");
+  assert.match(method, /behavioural claim and every worked number[\s\S]*?command and its output in the self-review file/);
+  assert.match(method, /re-reads every changed deliverable whole[\s\S]*?claim the rewrite newly makes/);
+  assert.match(method, /probe child[\s\S]*?Never the child that wrote this task's code/);
+});
+
+test("mkpacket: --deliverables fills every lens brief with the task's deliverable files", () => {
+  const { r, text } = packet(withWorkflow(), ["--band", "medium", "--deliverables", "tmp/outcome.md, docs/plan.md"]);
+  assert.equal(r.status, 0, r.stderr);
+  const briefs = briefsIn(text);
+  assert.equal(briefs.length, 2);
+  for (const b of briefs) assert.match(b, /every deliverable the task names: tmp\/outcome\.md, docs\/plan\.md\. /);
+});
+
+test("mkpacket: a task with no ORACLE section exits 2; a heading or a bare line both count", () => {
+  const dir = repo();
+  writeFileSync(join(dir, "task.md"), "TASK: fix it in {wt}.\nThe oracle is implied.\n");
+  const none = packet(dir);
+  assert.equal(none.r.status, 2);
+  assert.match(none.r.stderr, /no ORACLE section in .*task\.md/);
+  assert.ok(!existsSync(none.out), "no packet is written without an oracle");
+  for (const line of ["ORACLE: none (docs only)", "## ORACLE", "  ORACLE (today's behaviour):", "**ORACLE**"]) {
+    writeFileSync(join(dir, "task.md"), `TASK: fix it in {wt}.\n${line}\n| input | main |\n`);
+    assert.equal(packet(dir).r.status, 0, line);
+  }
+});
+
+test("packet rules: a fix round fixes the class, and the full suite waits for a settled commit", () => {
+  const text = packet(repo()).text;
+  assert.match(text, /12\. FIX ROUND[\s\S]*?name the class, list every site or input shape[\s\S]*?one test that walks\s+the list/);
+  assert.match(text, /once, on a commit whose self-review act-on list is\s+empty/);
+  assert.match(text, /3\. TEST FIRST, FROM THE ORACLE/);
 });
 
 test("mkpacket: --base must be an ancestor of, or equal to, --branch's tip in --wt", () => {

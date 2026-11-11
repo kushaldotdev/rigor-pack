@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Build an implementer packet: task text + chain preferences + pack rules + project rules.
 //   node mkpacket.mjs --slug S --wt W --base B --branch BR --task FILE --out FILE
-//                     [--ref R] [--task-id T] [--band B] [--kind K] [--project-rules FILE] [--repo DIR]
+//                     [--ref R] [--task-id T] [--band B] [--kind K] [--deliverables A,B]
+//                     [--project-rules FILE] [--repo DIR]
 // --repo (default cwd) supplies .audit/<slug>.preferences.md (required),
 // docs/agents/packet-rules.md (used when --project-rules is absent) and
 // docs/agents/workflow.md (read for the "Self-review lenses" line when --band is given).
@@ -20,9 +21,15 @@
 // <base> must be an ancestor of, or equal to, <branch>'s tip in <wt> (git merge-base --is-ancestor),
 // so a packet built with a stale base fails here instead of in the implementer's run; it exits 2,
 // and so does a base, branch or worktree git cannot resolve.
-// {lens_briefs} in packet rule 6 becomes one reviewer-child brief per required lens, naming that
-// lens's body under {wt}/.agents/skills/code-review/references/, so the implementer copies it
-// instead of briefing a child from its own summary.
+// {lens_briefs} in packet rule 6 becomes one child brief per required lens, naming that lens's
+// body under {wt}/.agents/skills/code-review/references/, so the implementer copies it instead of
+// briefing a child from its own summary. standards+spec goes to a read-only reviewer; blast radius
+// and interrogate go to a probe child that runs its attacks in a throwaway copy
+// (templates/self-review.txt). --deliverables is a comma-separated list of the deliverable files
+// the task names; it fills each brief (default "none").
+// The task file must carry an ORACLE section (a line starting "ORACLE", optionally a markdown
+// heading): what right looks like, as CHAIN.md -> The implementer packet says. Without one the
+// build exits 2: an implementer with no oracle optimises the rules it can check.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -61,6 +68,7 @@ const pack = read(packPath, "pack rules");
 const projPath = args["project-rules"] ?? join(repo, "docs", "agents", "packet-rules.md");
 const proj = existsSync(projPath) ? read(projPath, "project rules") : "none";
 const task = read(args.task, "task");
+if (!/^\s*(?:#+\s*)?(?:\*\*)?ORACLE\b/m.test(task)) die(`no ORACLE section in ${args.task}: add a line starting "ORACLE" that says what right looks like (today's behaviour per input shape, the input shapes of a guard, one observable scenario, the claims to run, or "ORACLE: none" with the reason)`);
 
 const ref = args.ref;
 const taskId = args["task-id"] ?? "T1";
@@ -106,6 +114,8 @@ function lensesFor(band) {
 const lenses = lensesFor(band);
 if (kind === "assessment") lenses.add("interrogate");
 const required = Object.keys(LENSES).filter((k) => lenses.has(k));
+const deliverables = (args.deliverables ?? "").split(",").map((d) => d.trim()).filter(Boolean).join(", ") || "none";
+const PROBE = new Set(["blast-radius", "interrogate"]); // lenses whose child runs its own attacks
 
 const slug = args.slug;
 const vars = {
@@ -121,7 +131,10 @@ const vars = {
   lenses: required.map((k) => LENSES[k]).join("; "),
   lens_briefs: required.map((k) => {
     const [name, body] = BODIES[k];
-    return `   - Lens: ${name}. Read ${args.wt}/.agents/skills/code-review/references/${body} in full first, then review ${args.base}..HEAD in ${args.wt} and every deliverable the task names: <deliverable paths, or none>. Read-only: edit nothing, run nothing that writes.`;
+    const how = PROBE.has(k)
+      ? `Probe child: work only in a throwaway copy of HEAD under ${args.wt}/tmp/probe-${k}/, never edit ${args.wt}; run every attack yourself and report each finding with its command and output; a finding with no run is "unproven".`
+      : "Read-only: edit nothing, run nothing that writes.";
+    return `   - Lens: ${name}. Read ${args.wt}/.agents/skills/code-review/references/${body} in full first, then review ${args.base}..HEAD in ${args.wt} and every deliverable the task names: ${deliverables}. ${how}`;
   }).join("\n"),
 };
 if (ref && /^\d+$/.test(ref)) { // tracker issue

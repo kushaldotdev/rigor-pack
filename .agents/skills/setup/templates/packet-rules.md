@@ -20,6 +20,7 @@ Run these before every report, in this order:
 - `<lint>` · `<format check>` · `<typecheck>`
 - Targeted tests: `<how to run one test file>`
 - Full gate (the lead runs it on the staged squash): `<command>`
+- Cheap gate checks, before every hand-back at every band: `<the gate's fast checks an implementer can run alone, so none of them costs a round at the gate: a new-suppression or lint-baseline check against the task base, import contracts, coverage of the lines the task added>`
 
 ## Subagent policy
 
