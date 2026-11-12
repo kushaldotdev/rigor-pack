@@ -164,15 +164,15 @@ Three levels do the work. **L0**, the lead session, picks tickets, briefs, rerun
 ```mermaid
 flowchart TD
   P["L0 picks the next ticket in order<br/>halt check by band: easy go · medium post a plan ·<br/>hard and critical park until the plan is approved"] --> O["Task block per task: fence, ORACLE, required test,<br/>'Earlier reviews found' classes"]
-  O --> K["mkpacket builds the packet: task, standing orders, pack rules, project rules<br/>(exits 2 on a stale base or a task with no ORACLE)"]
+  O --> K["mkpacket builds the packet: task, standing orders, pack rules, project rules<br/>(exits 2 on a stale base, a task with no ORACLE,<br/>or a hard or critical task with no ARCHITECTURE)"]
   K --> I["L1 implements: red test from the ORACLE, then the fix<br/>(differential against the base for a today's-behaviour table)"]
-  I --> SR["L1 self-review, one fresh child per lens:<br/>standards + spec = read-only reviewer<br/>blast radius, interrogate = probe child that runs its attacks"]
+  I --> SR["L1 self-review: one read-only child per lens, in parallel, every loop<br/>hard or critical behaviour change: one time-boxed probe child<br/>runs blast radius and interrogate attacks once, on the final loop"]
   SR --> R["L1 reports the range, the red and green output, the self-review file"]
   R --> C["L0 checks the report: reruns red on the base and green on the tip,<br/>reads the self-review file, counts child calls"]
-  C --> RV["L0 review, sized by band (hard and critical: reviewers A and B on the same tip,<br/>one fix round for both): each act-on finding gets a class"]
+  C --> RV["L0 review, sized by band (a task of hardness 4+ in a hard or critical ticket:<br/>reviewers A and B on the same tip, one fix round for both): each act-on finding gets a class"]
   RV -- "act on" --> FX["Fix round to the same implementer: name the class,<br/>list every site or input shape, fix the list, one test over it"]
   FX --> RV
-  RV -- "same class a second time,<br/>or attempts used up" --> TK["Takeover with a structural brief:<br/>the property to hold over the whole class"]
+  RV -- "same class a second time,<br/>or attempts used up" --> TK["Escalation ladder with a structural brief:<br/>fresh implementer, then a second model, then the takeover role"]
   TK --> RV
   RV -- accepted --> N{"more tasks?"}
   N -- yes --> O
@@ -188,7 +188,8 @@ What keeps a chain from going in circles:
 - **L0 states the failing case, never the design.** A fix L0 dictates skips the implementer's own review.
 - **Findings travel.** The class of every act-on finding goes into the later and sibling task packets of the ticket.
 - **Proof, not summary.** L0 reruns red and green itself, and a probe child's finding counts only with its command and output.
-- **Suites run on settled commits.** A full suite starts only when the self-review's act-on list is empty, the gate only when every review is accepted, and a fold after the gate means a new stage.
+- **Suites run on settled commits.** The full suite runs once per ticket, as the gate on the staged squash, only when every review is accepted; a fold after the gate means a new stage.
+- **Architecture is checked, not assumed.** A hard or critical task names its modules and their deletion-test result (`ARCHITECTURE`), the packet inlines the project's Architecture rules, and the standards lens ends with a fixed ARCHITECTURE block that `review-file.mjs` checks.
 
 Sessions end by rewriting the handoff and the trail. With self-continuing on, a session starts its successor as a new top-level session after six checks (CHAIN.md → Self-continuing sessions); a stop file or an owner "stop" pauses the chain with a resume prompt.
 

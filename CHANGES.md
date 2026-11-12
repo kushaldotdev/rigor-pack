@@ -147,6 +147,14 @@ They stay in `vendors/` for the next upgrade. Nothing in an installed pack runs 
 
 `rigor/CHAIN.md` comes from no vendor: it is a method worked out over real ticket chains in 2026-10 and 2026-11, with every project setting lifted out. Every number, model id and command lives in the target repo's `docs/agents/workflow.md` → Chain efforts, written by `setup`. The delegation tool sits behind an adapter in `rigor/delegation/`, so the method names no tool.
 
+2026-11-12, after a chain session where self-review grew to 50-85% of each implementer's wall time (probe children ran mutant tables, the whole suite and `sleep` polls, and hit the harness's 30-minute run cut) while the architecture rules sat in a file almost no one opened:
+
+- `templates/self-review.txt`, packet rule 6, `mkpacket.mjs`: every self-review loop runs each lens as a read-only child, in parallel. Only a hard or critical task that changes behaviour (`--change behaviour`, the default; `--change refactor` opts out) gets one probe child, once, on the final loop, limited to 15 minutes, 5 attacks from the ORACLE, targeted test files, foreground runs and one container pair. A refactor's claim may stand on cited lines plus named existing tests.
+- `harness/pi.md`: a probe child gets a 25-minute budget and reports partial results instead of being resumed.
+- `mkpacket.mjs`: a hard or critical task file needs an `ARCHITECTURE` section naming its modules and their deletion-test result (or `ARCHITECTURE: none` with a reason). The project rules' `## Architecture rules` section is inlined into the packet body, and rule 6 makes the standards lens end with a fixed ARCHITECTURE block.
+- `scripts/review-file.mjs` (new): checks a self-review file against its packet: a section per lens, the probe when due, and the ARCHITECTURE block filled.
+- `CHAIN.md`: two L0 reviewers only for a task of hardness 4+, one reviewer both axes otherwise and for every delta; about 4-5 tasks per ticket, parallel tasks marked by the planner; one full suite per ticket, on the staged squash; an escalation ladder (fresh implementer with a structural brief, then a `second implementer` model, then the takeover role); an `improve-codebase-architecture` pass at plan and at the staged squash for hard and critical tickets.
+
 ## Lost on purpose
 
 - Direct slash entry to `/architect`, `/interrogate`, `/blast-radius`, `/how`, `/why`, `/swarm`, `/arena`, `/figure-it-out`, `/correct`, `/benchmark-checklist`, `/statechart`. Reach them through their host skill's mode or a `rigor` route.
