@@ -496,11 +496,12 @@ test("setup template: the Architecture rules section quotes skill files that exi
 });
 
 // A trail with the chain's columns, plus an arch report file, in a throwaway repo.
-function trail(rows, { report = true } = {}) {
+const PASS = "## Scope\nx\n## Friction\n- a.py:f\n## Deletion test\n| module | result | why |\n|---|---|---|\n| a | pass | ok |\n## Owners\n- k -> A\n## Seams\n- none\n## Candidates\n- Speculative: none\n## Principles applied\n- deletion test\n## Verdict\nSOUND\n";
+function trail(rows, { report = true, body = PASS } = {}) {
   const dir = tmp();
   mkdirSync(join(dir, ".audit"), { recursive: true });
   mkdirSync(join(dir, "tmp"), { recursive: true });
-  if (report) writeFileSync(join(dir, "tmp", "arch-375.md"), "report\n");
+  if (report) writeFileSync(join(dir, "tmp", "arch-375.md"), body);
   const file = join(dir, ".audit", "s.tsv");
   writeFileSync(file, ["ts\tphase\tdecision\twhy\tevidence\tresult", ...rows.map((r) => ["2026-11-12T00:00:00Z", ...r].join("\t"))].join("\n") + "\n");
   return { dir, file };
@@ -542,6 +543,17 @@ test("land-check: blocks REGRESSED, a missing verdict, a missing report, and ano
   }
   const fixed = trail([["arch", "#375 REGRESSED", "", "tmp/arch-375.md", "ok"], ["arch", "#375 SOUND", "after fix", "tmp/arch-375.md", "ok"]]);
   assert.equal(landCheck(fixed, "375", "hard").status, 0, "a re-run after a fix replaces the first verdict");
+});
+
+test("land-check: a report that fails arch-check --role landing blocks", () => {
+  const row = [["arch", "#375 SOUND", "", "tmp/arch-375.md", "ok"]];
+  for (const [body, why] of [["report\n", /missing heading "## Scope"/], [PASS.replace("## Verdict\nSOUND\n", ""), /missing heading "## Verdict"/], [PASS.replace("- k -> A", "- k"), /no "<rule> -> <owner>"/]]) {
+    const r = landCheck(trail(row, { body }), "375", "medium");
+    assert.equal(r.status, 1, r.stdout);
+    assert.match(r.stdout, /blocked: the `arch` report for #375 fails arch-check --role landing/);
+    assert.match(r.stdout, why);
+  }
+  assert.equal(landCheck(trail(row, { body: "report\n" }), "375", "easy").status, 0, "easy never reads the report");
 });
 
 test("land-check: misuse exits 2", () => {

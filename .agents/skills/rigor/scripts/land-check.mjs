@@ -5,12 +5,16 @@
 // ticket (CHAIN.md -> The loop for one ticket, step 5): phase `arch`, decision "#<ticket> <verdict>"
 // (the "#" optional, so a unit id like U2 works too), evidence the report path, relative to --repo
 // (default cwd) or absolute. A plan-review row ("#<ticket> plan <verdict>") never counts. The last such row wins, so a pass re-run after a fix replaces the first.
+// The report must also pass `arch-check.mjs --role landing` (headings, deletion-test row, owners,
+// verdict); a report that fails it blocks, with arch-check's problems printed.
 // Verdicts: SOUND, SOUND WITH FOLLOW-UPS, REGRESSED. The trail's header row names the columns
 // (phase, decision, evidence); a trail without them is misuse.
 // Prints one line, "land-check: ok ..." or "land-check: blocked: <reason>". Exits 0 when the ticket
 // may land, 1 when it may not, 2 on misuse.
 import { readFileSync, existsSync } from "node:fs";
-import { resolve, isAbsolute, join } from "node:path";
+import { resolve, isAbsolute, join, dirname } from "node:path";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
 const die = (m) => { console.error(`land-check: ${m}`); process.exit(2); };
 const args = {};
@@ -50,5 +54,7 @@ const report = (r[col.evidence] ?? "").trim();
 if (!report) block(`the last \`arch\` row for #${ticket} names no report path`);
 const path = isAbsolute(report) ? report : join(resolve(args.repo ?? process.cwd()), report);
 if (!existsSync(path)) block(`the \`arch\` report for #${ticket} does not exist: ${path}`);
+const check = spawnSync(process.execPath, [join(dirname(fileURLToPath(import.meta.url)), "arch-check.mjs"), "--role", "landing", "--arch", path], { encoding: "utf8" });
+if (check.status !== 0) block(`the \`arch\` report for #${ticket} fails arch-check --role landing (${report}):\n${(check.stdout + check.stderr).trim()}`);
 if (verdict === "REGRESSED") block(`the architecture pass for #${ticket} says REGRESSED (${report}): fix what the ticket caused, re-run the pass, record a new \`arch\` row`);
 pass(`#${ticket} ${verdict} (${report})`);

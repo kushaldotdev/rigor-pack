@@ -42,7 +42,7 @@ Where a chain run differs from `## Authority` above. Every number here is a sett
 - Solo band: `hard` <!-- or: critical, or none. A ticket at or above it runs alone in its own session -->
 - Self-review lenses: `standards+spec always; blast-radius at medium; interrogate at hard and critical` <!-- the implementer's own review, run before L0's reviewers see the diff. mkpacket.mjs --band reads this line. standards+spec always runs. Each other lens is "<lens> at <band>[, <band>][ and <band>]", or "<lens> always". Lenses: blast-radius, interrogate. interrogate is the expensive one: each adversary works in its own worktree and proves its findings with real runs. Cheaper: interrogate at critical only; blast-radius at medium and hard. Drop a clause to skip that lens. Every lens runs read-only on every loop; only a hard or critical task that changes behaviour adds one probe child (blast radius and interrogate with real runs, time-boxed) on the final loop -->
 - Review depth: a post-land delta over `<n>` lines is re-reviewed
-- Architecture pass: every ticket of band medium and above, on its staged squash (and, for hard and critical, on the plan before approval); `arch` trail row; landing gate `node .agents/skills/rigor/scripts/land-check.mjs --trail .audit/<slug>.tsv --ticket <id> --band <band>`; planner and pass briefs `node .agents/skills/rigor/scripts/mkbrief.mjs --role planner|plan-review|landing ...` (planner: `--brief <project planner brief>`), pass files checked with `node .agents/skills/rigor/scripts/arch-check.mjs` <!-- pack default (rigor/CHAIN.md → Land, Planner); keep it unless the owner drops it -->
+- Architecture pass: every ticket of band medium and above, on its staged squash, inside the final axis-A review (and, for hard and critical, on the plan before approval); `arch` trail row; pass files `.audit/<slug>/arch/<id>[-plan].md`; landing gate `node .agents/skills/rigor/scripts/land-check.mjs --trail .audit/<slug>.tsv --ticket <id> --band <band>` (it runs arch-check on the pass file); planner and pass briefs `node .agents/skills/rigor/scripts/mkbrief.mjs --role planner|plan-review|landing ...` (planner: `--brief <project planner brief>`; landing: appended to the final axis-A reviewer's brief), pass files checked with `node .agents/skills/rigor/scripts/arch-check.mjs` <!-- pack default (rigor/CHAIN.md → Land, Planner, Plan review); keep it unless the owner drops it -->
 - L0 heartbeat: every 15 minutes <!-- default -->; a progress line older than `<n>` minutes, or the same step on `<n>` lines in a row, is stuck
 - L1/L2 wait slice: 10 minutes max <!-- default; never an unbounded wait -->
 - Reviewer fallback: none <!-- or: a named model when the first is out of quota -->
@@ -62,7 +62,8 @@ Where a chain run differs from `## Authority` above. Every number here is a sett
 | L2 reviewer | `<provider/model>` | `<level>` |
 | L0 reviewers | `<provider/model>` | `<level>` |
 | reviewer fallback | none | |
-| planner | `<provider/model>` | `<level>` |
+| planner | `<provider/model>` | `<level>` <!-- the strongest model: every planner, and the critical plan review --> |
+| plan reviewer | `<provider/model>` | `<level>` <!-- hard tickets: the L1 implementer model; on REGRESSED, or disagreement with the plan on an owner or a seam, the review runs again on the planner role --> |
 | second implementer | none <!-- or: a second cheap model, the escalation ladder's middle rung --> | |
 | takeover | `<provider/model>` | `<level>` |
 | verify driver | `<provider/model>` | `<level>` |

@@ -165,6 +165,12 @@ They stay in `vendors/` for the next upgrade. Nothing in an installed pack runs 
 - `scripts/inline.mjs` (new): the `INLINE` expansion, shared by `mkpacket.mjs` and `mkbrief.mjs`.
 - `CHAIN.md`: the planner and both architecture reviewers are briefed with `mkbrief.mjs`, and L0 runs `arch-check.mjs` on their pass files before reading a plan or a verdict; the plan reviewer writes its own pass before it opens the plan.
 
+2026-11-13, to cut agents per ticket: a hard ticket ran a planner, a strong plan reviewer, each with an explorer sub-agent, and a separate landing reviewer beside the final review.
+
+- `scripts/land-check.mjs`: from band medium up, the last non-plan `arch` row's pass file must also pass `arch-check.mjs --role landing`, or landing blocks.
+- `templates/arch-pass.txt`: no explorer sub-agent in any role (the agent is the fresh context and walks the scope itself); quotes only the `### 1. Explore` step of `improve-codebase-architecture` plus `codebase-design` in full, keeping the unattended rules (no HTML, no questions, decide yourself).
+- `CHAIN.md`: critical plans get a planner and a plan reviewer, both on the planner (strongest) role, no sub-agents; a hard plan review runs on the cheap plan-review role and goes again on the planner role only on `REGRESSED` or disagreement on an owner or seam; the landing pass rides the final axis-A review of the staged squash instead of a separate agent; pass files go where the project's workflow settings say (default `.audit/<slug>/arch/<id>[-plan].md`), not `tmp/`. The setup workflow template mirrors this with a `plan reviewer` role.
+
 ## Lost on purpose
 
 - Direct slash entry to `/architect`, `/interrogate`, `/blast-radius`, `/how`, `/why`, `/swarm`, `/arena`, `/figure-it-out`, `/correct`, `/benchmark-checklist`, `/statechart`. Reach them through their host skill's mode or a `rigor` route.

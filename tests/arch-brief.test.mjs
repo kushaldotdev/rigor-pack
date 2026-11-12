@@ -21,7 +21,7 @@ test("mkbrief planner: step 1 quotes both skills in full before the project brie
   assert.equal(r.status, 0, r.stderr);
   const o = readFileSync(join(d, "o.txt"), "utf8");
   const cd = o.indexOf("codebase-design.md → Codebase Design");
-  const ica = o.indexOf("improve-codebase-architecture.md → Improve Codebase Architecture");
+  const ica = o.indexOf("improve-codebase-architecture.md → 1. Explore");
   const step2 = o.indexOf("STEP 2 OF 2");
   assert.ok(o.startsWith("STEP 1 OF 2"));
   assert.ok(cd > 0 && ica > cd && step2 > ica, "skills come before step 2");
@@ -30,6 +30,10 @@ test("mkbrief planner: step 1 quotes both skills in full before the project brie
   assert.ok(o.includes("Planner for #385 (7) of s."));
   assert.ok(o.includes(`Write ${join(d, "a.md")} BEFORE any other output file`));
   assert.ok(!o.includes("INLINE:"), "every INLINE line expanded");
+  assert.match(o, /you are the fresh context:\s+walk the scope yourself\. Start no sub-agent,/);
+  assert.ok(!o.includes("Present candidates as an HTML report") && !o.includes("Grilling loop"), "only the Explore step of improve-codebase-architecture");
+  assert.ok(!/sub-agent you started|replaces the skill's steps/.test(o), "no explorer and no step-replacement text");
+  assert.match(o, /No HTML report, no browser, no question to the user/);
   assert.ok(!o.includes("[[plan-review]]") && !o.includes("## Plan comparison"), "only the planner part");
 });
 
@@ -64,7 +68,7 @@ test("mkbrief: misuse and leftover placeholders exit 2", () => {
 });
 
 const GOOD = `## Scope
-backend/x at abc; sub-agent "walk"
+backend/x at abc
 ## Friction
 - x.py:f leaks
 ## Deletion test

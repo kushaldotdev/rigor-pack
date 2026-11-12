@@ -4,25 +4,24 @@ other purpose, before you form a view on where anything goes, and before you rea
 conclusion. Its output file is checked by `arch-check.mjs`; a file that is missing, out of order or
 incomplete sends your work back unread.
 
-The two skills below are quoted in full. They are the method; follow them, do not paraphrase them
-from memory. Use their vocabulary exactly (module, interface, depth, seam, adapter, leverage,
-locality) and the project's GLOSSARY.md for domain names.
+Quoted below: codebase-design in full, and the Explore step of improve-codebase-architecture.
+They are the method; follow them, do not paraphrase them from memory. Use their vocabulary exactly
+(module, interface, depth, seam, adapter, leverage, locality) and the project's GLOSSARY.md for
+domain names.
 
 INLINE: .agents/skills/codebase-design/references/matt/codebase-design/codebase-design.md#Codebase Design
 
-INLINE: .agents/skills/rigor/references/matt/improve-codebase-architecture/improve-codebase-architecture.md#Improve Codebase Architecture
+INLINE: .agents/skills/rigor/references/matt/improve-codebase-architecture/improve-codebase-architecture.md#1. Explore
 
-HOW TO RUN IT UNATTENDED (this replaces the skill's steps 2 and 3; step 1 stands as written)
-- Where the skill says to call the Skill tool with "codebase-design", the text above is that call.
+HOW TO RUN IT UNATTENDED
 - Scope: {scope}. Read GLOSSARY.md and the ADRs for that area first.
-- Step 1 as the skill says: spawn one read-only sub-agent with a fresh context to walk that scope for
-  friction (your harness's read-only child or explorer). Give it the codebase-design text above
-  verbatim. If your harness has no children, walk it yourself and say so in the file.
+- Where the Explore step says to spawn a sub-agent with a fresh context, you are the fresh context:
+  walk the scope yourself. Start no sub-agent, for this or for any other step.
 - No HTML report, no browser, no question to the user, no grilling loop: nobody is there. Write the
   candidates as markdown to {arch_out}, and decide each open point yourself, stating the decision and
   the principle that decided it.
 - Write {arch_out} BEFORE any other output file. It holds exactly these headings, each non-empty:
-  ## Scope            what you walked (paths, commit) and the sub-agent you started
+  ## Scope            what you walked (paths, commit)
   ## Friction         one bullet per friction point, with file:symbol
   ## Deletion test    a table `| module | result (concentrates / moves / pass / fail) | why |`, one row
                       per module the work adds, changes or might delete
