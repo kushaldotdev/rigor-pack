@@ -25,7 +25,8 @@
    {wt}/.agents/skills/rigor/templates/self-review.txt (read it first), over task
    base..last commit AND every deliverable file the task names, committed or not, with these
    lenses: {lenses}. Each loop starts one fresh read-only child per lens, all in one parallel
-   call, each with its brief below copied verbatim, followed by the task's ORACLE section:
+   call, each with its brief below copied verbatim, followed by the task's ORACLE section (and,
+   for the standards + spec lens, this packet's ARCHITECTURE RULES section, verbatim):
 {lens_briefs}
    Probe: {probe}
    The standards + spec section of the file ends with this block, one line per item, each

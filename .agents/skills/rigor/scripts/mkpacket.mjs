@@ -34,7 +34,13 @@
 // The project rules file's "## Architecture rules" section, when present, is lifted out of the
 // PROJECT RULES block and inlined as ARCHITECTURE RULES right after the task, so no implementer or
 // reviewer has to open another file for the checklist; rule 6 asks the standards lens to end with a
-// fixed ARCHITECTURE block.
+// fixed ARCHITECTURE block. The skill files own the architecture text, so the section quotes them
+// instead of copying: a line of the exact form "INLINE: <path>#<Heading>" (path relative to the
+// repo root; tried against --repo, then --wt, then the root the pack is installed in) becomes
+// "From <path> → <Heading> (source of truth; read the file for more):" and that heading's section,
+// up to the next heading of the same or higher level (headings inside ``` fences do not count).
+// A missing file or heading exits 2 naming both. Every other line of the section is the project's
+// own binding and stays as written.
 // A hard or critical task file must also carry an ARCHITECTURE section (a line starting
 // "ARCHITECTURE"): the modules the task adds or changes and their deletion-test result, or
 // "ARCHITECTURE: none" with the reason. Without one, or with one that names no module (a backticked
@@ -159,7 +165,34 @@ const probeNone = !probed.length ? "none: no lens this task requires runs as a p
 
 // The project's "## Architecture rules" section, lifted out of the project rules.
 const ARCH = /^## Architecture rules[^\n]*\n([\s\S]*?)(?=^## |(?![\s\S]))/m;
-const archRules = proj.match(ARCH)?.[1].trim() ?? null;
+const packRoot = resolve(script, "..", "..", "..", ".."); // <root>/.agents/skills/rigor/scripts
+function sectionOf(text, heading) {
+  const lines = text.split("\n");
+  let fence = false;
+  const heads = lines.map((l) => {
+    if (/^\s*(```|~~~)/.test(l)) { fence = !fence; return null; }
+    const m = !fence && l.match(/^(#{1,6})\s+(.*?)\s*#*\s*$/);
+    return m ? { level: m[1].length, text: m[2] } : null;
+  });
+  const at = heads.findIndex((h) => h && h.text === heading);
+  if (at < 0) return null;
+  const end = heads.findIndex((h, i) => i > at && h && h.level <= heads[at].level);
+  return lines.slice(at + 1, end < 0 ? lines.length : end).join("\n").trim();
+}
+function expandInline(text) {
+  return text.split("\n").map((l) => {
+    const m = l.match(/^INLINE: (\S[^#]*?)#(.+?)\s*$/);
+    if (!m) return l;
+    const [, path, heading] = m;
+    const file = [repo, resolve(args.wt), packRoot].map((r) => join(r, path)).find((f) => existsSync(f));
+    if (!file) die(`INLINE: no file ${path} (heading "${heading}") under ${repo}, ${resolve(args.wt)} or ${packRoot}`);
+    const section = sectionOf(read(file, "inlined file"), heading);
+    if (section === null) die(`INLINE: no heading "${heading}" in ${path} (${file})`);
+    return `From ${path} → ${heading} (source of truth; read the file for more):\n${section}`;
+  }).join("\n");
+}
+const archRaw = proj.match(ARCH)?.[1].trim() ?? null;
+const archRules = archRaw === null ? null : expandInline(archRaw);
 const projBody = archRules === null ? proj : proj.replace(ARCH, "## Architecture rules\n\nInlined above as ARCHITECTURE RULES.\n\n");
 
 const slug = args.slug;

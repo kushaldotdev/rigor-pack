@@ -444,3 +444,53 @@ test("review-file: fails a missing lens, a missing probe, and a missing, unfille
   assert.equal(misplaced.status, 1, "a block under another lens does not count");
   assert.equal(run("review-file.mjs", ["cr.md"]).status, 2);
 });
+
+// A project rules file whose Architecture section quotes skill text with INLINE lines.
+function inlineRepo(archLines, files = {}) {
+  const dir = repo(undefined, `## Check commands\n\n- lint\n\n## Architecture rules\n\n${archLines}\n\n## Cleanup duties\n\n- rm scratch\n`);
+  for (const [path, text] of Object.entries(files)) {
+    mkdirSync(join(dir, path, ".."), { recursive: true });
+    writeFileSync(join(dir, path), text);
+  }
+  return dir;
+}
+const DOC = "# Doc\n\nintro\n\n## Rules\n\nrule one\n\n### Nested\n\nnested text\n\n```\n# not a heading\n## nor this\n```\n\nafter fence\n\n## Next\n\nnext text\n";
+
+test("mkpacket: INLINE lines expand into the named section, other lines stay as the project's bindings", () => {
+  const dir = inlineRepo("- own binding: ADRs bind\nINLINE: docs/d.md#Rules\nINLINE: docs/d.md#Nested", { "docs/d.md": DOC });
+  const { r, text } = packet(dir);
+  assert.equal(r.status, 0, r.stderr);
+  const arch = text.slice(text.indexOf("ARCHITECTURE RULES"), text.indexOf("STANDING ORDERS"));
+  assert.match(arch, /- own binding: ADRs bind\nFrom docs\/d\.md → Rules \(source of truth; read the file for more\):\nrule one\n\n### Nested\n\nnested text\n\n```\n# not a heading\n## nor this\n```\n\nafter fence\nFrom docs\/d\.md → Nested/);
+  // Nested heading boundary: Rules runs past its ### child and stops at the next ##; Nested stops at the next ## too.
+  assert.doesNotMatch(arch, /next text/);
+  assert.match(arch, /From docs\/d\.md → Nested \(source of truth; read the file for more\):\nnested text\n\n```[\s\S]*after fence\n\n$/);
+  assert.doesNotMatch(arch, /INLINE:/);
+});
+
+test("mkpacket: INLINE resolves the pack's own skill files from the install root", () => {
+  const dir = inlineRepo("INLINE: .agents/skills/codebase-design/references/matt/codebase-design/codebase-design.md#Principles");
+  const { r, text } = packet(dir);
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(text, /From \.agents\/skills\/codebase-design\/\S+ → Principles \(source of truth[^\n]*\n- \*\*Depth is a property[\s\S]*The deletion test/);
+});
+
+test("mkpacket: an INLINE line with a missing file or heading exits 2 naming both, and writes no packet", () => {
+  const noFile = packet(inlineRepo("INLINE: docs/absent.md#Rules"));
+  assert.equal(noFile.r.status, 2);
+  assert.match(noFile.r.stderr, /INLINE: no file docs\/absent\.md \(heading "Rules"\)/);
+  assert.ok(!existsSync(noFile.out));
+  const noHead = packet(inlineRepo("INLINE: docs/d.md#not a heading", { "docs/d.md": DOC })); // only inside a fence
+  assert.equal(noHead.r.status, 2);
+  assert.match(noHead.r.stderr, /INLINE: no heading "not a heading" in docs\/d\.md/);
+  assert.ok(!existsSync(noHead.out));
+});
+
+test("setup template: the Architecture rules section quotes skill files that exist, by heading", () => {
+  const tpl = readFileSync(fileURLToPath(new URL("../.agents/skills/setup/templates/packet-rules.md", import.meta.url)), "utf8");
+  const lines = [...tpl.matchAll(/^INLINE: .*$/gm)].map((m) => m[0]);
+  assert.ok(lines.length >= 1);
+  const { r, text } = packet(inlineRepo(lines.join("\n")));
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal((text.match(/\(source of truth; read the file for more\):/g) ?? []).length, lines.length);
+});

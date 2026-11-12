@@ -27,6 +27,8 @@ PROBE LIMITS (the probe brief repeats them; a probe over them is stopped and rep
 
 WHAT EVERY CHILD GETS
 - Its packet brief, copied verbatim. A child briefed from your summary of a lens has not run it.
+- The standards + spec child (and the probe) also gets the packet's ARCHITECTURE RULES section,
+  verbatim: the skill text it quotes is the checklist, so the child needs no other file for it.
 - The task's ORACLE section, verbatim, and the PROJECT RULES section on running tests in isolation
   (a probe child needs it to run anything).
 - Never your account of what the change does. The child judges the work against the ORACLE and

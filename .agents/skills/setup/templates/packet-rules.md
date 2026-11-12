@@ -24,13 +24,12 @@ Run these before every report, in this order:
 
 ## Architecture rules
 
-<!-- mkpacket.mjs inlines this section into the packet body as ARCHITECTURE RULES, so write the checklist itself here, not a pointer to another file. -->
+<!-- mkpacket.mjs inlines this section into the packet body as ARCHITECTURE RULES. The skill files own the architecture text: quote them with INLINE lines, never copy their rules here. An `INLINE: <path>#<Heading>` line becomes that heading's section of the file (path relative to the repo root); a missing file or heading stops the packet build. Other lines are this repo's own bindings. -->
 
-- **Deep, not shallow:** a new or changed module passes the deletion test (deleting it would spread complexity across its callers).
-- **Seams are earned:** no interface, registry or option for a single implementation.
-- **One owner per rule:** a default, a parse or a decision lives in one module.
-- **Migrate callers, then delete:** no compatibility shim, re-export or dead branch left behind.
-- **ADRs bind:** `<where the ADRs live>`; a change that contradicts one stops and asks the lead.
+INLINE: .agents/skills/codebase-design/references/matt/codebase-design/codebase-design.md#Principles
+INLINE: .agents/skills/codebase-design/references/matt/codebase-design/codebase-design.md#Deep vs shallow
+
+- ADRs: `<where the ADRs live>`; a change that contradicts one stops and asks the lead.
 - Contracts: `<the import-contract or lint command whose output the self-review quotes>`
 
 ## Subagent policy
