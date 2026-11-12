@@ -494,3 +494,61 @@ test("setup template: the Architecture rules section quotes skill files that exi
   assert.equal(r.status, 0, r.stderr);
   assert.equal((text.match(/\(source of truth; read the file for more\):/g) ?? []).length, lines.length);
 });
+
+// A trail with the chain's columns, plus an arch report file, in a throwaway repo.
+function trail(rows, { report = true } = {}) {
+  const dir = tmp();
+  mkdirSync(join(dir, ".audit"), { recursive: true });
+  mkdirSync(join(dir, "tmp"), { recursive: true });
+  if (report) writeFileSync(join(dir, "tmp", "arch-375.md"), "report\n");
+  const file = join(dir, ".audit", "s.tsv");
+  writeFileSync(file, ["ts\tphase\tdecision\twhy\tevidence\tresult", ...rows.map((r) => ["2026-11-12T00:00:00Z", ...r].join("\t"))].join("\n") + "\n");
+  return { dir, file };
+}
+const landCheck = ({ dir, file }, ticket, band, extra = []) => run("land-check.mjs", ["--trail", file, "--ticket", ticket, "--band", band, "--repo", dir, ...extra]);
+
+test("land-check: easy lands with no pass; medium and up need a passing arch row with a report", () => {
+  const empty = trail([]);
+  assert.equal(landCheck(empty, "375", "easy").status, 0);
+  for (const band of ["medium", "hard", "critical"]) {
+    const r = landCheck(empty, "375", band);
+    assert.equal(r.status, 1, band);
+    assert.match(r.stdout, /blocked: no `arch` trail row for #375/);
+  }
+  for (const v of ["SOUND", "SOUND WITH FOLLOW-UPS", "sound with follow-ups: two filed"]) {
+    const r = landCheck(trail([["arch", `#375 ${v}`, "pass on stage1", "tmp/arch-375.md", "ok"]]), "375", "hard");
+    assert.equal(r.status, 0, `${v}: ${r.stdout}`);
+    assert.match(r.stdout, /^land-check: ok: #375 SOUND/);
+  }
+  const unit = trail([["arch", "U2 SOUND", "", "tmp/arch-375.md", "ok"]]);
+  assert.equal(landCheck(unit, "u2", "medium").status, 0, "unit ids match, case-blind");
+});
+
+test("land-check: blocks REGRESSED, a missing verdict, a missing report, and another ticket's row", () => {
+  const cases = [
+    [[["arch", "#375 REGRESSED", "", "tmp/arch-375.md", "ok"]], {}, /says REGRESSED/],
+    [[["arch", "#375 looks fine", "", "tmp/arch-375.md", "ok"]], {}, /has no verdict/],
+    [[["arch", "#375 SOUNDISH", "", "tmp/arch-375.md", "ok"]], {}, /has no verdict/],
+    [[["arch", "#375 SOUND", "", "", "ok"]], {}, /names no report path/],
+    [[["arch", "#375 SOUND", "", "tmp/arch-375.md", "ok"]], { report: false }, /report for #375 does not exist/],
+    [[["arch", "#375 plan SOUND", "plan review", "tmp/arch-375.md", "ok"]], {}, /no `arch` trail row for #375/], // a plan review is not the stage pass
+    [[["arch", "#3750 SOUND", "", "tmp/arch-375.md", "ok"], ["land", "#375 SOUND", "", "tmp/arch-375.md", "ok"]], {}, /no `arch` trail row for #375/],
+    [[["arch", "#375 SOUND", "", "tmp/arch-375.md", "ok"], ["arch", "#375 REGRESSED", "re-run", "tmp/arch-375.md", "ok"]], {}, /says REGRESSED/], // last row wins
+  ];
+  for (const [rows, opts, why] of cases) {
+    const r = landCheck(trail(rows, opts), "#375", "critical");
+    assert.equal(r.status, 1, JSON.stringify(rows));
+    assert.match(r.stdout, why, JSON.stringify(rows));
+  }
+  const fixed = trail([["arch", "#375 REGRESSED", "", "tmp/arch-375.md", "ok"], ["arch", "#375 SOUND", "after fix", "tmp/arch-375.md", "ok"]]);
+  assert.equal(landCheck(fixed, "375", "hard").status, 0, "a re-run after a fix replaces the first verdict");
+});
+
+test("land-check: misuse exits 2", () => {
+  const t = trail([]);
+  assert.equal(run("land-check.mjs", ["--trail", t.file, "--band", "hard"]).status, 2);
+  assert.equal(landCheck(t, "375", "extreme").status, 2);
+  assert.equal(landCheck({ dir: t.dir, file: join(t.dir, "absent.tsv") }, "375", "hard").status, 2);
+  writeFileSync(t.file, "a\tb\n");
+  assert.match(landCheck(t, "375", "hard").stderr, /header row has no "phase" column/);
+});

@@ -176,7 +176,7 @@ flowchart TD
   TK --> RV
   RV -- accepted --> N{"more tasks?"}
   N -- yes --> O
-  N -- no --> G["Staged squash, full gate on it, verify for user-visible changes<br/>land only the tree the gate ran on"]
+  N -- no --> G["Staged squash, full gate on it, verify for user-visible changes<br/>medium and up: architecture pass, arch row, land-check gate<br/>land only the tree the gate ran on"]
   G --> CL["Squash commit, resolution comment, close the ticket, clean up"]
   CL --> P
 ```
@@ -189,7 +189,7 @@ What keeps a chain from going in circles:
 - **Findings travel.** The class of every act-on finding goes into the later and sibling task packets of the ticket.
 - **Proof, not summary.** L0 reruns red and green itself, and a probe child's finding counts only with its command and output.
 - **Suites run on settled commits.** The full suite runs once per ticket, as the gate on the staged squash, only when every review is accepted; a fold after the gate means a new stage.
-- **Architecture is checked, not assumed.** A hard or critical task names its modules and their deletion-test result (`ARCHITECTURE`), the packet inlines the project's Architecture rules, and the standards lens ends with a fixed ARCHITECTURE block that `review-file.mjs` checks.
+- **Architecture is checked, not assumed.** A hard or critical task names its modules and their deletion-test result (`ARCHITECTURE`), the packet inlines the project's Architecture rules, and the standards lens ends with a fixed ARCHITECTURE block that `review-file.mjs` checks. From medium up, an architecture pass on the staged squash writes an `arch` trail row, and `land-check.mjs` refuses to land without a passing one.
 
 Sessions end by rewriting the handoff and the trail. With self-continuing on, a session starts its successor as a new top-level session after six checks (CHAIN.md → Self-continuing sessions); a stop file or an owner "stop" pauses the chain with a resume prompt.
 
