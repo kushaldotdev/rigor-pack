@@ -24,12 +24,23 @@
 6. SELF-REVIEW before the report, by the method in
    {wt}/.agents/skills/rigor/templates/self-review.txt (read it first), over task
    base..last commit AND every deliverable file the task names, committed or not, with these
-   lenses: {lenses}. Use fresh children, one per lens, each started with its brief below copied verbatim, followed by the
-   task's ORACLE section:
+   lenses: {lenses}. Each loop starts one fresh read-only child per lens, all in one parallel
+   call, each with its brief below copied verbatim, followed by the task's ORACLE section:
 {lens_briefs}
+   Probe: {probe}
+   The standards + spec section of the file ends with this block, one line per item, each
+   filled from a read or a run (the ARCHITECTURE RULES section of this packet is the checklist):
+     ARCHITECTURE
+     - Deletion test: <each new or changed module>: <passes / fails, and why>
+     - Duplicated owners: <a default, parse or decision now owned in two places, or none>
+     - Shims left: <compatibility shims, re-exports, dead branches left behind, or none>
+     - Single-implementation seams: <an interface, registry or option with one implementation, or none>
+     - ADRs: <each ADR for the area, kept or contradicted, or none apply>
+     - Lint/contract output: <the import-contract or lint command and its result line>
    Write the review to {wt}/tmp/cr-{ticket}-{task}.md, one section per lens (no lens ranks
    another), fix every act-on finding, and list fixed / deferred / rejected with reasons. L0 checks
-   that file has every lens above and counts your child calls before accepting.
+   that file has every lens above and the ARCHITECTURE block, and counts your child calls before
+   accepting.
 7. COMMITS on {branch} only, as often as useful: {commit_subject}, with a hyphen-bullet body
    starting with verbs and {commit_trailer}. Note the branch tip first: that is the task base
    ({base}). Never push, merge, touch the main branch or the tracker. Scratch output goes to {wt}/tmp/.

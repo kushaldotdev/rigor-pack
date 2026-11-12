@@ -22,6 +22,17 @@ Run these before every report, in this order:
 - Full gate (the lead runs it on the staged squash): `<command>`
 - Cheap gate checks, before every hand-back at every band: `<the gate's fast checks an implementer can run alone, so none of them costs a round at the gate: a new-suppression or lint-baseline check against the task base, import contracts, coverage of the lines the task added>`
 
+## Architecture rules
+
+<!-- mkpacket.mjs inlines this section into the packet body as ARCHITECTURE RULES, so write the checklist itself here, not a pointer to another file. -->
+
+- **Deep, not shallow:** a new or changed module passes the deletion test (deleting it would spread complexity across its callers).
+- **Seams are earned:** no interface, registry or option for a single implementation.
+- **One owner per rule:** a default, a parse or a decision lives in one module.
+- **Migrate callers, then delete:** no compatibility shim, re-export or dead branch left behind.
+- **ADRs bind:** `<where the ADRs live>`; a change that contradicts one stops and asks the lead.
+- Contracts: `<the import-contract or lint command whose output the self-review quotes>`
+
 ## Subagent policy
 
 - `<path to this harness's subagent policy, or: none; the packet's own size rule decides>`

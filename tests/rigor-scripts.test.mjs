@@ -91,7 +91,7 @@ function repo(prefs = "prefs body: scratch in {wt}/tmp, no .env\n", project = nu
   const dir = tmp();
   mkdirSync(join(dir, ".audit"), { recursive: true });
   if (prefs !== null) writeFileSync(join(dir, ".audit", `${SLUG}.preferences.md`), prefs);
-  writeFileSync(join(dir, "task.md"), "TASK: fix it in {wt} on {branch} (base {base}).\nORACLE: none (fixture)\n");
+  writeFileSync(join(dir, "task.md"), "TASK: fix it in {wt} on {branch} (base {base}).\nORACLE: none (fixture)\nARCHITECTURE: none (fixture)\n");
   if (project !== null) {
     mkdirSync(join(dir, "docs", "agents"), { recursive: true });
     writeFileSync(join(dir, "docs", "agents", "packet-rules.md"), project);
@@ -184,7 +184,7 @@ const withWorkflow = (line = LENS_LINE) => {
 };
 // The lens list packet rule 6 names, by short name.
 const lensesIn = (text) => {
-  const m = text.match(/with these\s+lenses: ([\s\S]*?)\. Use fresh/);
+  const m = text.match(/with these\s+lenses: ([\s\S]*?)\. Each loop starts/);
   assert.ok(m, "rule 6 lens list not found");
   return [...m[1].matchAll(/(standards \+ spec|blast radius|interrogate) \(/g)].map((x) => x[1]);
 };
@@ -243,7 +243,7 @@ test("mkpacket: --kind assessment adds interrogate whatever the band, and change
     assert.deepEqual(lensesIn(a.text), lenses, band);
     // Apart from the interrogate lens and its brief, the packet is the code packet of the same band.
     const c = packet(dir, ["--ref", "364", "--band", band, "--kind", "code"]);
-    const strip = (t) => t.replace(/; interrogate \([^)]*\)/, "").replace(/ interrogate \([^)]*\);?/, "").split("\n").filter((l) => !/Lens: interrogate\./.test(l)).join("\n");
+    const strip = (t) => t.replace(/; interrogate \([^)]*\)/, "").replace(/ interrogate \([^)]*\);?/, "").split("\n").filter((l) => !/Lens: interrogate\.|^\s*Probe: none/.test(l)).join("\n");
     assert.equal(strip(a.text), strip(c.text), band);
   }
   assert.deepEqual(lensesIn(packet(repo(), ["--kind", "assessment"]).text), ["standards + spec", "interrogate"]); // no band, no workflow.md
@@ -262,6 +262,7 @@ const BODIES = {
   "interrogate": "code-review/references/pstack/interrogate/interrogate.md",
 };
 const briefsIn = (text) => [...text.matchAll(/^\s*- (Lens: .*)$/gm)].map((m) => m[1]);
+const probeIn = (text) => text.match(/^\s*- Probe, final loop, once\. (.*)$/m)?.[1] ?? null;
 
 test("mkpacket: the packet carries one filled reviewer-child brief per required lens, naming its body path", () => {
   const dir = withWorkflow();
@@ -272,10 +273,7 @@ test("mkpacket: the packet carries one filled reviewer-child brief per required 
     const briefs = briefsIn(text);
     assert.equal(briefs.length, lenses.length, `${band}/${kind}`);
     lenses.forEach((lens, i) => {
-      const how = lens === "standards + spec"
-        ? "Read-only: edit nothing, run nothing that writes."
-        : `Probe child: work only in a throwaway copy of HEAD under ${WT}/tmp/probe-${lens.replace(" ", "-")}/, never edit ${WT}; run every attack yourself and report each finding with its command and output; a finding with no run is "unproven".`;
-      assert.equal(briefs[i], `Lens: ${lens}. Read ${WT}/.agents/skills/${BODIES[lens]} in full first, then review ${BASE}..HEAD in ${WT} and every deliverable the task names: none. ${how}`);
+      assert.equal(briefs[i], `Lens: ${lens}. Read ${WT}/.agents/skills/${BODIES[lens]} in full first, then review ${BASE}..HEAD in ${WT} and every deliverable the task names: none. Read-only: edit nothing, run nothing that writes.`);
     });
   }
 });
@@ -290,9 +288,9 @@ test("mkpacket: rule 6 puts named deliverables in scope and asks for runs behind
   assert.match(text, /base\.\.last commit AND every deliverable file the task names, committed or not/);
   assert.match(text, /by the method in\s+\S+\/\.agents\/skills\/rigor\/templates\/self-review\.txt/);
   const method = readFileSync(fileURLToPath(new URL("../.agents/skills/rigor/templates/self-review.txt", import.meta.url)), "utf8");
-  assert.match(method, /behavioural claim and every worked number[\s\S]*?command and its output in the self-review file/);
+  assert.match(method, /claim of changed behaviour and every worked number[\s\S]*?command and its output in the self-review\s+file/);
   assert.match(method, /re-reads every changed deliverable whole[\s\S]*?claim the rewrite newly makes/);
-  assert.match(method, /probe child[\s\S]*?Never the child that wrote this task's code/);
+  assert.match(method, /probe child[\s\S]*?never the child that wrote this task's code/);
 });
 
 test("mkpacket: --deliverables fills every lens brief with the task's deliverable files", () => {
@@ -336,4 +334,113 @@ test("mkpacket: --base must be an ancestor of, or equal to, --branch's tip in --
   const notGit = packet(dir, [], { wt: tmp() });
   assert.equal(notGit.r.status, 2);
   assert.match(notGit.r.stderr, /cannot check --base/);
+});
+
+test("mkpacket: only a hard or critical task that changes behaviour gets a probe, once, on the final loop", () => {
+  const all = "- Self-review lenses: `standards+spec always; blast-radius at medium, hard and critical; interrogate at medium, hard and critical`\n";
+  const dir = withWorkflow(all);
+  for (const band of ["hard", "critical"]) {
+    const { r, text } = packet(dir, ["--band", band]);
+    assert.equal(r.status, 0, r.stderr);
+    const probe = probeIn(text);
+    assert.ok(probe, band);
+    assert.match(probe, /^Lens: blast radius\. Lens: interrogate\. Read \S+blast-radius\.md and \S+interrogate\.md in full first/);
+    for (const limit of [/15 minutes of attacks/, /at most 5 attacks, picked from the ORACLE rows by risk/, /mutant table only if the ORACLE asks/, /never the whole suite or a runner call without a test path/, /no `sleep` polling/, /one container pair, removed before you report/, /25 minutes wall time/, /Never ask to be resumed/])
+      assert.match(probe, limit, `${band}: ${limit}`);
+    assert.match(text, /Probe: one probe child, once, on the final loop only/);
+    assert.equal(briefsIn(text).filter((b) => /Read-only: edit nothing/.test(b)).length, 3, "every loop's lenses stay read-only");
+  }
+  for (const [extra, why] of [[["--band", "medium"], /Probe: none: a medium task keeps read-only lenses/], [["--band", "easy"], /Probe: none: no lens this task requires/], [["--band", "hard", "--change", "refactor"], /Probe: none: a refactor that keeps behaviour/], [[], /Probe: none: no lens/]]) {
+    const { r, text } = packet(dir, extra);
+    assert.equal(r.status, 0, r.stderr);
+    assert.equal(probeIn(text), null, extra.join(" "));
+    assert.match(text, why, extra.join(" "));
+  }
+  const bad = packet(dir, ["--change", "rewrite"]);
+  assert.equal(bad.r.status, 2);
+  assert.match(bad.r.stderr, /--change must be one of behaviour, refactor: rewrite/);
+});
+
+test("mkpacket: a hard or critical task needs an ARCHITECTURE section naming modules and the deletion test", () => {
+  const dir = withWorkflow();
+  const withTask = (t) => { writeFileSync(join(dir, "task.md"), `TASK: fix it.\nORACLE: none (fixture)\n${t}`); };
+  withTask("");
+  for (const band of ["hard", "critical"]) {
+    const none = packet(dir, ["--band", band]);
+    assert.equal(none.r.status, 2, band);
+    assert.match(none.r.stderr, new RegExp(`no ARCHITECTURE section in .*task\\.md \\(band ${band}\\)`));
+    assert.ok(!existsSync(none.out));
+  }
+  for (const band of ["easy", "medium"]) assert.equal(packet(dir, ["--band", band]).r.status, 0, band);
+  for (const t of ["ARCHITECTURE\n- deletion test: passes\n", "ARCHITECTURE: `fees.resolve` changes.\nORACLE note: the deletion test is elsewhere\n", "## ARCHITECTURE\nWe keep it deep.\n", "ARCHITECTURE: none\n"]) {
+    withTask(t);
+    const r = packet(dir, ["--band", "hard"]).r;
+    assert.equal(r.status, 2, t);
+    assert.match(r.stderr, /names no module .* or no deletion-test result/, t);
+  }
+  for (const t of ["ARCHITECTURE: none (docs only)\n", "## ARCHITECTURE\n- `fees.resolve`: deletion test passes (three callers would each re-parse)\n", "**ARCHITECTURE** backend/app/fees.py: deletion-test fails today, so it merges into resolve\n"]) {
+    withTask(t);
+    const r = packet(dir, ["--band", "hard"]).r;
+    assert.equal(r.status, 0, `${t}: ${r.stderr}`);
+  }
+});
+
+test("mkpacket: the project's Architecture rules are inlined after the task and lifted out of PROJECT RULES", () => {
+  const dir = repo(undefined, "## Check commands\n\n- lint\n\n## Architecture rules\n\nRead {wt}/x.md for background.\n\n- **Deep, not shallow:** deletion test.\n\n## Cleanup duties\n\n- rm scratch\n");
+  const { r, text } = packet(dir);
+  assert.equal(r.status, 0, r.stderr);
+  const arch = text.indexOf("ARCHITECTURE RULES (binding): the project's checklist, inlined");
+  assert.ok(arch > 0 && arch < text.indexOf("STANDING ORDERS"), "inlined between the task and the standing orders");
+  assert.match(text, new RegExp(`Read ${esc(WT)}/x\\.md for background\\.\\n\\n- \\*\\*Deep, not shallow:\\*\\* deletion test\\.\\n\\nSTANDING ORDERS`));
+  const proj = text.slice(text.indexOf("PROJECT RULES:"));
+  assert.match(proj, /## Architecture rules\n\nInlined above as ARCHITECTURE RULES\.\n\n## Cleanup duties\n\n- rm scratch/);
+  assert.doesNotMatch(proj, /Deep, not shallow/);
+  const last = packet(repo(undefined, "## Check commands\n\n- lint\n\n## Architecture rules\n\n- one owner\n")).text; // last section
+  assert.match(last, /inlined here[^\n]*\n- one owner\n\nSTANDING ORDERS/);
+  assert.match(packet(repo()).text, /ARCHITECTURE RULES \(binding\): none in the project rules/);
+});
+
+test("packet rules: the standards lens ends with the fixed ARCHITECTURE block", () => {
+  const text = packet(repo()).text;
+  const block = text.match(/\n {5}ARCHITECTURE\n((?: {5}- .*\n)+)/);
+  assert.ok(block, "ARCHITECTURE block not found in rule 6");
+  assert.deepEqual([...block[1].matchAll(/- ([^:]+):/g)].map((m) => m[1]), ["Deletion test", "Duplicated owners", "Shims left", "Single-implementation seams", "ADRs", "Lint/contract output"]);
+  assert.match(text, /L0 checks\s+that file has every lens above and the ARCHITECTURE block/);
+});
+
+const ARCH_OK = "ARCHITECTURE\n- Deletion test: `fees.resolve`: passes, three callers would re-parse\n- Duplicated owners: none\n- Shims left: none\n- Single-implementation seams: none\n- ADRs: ADR-0007 kept\n- Lint/contract output: `lint-imports` -> Contracts: 9 kept, 0 broken\n";
+function reviewCheck(packetArgs, review) {
+  const dir = withWorkflow("- Self-review lenses: `standards+spec always; blast-radius at medium, hard and critical; interrogate at hard and critical`\n");
+  const { r, out } = packet(dir, packetArgs);
+  assert.equal(r.status, 0, r.stderr);
+  const cr = join(dir, "cr.md");
+  writeFileSync(cr, review);
+  return run("review-file.mjs", ["--packet", out, cr]);
+}
+
+test("review-file: passes a file with every lens, the probe and a filled ARCHITECTURE block", () => {
+  const ok = reviewCheck(["--band", "hard"], `# Self-review\n\n## Standards + spec\n- finding\n\n${ARCH_OK}\n## Blast radius\n- x\n\n## Interrogate\n- y\n\n## Probe (final loop)\n- ran\n`);
+  assert.equal(ok.status, 0, ok.stdout + ok.stderr);
+  assert.equal(ok.stdout, "lens standards + spec section:yes\nlens blast radius section:yes\nlens interrogate section:yes\nprobe required:yes section:yes\narchitecture block:yes missing:none\n");
+  const medium = reviewCheck(["--band", "medium"], `## standards+spec\n### ARCHITECTURE\n${ARCH_OK.split("\n").slice(1).join("\n")}\n## blast-radius\n`);
+  assert.equal(medium.status, 0, medium.stdout);
+  assert.match(medium.stdout, /probe required:no section:n\/a/);
+});
+
+test("review-file: fails a missing lens, a missing probe, and a missing, unfilled or misplaced ARCHITECTURE block", () => {
+  const noProbe = reviewCheck(["--band", "hard"], `## Standards + spec\n${ARCH_OK}\n## Blast radius\n## Interrogate\n`);
+  assert.equal(noProbe.status, 1);
+  assert.match(noProbe.stdout, /probe required:yes section:no/);
+  const noLens = reviewCheck(["--band", "medium"], `## Standards + spec\n${ARCH_OK}`);
+  assert.equal(noLens.status, 1);
+  assert.match(noLens.stdout, /lens blast radius section:no/);
+  const noBlock = reviewCheck(["--band", "easy"], "## Standards + spec\n- all good\n");
+  assert.equal(noBlock.status, 1);
+  assert.match(noBlock.stdout, /architecture block:no missing:Deletion test, Duplicated owners, Shims left, Single-implementation seams, ADRs, Lint\/contract output/);
+  const unfilled = reviewCheck(["--band", "easy"], `## Standards + spec\n${ARCH_OK.replace("- ADRs: ADR-0007 kept", "- ADRs: <each ADR>").replace("- Shims left: none\n", "")}`);
+  assert.equal(unfilled.status, 1);
+  assert.match(unfilled.stdout, /missing:Shims left, ADRs$/m);
+  const misplaced = reviewCheck(["--band", "medium"], `## Standards + spec\n- ok\n## Blast radius\n${ARCH_OK}`);
+  assert.equal(misplaced.status, 1, "a block under another lens does not count");
+  assert.equal(run("review-file.mjs", ["cr.md"]).status, 2);
 });

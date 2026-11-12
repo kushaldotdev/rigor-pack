@@ -2,7 +2,7 @@
 // Build an implementer packet: task text + chain preferences + pack rules + project rules.
 //   node mkpacket.mjs --slug S --wt W --base B --branch BR --task FILE --out FILE
 //                     [--ref R] [--task-id T] [--band B] [--kind K] [--deliverables A,B]
-//                     [--project-rules FILE] [--repo DIR]
+//                     [--change behaviour|refactor] [--project-rules FILE] [--repo DIR]
 // --repo (default cwd) supplies .audit/<slug>.preferences.md (required),
 // docs/agents/packet-rules.md (used when --project-rules is absent) and
 // docs/agents/workflow.md (read for the "Self-review lenses" line when --band is given).
@@ -21,12 +21,24 @@
 // <base> must be an ancestor of, or equal to, <branch>'s tip in <wt> (git merge-base --is-ancestor),
 // so a packet built with a stale base fails here instead of in the implementer's run; it exits 2,
 // and so does a base, branch or worktree git cannot resolve.
-// {lens_briefs} in packet rule 6 becomes one child brief per required lens, naming that lens's
-// body under {wt}/.agents/skills/code-review/references/, so the implementer copies it instead of
-// briefing a child from its own summary. standards+spec goes to a read-only reviewer; blast radius
-// and interrogate go to a probe child that runs its attacks in a throwaway copy
-// (templates/self-review.txt). --deliverables is a comma-separated list of the deliverable files
-// the task names; it fills each brief (default "none").
+// {lens_briefs} in packet rule 6 becomes one read-only child brief per required lens, naming that
+// lens's body under {wt}/.agents/skills/code-review/references/, so the implementer copies it
+// instead of briefing a child from its own summary. Every self-review loop runs those briefs, in
+// parallel. {probe} is the one probe brief, or why there is none: a probe (a child that runs its
+// attacks in a throwaway copy, templates/self-review.txt) runs once, on the final loop, for the
+// blast-radius and interrogate lenses the band requires, and only when --band is hard or critical
+// and --change is behaviour (the default). --change refactor marks a task that keeps behaviour: its
+// read-only lenses are the whole self-review. A bad change exits 2. --deliverables is a
+// comma-separated list of the deliverable files the task names; it fills each brief (default
+// "none").
+// The project rules file's "## Architecture rules" section, when present, is lifted out of the
+// PROJECT RULES block and inlined as ARCHITECTURE RULES right after the task, so no implementer or
+// reviewer has to open another file for the checklist; rule 6 asks the standards lens to end with a
+// fixed ARCHITECTURE block.
+// A hard or critical task file must also carry an ARCHITECTURE section (a line starting
+// "ARCHITECTURE"): the modules the task adds or changes and their deletion-test result, or
+// "ARCHITECTURE: none" with the reason. Without one, or with one that names no module (a backticked
+// name or a path) or no deletion test, the build exits 2.
 // The task file must carry an ORACLE section (a line starting "ORACLE", optionally a markdown
 // heading): what right looks like, as CHAIN.md -> The implementer packet says. Without one the
 // build exits 2: an implementer with no oracle optimises the rules it can check.
@@ -85,10 +97,33 @@ const BODIES = { // each lens's body, under {wt}/.agents/skills/code-review/refe
   "interrogate": ["interrogate", "pstack/interrogate/interrogate.md"],
 };
 const KINDS = ["code", "assessment"];
+const CHANGES = ["behaviour", "refactor"];
 const band = args.band;
 if (band !== undefined && !BANDS.includes(band)) die(`--band must be one of ${BANDS.join(", ")}: ${band}`);
 const kind = args.kind ?? "code";
 if (!KINDS.includes(kind)) die(`--kind must be one of ${KINDS.join(", ")}: ${kind}`);
+const change = args.change ?? "behaviour";
+if (!CHANGES.includes(change)) die(`--change must be one of ${CHANGES.join(", ")}: ${change}`);
+const TOP = ["hard", "critical"];
+
+// The task's ARCHITECTURE section: from its label line to the next heading or capitalised label.
+function architectureOf(text) {
+  const lines = text.split("\n");
+  const label = /^\s*(?:#+\s*)?(?:\*\*)?ARCHITECTURE\b/;
+  const at = lines.findIndex((l) => label.test(l));
+  if (at < 0) return null;
+  const rest = lines.slice(at + 1);
+  const end = rest.findIndex((l) => /^\s*#/.test(l) || /^\s*(?:\*\*)?[A-Z][A-Z' ]{3,}\b(?![a-z])/.test(l));
+  return [lines[at], ...(end < 0 ? rest : rest.slice(0, end))].join("\n");
+}
+if (TOP.includes(band)) {
+  const arch = architectureOf(task);
+  const fix = `add a line starting "ARCHITECTURE" naming each module the task adds or changes and its deletion-test result, or "ARCHITECTURE: none" with the reason`;
+  if (arch === null) die(`no ARCHITECTURE section in ${args.task} (band ${band}): ${fix}`);
+  const none = /^\s*(?:#+\s*)?(?:\*\*)?ARCHITECTURE(?:\*\*)?\s*:?\s*none\b\W*\S/i.test(arch);
+  const names = /`[^`\s][^`]*`|[\w.-]+\/[\w./-]+|\b\w+\.(?:py|ts|tsx|js|mjs|go|rs|rb|java|kt|cs|md)\b/.test(arch);
+  if (!none && !(names && /deletion[ -]test/i.test(arch))) die(`the ARCHITECTURE section in ${args.task} names no module (a backticked name or a path) or no deletion-test result: ${fix}`);
+}
 
 // Lenses the band requires, from workflow.md's "Self-review lenses" line.
 function lensesFor(band) {
@@ -115,7 +150,17 @@ const lenses = lensesFor(band);
 if (kind === "assessment") lenses.add("interrogate");
 const required = Object.keys(LENSES).filter((k) => lenses.has(k));
 const deliverables = (args.deliverables ?? "").split(",").map((d) => d.trim()).filter(Boolean).join(", ") || "none";
-const PROBE = new Set(["blast-radius", "interrogate"]); // lenses whose child runs its own attacks
+const PROBE = new Set(["blast-radius", "interrogate"]); // lenses the final-loop probe runs
+const probed = required.filter((k) => PROBE.has(k));
+const probeNone = !probed.length ? "none: no lens this task requires runs as a probe"
+  : !TOP.includes(band) ? `none: ${band === undefined ? "a band-less" : band === "easy" ? "an easy" : `a ${band}`} task keeps read-only lenses on every loop`
+  : change === "refactor" ? "none: a refactor that keeps behaviour keeps read-only lenses on every loop"
+  : null;
+
+// The project's "## Architecture rules" section, lifted out of the project rules.
+const ARCH = /^## Architecture rules[^\n]*\n([\s\S]*?)(?=^## |(?![\s\S]))/m;
+const archRules = proj.match(ARCH)?.[1].trim() ?? null;
+const projBody = archRules === null ? proj : proj.replace(ARCH, "## Architecture rules\n\nInlined above as ARCHITECTURE RULES.\n\n");
 
 const slug = args.slug;
 const vars = {
@@ -131,11 +176,10 @@ const vars = {
   lenses: required.map((k) => LENSES[k]).join("; "),
   lens_briefs: required.map((k) => {
     const [name, body] = BODIES[k];
-    const how = PROBE.has(k)
-      ? `Probe child: work only in a throwaway copy of HEAD under ${args.wt}/tmp/probe-${k}/, never edit ${args.wt}; run every attack yourself and report each finding with its command and output; a finding with no run is "unproven".`
-      : "Read-only: edit nothing, run nothing that writes.";
-    return `   - Lens: ${name}. Read ${args.wt}/.agents/skills/code-review/references/${body} in full first, then review ${args.base}..HEAD in ${args.wt} and every deliverable the task names: ${deliverables}. ${how}`;
+    return `   - Lens: ${name}. Read ${args.wt}/.agents/skills/code-review/references/${body} in full first, then review ${args.base}..HEAD in ${args.wt} and every deliverable the task names: ${deliverables}. Read-only: edit nothing, run nothing that writes.`;
   }).join("\n"),
+  probe: probeNone ?? `one probe child, once, on the final loop only (the read-only lenses came back with an empty act-on list), started with this brief verbatim plus the ORACLE and the PROJECT RULES on tests in isolation:
+   - Probe, final loop, once. ${probed.map((k) => `Lens: ${BODIES[k][0]}.`).join(" ")} Read ${probed.map((k) => `${args.wt}/.agents/skills/code-review/references/${BODIES[k][1]}`).join(" and ")} in full first, then attack HEAD (range ${args.base}..HEAD, deliverables: ${deliverables}) in a throwaway copy under ${args.wt}/tmp/probe/; never edit ${args.wt}. Run every attack yourself and report each finding with its command and output; a finding with no run is "unproven". Limits: 15 minutes of attacks; at most 5 attacks, picked from the ORACLE rows by risk; a mutant table only if the ORACLE asks for one; targeted test files by path only, never the whole suite or a runner call without a test path; foreground commands under \`timeout\`, no \`sleep\` polling; one container pair, removed before you report. Budget: 25 minutes wall time in all; past 20 minutes, stop and report what ran, listing the rest as "not run". Never ask to be resumed.`,
 };
 if (ref && /^\d+$/.test(ref)) { // tracker issue
   vars.ticket = ref;
@@ -153,7 +197,10 @@ if (ref && /^\d+$/.test(ref)) { // tracker issue
 const sub = (text) => text.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
 
 const body = sub(task);
-const out = `${body}\n\nSTANDING ORDERS (binding):\n${sub(prefs)}\n\nRULES:\n${sub(pack)}\n\nPROJECT RULES:\n${sub(proj)}`;
+const archBlock = archRules === null
+  ? "none in the project rules: the ARCHITECTURE block items in rule 6 are the checklist."
+  : `the project's checklist, inlined here so no other file is needed for it; a file it names is background reading, not a precondition:\n${sub(archRules)}`;
+const out = `${body}\n\nARCHITECTURE RULES (binding): ${archBlock}\n\nSTANDING ORDERS (binding):\n${sub(prefs)}\n\nRULES:\n${sub(pack)}\n\nPROJECT RULES:\n${sub(projBody)}`;
 
 const left = [...out.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).filter((k) => k in vars);
 if (left.length) die(`unreplaced placeholder(s) in ${args.out}: ${[...new Set(left)].map((k) => `{${k}}`).join(", ")}`);

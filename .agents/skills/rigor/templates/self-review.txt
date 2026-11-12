@@ -1,13 +1,29 @@
 SELF-REVIEW METHOD (packet rule 6 points here; the packet names your lenses, briefs and file)
 
 WHO RUNS A LENS
-- standards + spec: a read-only reviewer child. It reads; it runs nothing that writes.
-- blast radius, interrogate: a probe child, which is a child that can run commands (your harness's
-  worker). Never the child that wrote this task's code. It works only in a throwaway copy of your
-  last commit under <worktree>/tmp/probe-<lens>/, never in the worktree, and runs every attack
-  itself. Where a lens body calls for several adversaries and the child cannot start children, it
-  plays each adversary in turn.
+- Every loop before the final one: every lens is a read-only reviewer child, all started at once
+  in one parallel call. A reviewer reads; it runs nothing that writes.
+- The final loop (the read-only lenses came back with an empty act-on list): the packet says
+  whether this task gets a probe. Only a hard or critical task that changes behaviour does. Then
+  blast radius and interrogate run ONCE more, together, as one probe child: a child that can run
+  commands (your harness's worker), never the child that wrote this task's code. It works only in
+  a throwaway copy of your last commit under <worktree>/tmp/probe/, never in the worktree, and
+  runs every attack itself. Where a lens body calls for several adversaries and the child cannot
+  start children, it plays each adversary in turn. A refactor that keeps behaviour, and every easy
+  or medium task, never gets a probe: its read-only lenses are the whole self-review.
+- After the probe, a fix it causes gets a read-only delta review, never a second probe.
 - No child agents: run each lens yourself, in the packet's order, reading its body in full first.
+
+PROBE LIMITS (the probe brief repeats them; a probe over them is stopped and reported as partial)
+- Time box: 15 minutes of attacks. Report what ran by then; list the rest as "not run".
+- At most 5 attacks, chosen from the task's ORACLE rows by risk: the rows whose failure would
+  cost most, first. A mutant table runs only when the ORACLE asks for one by name.
+- Targeted test files only, each named by path. Never the whole suite: no test runner call
+  without a test path (no bare `pytest`, `pytest tests`, `npm test`).
+- Every command in the foreground, wrapped in `timeout`. No `sleep` polling, no waiting on a
+  sibling's container or run.
+- One container pair (or the project's one isolated environment) per probe, started by the
+  probe, and removed before it reports.
 
 WHAT EVERY CHILD GETS
 - Its packet brief, copied verbatim. A child briefed from your summary of a lens has not run it.
@@ -25,15 +41,18 @@ WHAT IS IN SCOPE
 WHAT COUNTS AS A FINDING
 - A probe child's finding carries the command it ran and the output. One with no run is listed as
   "unproven" and is not counted until a run shows it.
-- Back every behavioural claim and every worked number in the work or the report with a run: a
-  scratch command in a throwaway copy, with the command and its output in the self-review file. A
-  line citation alone does not count. Rerun a claim a child disputes before you count or dismiss it.
+- Back every claim of changed behaviour and every worked number in the work or the report with a
+  run: a scratch command in a throwaway copy, with the command and its output in the self-review
+  file. For a claim of changed behaviour, a line citation alone does not count. A claim that a
+  refactor keeps behaviour may stand on the cited lines plus the existing tests that cover them,
+  each named. Rerun a claim a child disputes before you count or dismiss it.
 - Name each finding's class, then look for its siblings before you fix (packet rule 12).
 
 A FIX ROUND'S REVIEW
 - The reviewer re-reads every changed deliverable whole, not only the lines the findings name,
-  and lists each claim the rewrite newly makes. Run each one.
+  and lists each claim the rewrite newly makes. Run each claim of changed behaviour.
 
 THE FILE
-- One section per lens; no lens ranks another. Per finding: class, proof (command and output),
-  and fixed / deferred / rejected with the reason.
+- One section per lens; no lens ranks another. Per finding: class, proof (command and output, or
+  for a refactor the cited lines and named tests), and fixed / deferred / rejected with the reason.
+- The standards + spec section ends with the ARCHITECTURE block packet rule 6 lays out.
