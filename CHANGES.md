@@ -10,7 +10,7 @@ Every vendor skill, where its copy lives in the pack, and what was done to it. T
 4. A vendor skill whose whole body is one line, `Call the Skill tool with "<name>"`, is an **alias**, not a skill: nothing is copied for it, no row appears here, and its name is rewritten to `<name>` wherever a copied body mentions it. `vendors/` keeps the alias folder. One alias resolves this way today (into `grilling`).
 5. Vendor `agents/openai.yaml` files are not copied. Each host gets a generated one from its own frontmatter.
 6. Each host carries the `LICENSE` of every vendor it copies from (`references/<vendor>/LICENSE`).
-7. Anything that differs from upstream behaviour is said once, in a hand-written file: the host `SKILL.md` (modes, precedence), `rigor/AFK.md` (what each interactive line means in an AFK run), `rigor/INTERVIEW.md`, `rigor/CHAIN.md` (chain runs), `rigor/delegation/*.md` (one adapter per delegation tool), `rigor/harness/*.md`, `setup/templates/*.md`. Pack-owned tools are hand-written too: `rigor/scripts/*.mjs` and `rigor/templates/packet-rules.txt`. Those files are the complete list of new prose.
+7. Anything that differs from upstream behaviour is said once, in a hand-written file: the host `SKILL.md` (modes, precedence), `rigor/AFK.md` (what each interactive line means in an AFK run), `rigor/INTERVIEW.md`, `rigor/CHAIN.md` (chain runs), `rigor/delegation/*.md` (one adapter per delegation tool), `rigor/harness/*.md`, `setup/templates/*.md`. Pack-owned tools are hand-written too: `rigor/scripts/*.mjs` and `rigor/templates/*.txt`. Those files are the complete list of new prose.
 
 ## Upstream pins
 
@@ -140,6 +140,7 @@ They stay in `vendors/` for the next upgrade. Nothing in an installed pack runs 
 | `orchestrate` keeps program state in the Project tracker and the Project store | State lives in the tracker and `.audit/<slug>/` | `rigor/SKILL.md` §1-§4, `rigor/AFK.md` |
 | `handoff` writes to the OS temp dir | Inside a rigor run, `.audit/<slug>.handoff.md` | `handoff/SKILL.md` |
 | `no-comments` spawns Cursor's Comment Sicko | Apply its rules directly | `code-review/SKILL.md` |
+| `improve-codebase-architecture` writes an HTML report, asks which candidate to explore and grills the user | Run unattended by planners and architecture reviewers: step 1 as upstream, the candidates as a markdown pass file with fixed headings, every open point decided and logged, no HTML and no grilling | `rigor/templates/arch-pass.txt`, `rigor/CHAIN.md` |
 | No chain method in either vendor | `rigor/CHAIN.md` is the method; every setting lives in `workflow.md` → Chain efforts; the delegation tool sits behind an adapter | `rigor/CHAIN.md`, `rigor/delegation/README.md`, `setup/SKILL.md` §2.10 |
 | poteto-mode playbooks split across concerns | Kept whole under `rigor/references/pstack/poteto-mode/` so their internal links work; other hosts link into it | host Modes tables |
 
@@ -156,6 +157,13 @@ They stay in `vendors/` for the next upgrade. Nothing in an installed pack runs 
 - `scripts/review-file.mjs` (new): checks a self-review file against its packet: a section per lens, the probe when due, and the ARCHITECTURE block filled.
 - `CHAIN.md` and `scripts/land-check.mjs` (new): every ticket of band medium and above gets an unprompted improve-codebase-architecture pass on its staged squash (hard and critical also on the plan), recorded as an `arch` trail row; `land-check.mjs` blocks landing without a passing row and an existing report. The setup workflow template names the pass and the gate.
 - `CHAIN.md`: two L0 reviewers only for a task of hardness 4+, one reviewer both axes otherwise and for every delta; about 4-5 tasks per ticket, parallel tasks marked by the planner; one full suite per ticket, on the staged squash; an escalation ladder (fresh implementer with a structural brief, then a `second implementer` model, then the takeover role); an `improve-codebase-architecture` pass at plan and at the staged squash for hard and critical tickets.
+
+2026-11-13, after a chain planner read neither architecture skill until L0 steered it, and had already decided where a moved rule should live by then. The planner brief listed the skills only inside the description of the plan's ARCHITECTURE section, after its read list and its task, so it read the code, decided, and left the skills for last; the earlier fix (`INLINE` in packets) reached implementers but not planners or architecture reviewers, and nothing checked that the method ran.
+
+- `scripts/mkbrief.mjs` (new) and `templates/arch-pass.txt` (new): planner, plan-review and landing architecture briefs open with the architecture pass as step 1, quoting `codebase-design` and `improve-codebase-architecture` in full through `INLINE` lines, with an unattended mode for the skill's steps 2 and 3 (a markdown pass file with fixed headings instead of an HTML report and a grilling loop). The project's planner brief follows as step 2, its `{KEY}` placeholders filled by `--set`.
+- `scripts/arch-check.mjs` (new): checks the pass file's headings, its deletion-test rows and owner lines, a review's verdict and plan comparison, and that a plan cites the file and was written after it.
+- `scripts/inline.mjs` (new): the `INLINE` expansion, shared by `mkpacket.mjs` and `mkbrief.mjs`.
+- `CHAIN.md`: the planner and both architecture reviewers are briefed with `mkbrief.mjs`, and L0 runs `arch-check.mjs` on their pass files before reading a plan or a verdict; the plan reviewer writes its own pass before it opens the plan.
 
 ## Lost on purpose
 

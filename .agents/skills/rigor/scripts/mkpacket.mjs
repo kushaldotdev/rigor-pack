@@ -52,6 +52,7 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
+import { expandInline } from "./inline.mjs";
 
 const die = (m) => { console.error(`mkpacket: ${m}`); process.exit(2); };
 
@@ -166,33 +167,9 @@ const probeNone = !probed.length ? "none: no lens this task requires runs as a p
 // The project's "## Architecture rules" section, lifted out of the project rules.
 const ARCH = /^## Architecture rules[^\n]*\n([\s\S]*?)(?=^## |(?![\s\S]))/m;
 const packRoot = resolve(script, "..", "..", "..", ".."); // <root>/.agents/skills/rigor/scripts
-function sectionOf(text, heading) {
-  const lines = text.split("\n");
-  let fence = false;
-  const heads = lines.map((l) => {
-    if (/^\s*(```|~~~)/.test(l)) { fence = !fence; return null; }
-    const m = !fence && l.match(/^(#{1,6})\s+(.*?)\s*#*\s*$/);
-    return m ? { level: m[1].length, text: m[2] } : null;
-  });
-  const at = heads.findIndex((h) => h && h.text === heading);
-  if (at < 0) return null;
-  const end = heads.findIndex((h, i) => i > at && h && h.level <= heads[at].level);
-  return lines.slice(at + 1, end < 0 ? lines.length : end).join("\n").trim();
-}
-function expandInline(text) {
-  return text.split("\n").map((l) => {
-    const m = l.match(/^INLINE: (\S[^#]*?)#(.+?)\s*$/);
-    if (!m) return l;
-    const [, path, heading] = m;
-    const file = [repo, resolve(args.wt), packRoot].map((r) => join(r, path)).find((f) => existsSync(f));
-    if (!file) die(`INLINE: no file ${path} (heading "${heading}") under ${repo}, ${resolve(args.wt)} or ${packRoot}`);
-    const section = sectionOf(read(file, "inlined file"), heading);
-    if (section === null) die(`INLINE: no heading "${heading}" in ${path} (${file})`);
-    return `From ${path} → ${heading} (source of truth; read the file for more):\n${section}`;
-  }).join("\n");
-}
+const expand = (text) => expandInline(text, [repo, resolve(args.wt), packRoot], die);
 const archRaw = proj.match(ARCH)?.[1].trim() ?? null;
-const archRules = archRaw === null ? null : expandInline(archRaw);
+const archRules = archRaw === null ? null : expand(archRaw);
 const projBody = archRules === null ? proj : proj.replace(ARCH, "## Architecture rules\n\nInlined above as ARCHITECTURE RULES.\n\n");
 
 const slug = args.slug;

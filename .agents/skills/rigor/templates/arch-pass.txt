@@ -1,0 +1,46 @@
+[[common]]
+ARCHITECTURE PASS ({role}, {ticket}). This is your FIRST step. Do it before you read code for any
+other purpose, before you form a view on where anything goes, and before you read any plan or diff
+conclusion. Its output file is checked by `arch-check.mjs`; a file that is missing, out of order or
+incomplete sends your work back unread.
+
+The two skills below are quoted in full. They are the method; follow them, do not paraphrase them
+from memory. Use their vocabulary exactly (module, interface, depth, seam, adapter, leverage,
+locality) and the project's GLOSSARY.md for domain names.
+
+INLINE: .agents/skills/codebase-design/references/matt/codebase-design/codebase-design.md#Codebase Design
+
+INLINE: .agents/skills/rigor/references/matt/improve-codebase-architecture/improve-codebase-architecture.md#Improve Codebase Architecture
+
+HOW TO RUN IT UNATTENDED (this replaces the skill's steps 2 and 3; step 1 stands as written)
+- Where the skill says to call the Skill tool with "codebase-design", the text above is that call.
+- Scope: {scope}. Read GLOSSARY.md and the ADRs for that area first.
+- Step 1 as the skill says: spawn one read-only sub-agent with a fresh context to walk that scope for
+  friction (your harness's read-only child or explorer). Give it the codebase-design text above
+  verbatim. If your harness has no children, walk it yourself and say so in the file.
+- No HTML report, no browser, no question to the user, no grilling loop: nobody is there. Write the
+  candidates as markdown to {arch_out}, and decide each open point yourself, stating the decision and
+  the principle that decided it.
+- Write {arch_out} BEFORE any other output file. It holds exactly these headings, each non-empty:
+  ## Scope            what you walked (paths, commit) and the sub-agent you started
+  ## Friction         one bullet per friction point, with file:symbol
+  ## Deletion test    a table `| module | result (concentrates / moves / pass / fail) | why |`, one row
+                      per module the work adds, changes or might delete
+  ## Owners           one line per rule, default, key or state the work moves: `<rule> -> <one owner>`
+  ## Seams            each seam kept or added, and whether it is real (two adapters) or hypothetical
+  ## Candidates       deepening candidates, each with Strong / Worth exploring / Speculative
+  ## Principles applied  each principle of the quoted skills you used, and the decision it settled
+[[planner]]
+- Then write the plan. Its ARCHITECTURE section cites {arch_out} by path and takes every owner and
+  deletion-test result from it; a plan decision that departs from the file says why.
+[[plan-review]]
+- You review a plan, but you form your own view first: write every heading above from the code and
+  the quoted skills alone, without opening the plan ({plan}). Only then read the plan and add:
+  ## Plan comparison  for each owner, seam and deletion-test call: agree / disagree, and why
+  ## Verdict          first line exactly one of SOUND, SOUND WITH FOLLOW-UPS, REGRESSED; then each
+                      act-on finding with its class
+[[landing]]
+- You review a staged change ({diff}). Write every heading above from the code at the stage and the
+  quoted skills; judge what the change did to each module and seam it touches. Then add:
+  ## Verdict          first line exactly one of SOUND, SOUND WITH FOLLOW-UPS, REGRESSED; then each
+                      finding: caused by this change (should-fix) or predating it (file a ticket)
