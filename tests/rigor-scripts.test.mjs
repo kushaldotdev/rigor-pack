@@ -439,10 +439,42 @@ test("review-file: fails a missing lens, a missing probe, and a missing, unfille
   assert.match(noBlock.stdout, /architecture block:no missing:Deletion test, Duplicated owners, Shims left, Single-implementation seams, ADRs, Lint\/contract output/);
   const unfilled = reviewCheck(["--band", "easy"], `## Standards + spec\n${ARCH_OK.replace("- ADRs: ADR-0007 kept", "- ADRs: <each ADR>").replace("- Shims left: none\n", "")}`);
   assert.equal(unfilled.status, 1);
-  assert.match(unfilled.stdout, /missing:Shims left, ADRs$/m);
+  assert.match(unfilled.stdout, /missing:Shims left, ADRs cut by:end of file$/m);
   const misplaced = reviewCheck(["--band", "medium"], `## Standards + spec\n- ok\n## Blast radius\n${ARCH_OK}`);
   assert.equal(misplaced.status, 1, "a block under another lens does not count");
+  assert.match(misplaced.stdout, /missing:Deletion test, .*Lint\/contract output cut by:"## Blast radius" \(line 3\); ARCHITECTURE at line 4 falls outside$/m);
   assert.equal(run("review-file.mjs", ["cr.md"]).status, 2);
+});
+
+test("review-file: names the heading that cut the standards section, e.g. a sub-heading naming the probe", () => {
+  const r = reviewCheck(["--band", "easy"], `## Standards + spec\n- ok\n### Notes for the probe\n- later\n${ARCH_OK}`);
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /^architecture block:no missing:Deletion test, Duplicated owners, Shims left, Single-implementation seams, ADRs, Lint\/contract output cut by:"### Notes for the probe" \(line 3\); ARCHITECTURE at line 5 falls outside$/m);
+  const none = reviewCheck(["--band", "easy"], "## Standards + spec\n- ok\n## Probe\n- n/a\n");
+  assert.match(none.stdout, /cut by:"## Probe" \(line 3\)$/m, "no label after the cut: only the heading is named");
+});
+
+test("review-file: still reads the lens list of a packet built before rule 6 named the lens-body read", () => {
+  const dir = tmp();
+  writeFileSync(join(dir, "p.md"), "6. SELF-REVIEW ... with these\n   lenses: standards + spec (x.md). Each loop starts one fresh child.\n");
+  writeFileSync(join(dir, "cr.md"), `## Standards + spec\n${ARCH_OK}`);
+  const r = run("review-file.mjs", ["--packet", join(dir, "p.md"), join(dir, "cr.md")]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /^lens standards \+ spec section:yes$/m);
+});
+
+test("packet rules: the implementer reads each lens body itself, and a guard's reach has one owner", () => {
+  const text = packet(repo()).text;
+  assert.match(text, /you yourself read each lens body in full: a child's\s+read is not yours/);
+  assert.match(text, /No heading between that section's heading and the block may name a lens or the probe/);
+  assert.match(text, /13\. GUARD REACH:[\s\S]*?once, in its own\s+docstring, generated from its constants or pinned by a test against them[\s\S]*?never restate or widen its reach/);
+});
+
+test("self-review method: the implementer greps for deleted names and runs the touched tests together", () => {
+  const method = readFileSync(fileURLToPath(new URL("../.agents/skills/rigor/templates/self-review.txt", import.meta.url)), "utf8");
+  assert.match(method, /YOUR OWN RUNS, EVERY LOOP/);
+  assert.match(method, /Deletions: for each symbol[\s\S]*?grep its name across code,\s+comments and docs/);
+  assert.match(method, /Tests together: run every test file the range adds or touches in ONE test-runner call/);
 });
 
 // A project rules file whose Architecture section quotes skill text with INLINE lines.

@@ -24,13 +24,17 @@
 6. SELF-REVIEW before the report, by the method in
    {wt}/.agents/skills/rigor/templates/self-review.txt (read it first), over task
    base..last commit AND every deliverable file the task names, committed or not, with these
-   lenses: {lenses}. Each loop starts one fresh read-only child per lens, all in one parallel
-   call, each with its brief below copied verbatim, followed by the task's ORACLE section (and,
-   for the standards + spec lens, this packet's ARCHITECTURE RULES section, verbatim):
+   lenses: {lenses}. Before the first loop you yourself read each lens body in full: a child's
+   read is not yours, and L0 checks your own session for it. Each loop starts one fresh read-only
+   child per lens, all in one parallel call, each with its brief below copied verbatim, followed
+   by the task's ORACLE section (and, for the standards + spec lens, this packet's ARCHITECTURE
+   RULES section, verbatim):
 {lens_briefs}
    Probe: {probe}
    The standards + spec section of the file ends with this block, one line per item, each
-   filled from a read or a run (the ARCHITECTURE RULES section of this packet is the checklist):
+   filled from a read or a run (the ARCHITECTURE RULES section of this packet is the checklist).
+   No heading between that section's heading and the block may name a lens or the probe: one
+   ends the section before the block:
      ARCHITECTURE
      - Deletion test: <each new or changed module>: <passes / fails, and why>
      - Duplicated owners: <a default, parse or decision now owned in two places, or none>
@@ -44,7 +48,10 @@
    accepting.
 7. COMMITS on {branch} only, as often as useful: {commit_subject}, with a hyphen-bullet body
    starting with verbs and {commit_trailer}. Note the branch tip first: that is the task base
-   ({base}). Never push, merge, touch the main branch or the tracker. Scratch output goes to {wt}/tmp/.
+   ({base}). Never push, merge, touch the main branch or the tracker. Scratch output, probe files
+   and throwaway copies go under {wt}/tmp/ only. Give a copy a dependency dir (node_modules, a
+   venv) as a container volume mount, never a symlink: removing a link or file outside tmp/
+   needs a permission prompt.
 8. CHECKS: the PROJECT RULES check commands, then targeted tests: every test file you add or edit,
    the tests mirroring each changed module, and any test that imports or calls a symbol you
    changed (grep for it; a changed signature breaks callers outside your fence). Run the full
@@ -65,3 +72,6 @@
    grep or a run, pasted in the report), fix the whole list, and pin it with one test that walks
    the list. A round that fixes only the cited case comes back. Then run rule 6 on the round's
    range.
+13. GUARD REACH: what a guard (scan, validator, lint, check) catches is stated once, in its own
+   docstring, generated from its constants or pinned by a test against them. Other docs and
+   comments cite that docstring and never restate or widen its reach.

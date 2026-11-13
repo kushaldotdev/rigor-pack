@@ -32,6 +32,8 @@ HOW TO RUN IT UNATTENDED
 [[planner]]
 - Then write the plan. Its ARCHITECTURE section cites {arch_out} by path and takes every owner and
   deletion-test result from it; a plan decision that departs from the file says why.
+- Size every task so one implementer finishes it, self-review and two fix rounds included, inside
+  the implementer context ceiling workflow.md sets (default ~180k tokens); split one that will not.
 [[plan-review]]
 - You review a plan, but you form your own view first: write every heading above from the code and
   the quoted skills alone, without opening the plan ({plan}). Only then read the plan and add:

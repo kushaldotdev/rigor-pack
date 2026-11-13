@@ -171,6 +171,14 @@ They stay in `vendors/` for the next upgrade. Nothing in an installed pack runs 
 - `templates/arch-pass.txt`: no explorer sub-agent in any role (the agent is the fresh context and walks the scope itself); quotes only the `### 1. Explore` step of `improve-codebase-architecture` plus `codebase-design` in full, keeping the unattended rules (no HTML, no questions, decide yourself).
 - `CHAIN.md`: critical plans get a planner and a plan reviewer, both on the planner (strongest) role, no sub-agents; a hard plan review runs on the cheap plan-review role and goes again on the planner role only on `REGRESSED` or disagreement on an owner or seam; the landing pass rides the final axis-A review of the staged squash instead of a separate agent; pass files go where the project's workflow settings say (default `.audit/<slug>/arch/<id>[-plan].md`), not `tmp/`. The setup workflow template mirrors this with a `plan reviewer` role.
 
+2026-11-13, from one chain's ledgers: implementers ran past their context four times, six self-review files came back on form, two finding classes repeated across rounds, a mock leak showed only with three test files run together, and probe files needed a permission prompt to remove.
+
+- `CHAIN.md`: before every fix round L0 reads the implementer's context; at the implementer ceiling (default ~180k tokens) the round goes to a fresh implementer briefed from a state file (diff, done, left), not a ladder rung. Planners size each task to fit that budget (also in `templates/arch-pass.txt`'s planner part). The guard ORACLE row points at packet rule 13.
+- `templates/packet-rules.txt`: rule 6 has the implementer read each lens body itself, and keeps any lens- or probe-named heading out of the standards section before its ARCHITECTURE block; rule 7 keeps probes and copies under `tmp/` and mounts dependency dirs instead of symlinking them; new rule 13 states a guard's reach once, in its docstring, tied to its constants.
+- `templates/self-review.txt`: every loop the implementer greps for each deleted name in code, comments and docs, and runs the touched test files together in one call as well as one by one.
+- `scripts/review-file.mjs`: a failing ARCHITECTURE check names the heading (or end of file) that ended the standards section and any label left past it; the lens list parses both rule 6 wordings.
+- `harness/pi.md`: a removal prompt may not take "Allow once" through a delegation tool; L0 removes the file and denies.
+
 ## Lost on purpose
 
 - Direct slash entry to `/architect`, `/interrogate`, `/blast-radius`, `/how`, `/why`, `/swarm`, `/arena`, `/figure-it-out`, `/correct`, `/benchmark-checklist`, `/statechart`. Reach them through their host skill's mode or a `rigor` route.

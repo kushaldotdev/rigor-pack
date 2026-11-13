@@ -36,7 +36,7 @@ Where a chain run differs from `## Authority` above. Every number here is a sett
 - PRs: none <!-- or: one per ticket -->
 - Plan approval: owner <!-- or: L0 for the owner (delegated), listed at every close for overturning -->
 - Concurrency caps: `<n>` implementers, `<n>` ticket worktrees, `<n>` reviewer sessions at once
-- Context ceilings: implementer `<n>k`, long session `<n>k`
+- Context ceilings: implementer `<n>k` (default ~180k; a fix round past it goes to a fresh implementer), long session `<n>k`
 - Attempts per task: `<n>` (`<n>` to get it right, `<n>` for review findings), then a takeover
 - Hard tickets: `<n>` implementer fix round, then a takeover
 - Solo band: `hard` <!-- or: critical, or none. A ticket at or above it runs alone in its own session -->

@@ -13,6 +13,15 @@ WHO RUNS A LENS
   or medium task, never gets a probe: its read-only lenses are the whole self-review.
 - After the probe, a fix it causes gets a read-only delta review, never a second probe.
 - No child agents: run each lens yourself, in the packet's order, reading its body in full first.
+- With child agents you still read every lens body yourself before the first loop (packet rule 6).
+
+YOUR OWN RUNS, EVERY LOOP (paste each command and its output in the file)
+- Deletions: for each symbol, file, flag or branch the range deletes, grep its name across code,
+  comments and docs. A comment or doc that still names it, or explains code that is gone, is a
+  finding.
+- Tests together: run every test file the range adds or touches in ONE test-runner call, as well
+  as one by one. A test that passes alone and fails beside the others leaks state (a mock, patch,
+  cache or fixture that outlives its test): a finding.
 
 PROBE LIMITS (the probe brief repeats them; a probe over them is stopped and reported as partial)
 - Time box: 15 minutes of attacks. Report what ran by then; list the rest as "not run".
@@ -57,4 +66,5 @@ A FIX ROUND'S REVIEW
 THE FILE
 - One section per lens; no lens ranks another. Per finding: class, proof (command and output, or
   for a refactor the cited lines and named tests), and fixed / deferred / rejected with the reason.
-- The standards + spec section ends with the ARCHITECTURE block packet rule 6 lays out.
+- The standards + spec section ends with the ARCHITECTURE block packet rule 6 lays out, with no
+  heading naming a lens or the probe before it inside that section.
