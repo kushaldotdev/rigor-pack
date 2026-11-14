@@ -39,6 +39,8 @@ Where a chain run differs from `## Authority` above. Every number here is a sett
 - Context ceilings: implementer `<n>k` (default ~180k; a fix round past it goes to a fresh implementer), long session `<n>k`
 - Attempts per task: `<n>` (`<n>` to get it right, `<n>` for review findings), then a takeover
 - Hard tickets: `<n>` implementer fix round, then a takeover
+- Parallel tasks: each in its own worktree, `<command>` from the ticket branch <!-- rigor/CHAIN.md step 4; a shared worktree only when the caps leave no choice -->
+- Lanes: `1` <!-- or n: each lane its own L0 session on disjoint session-plan rows marked with its lane (rigor/CHAIN.md → Lanes) -->
 - Solo band: `hard` <!-- or: critical, or none. A ticket at or above it runs alone in its own session -->
 - Self-review lenses: `standards+spec always; blast-radius at medium; interrogate at hard and critical` <!-- the implementer's own review, run before L0's reviewers see the diff. mkpacket.mjs --band reads this line. standards+spec always runs. Each other lens is "<lens> at <band>[, <band>][ and <band>]", or "<lens> always". Lenses: blast-radius, interrogate. interrogate is the expensive one: each adversary works in its own worktree and proves its findings with real runs. Cheaper: interrogate at critical only; blast-radius at medium and hard. Drop a clause to skip that lens. Every lens runs read-only on every loop; only a hard or critical task that changes behaviour adds one probe child (blast radius and interrogate with real runs, time-boxed) on the final loop -->
 - Review depth: a post-land delta over `<n>` lines is re-reviewed

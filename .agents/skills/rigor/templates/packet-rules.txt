@@ -11,12 +11,8 @@
    your work. Mock only true I/O borders.
 4. TRADE-OFFS: name every behaviour change beyond the fix, even ones you think are fine. A result
    that differs from an ORACLE row is not a trade-off: stop and report it (rule 10).
-5. DELEGATE by size. The TASK line says "small change: you edit" or "delegate". Small change: edit
-   it yourself, no worker. Delegate: if your harness has child agents, a worker writes the red test
-   then the fix, a fresh reviewer reads each round (at most 3 review->fix loops), and a scout runs
-   only when the scope is unclear. Pass agent names only, never a model. Without child agents, do
-   the steps yourself in that order. Load your harness's subagent policy first, if the PROJECT
-   RULES name one. NEVER end your turn while a child runs: wait in slices of 10 minutes or less,
+5. {delegate} NEVER end your turn while a child runs (a worker, a
+   lens reviewer, the probe): ending it is your report. Wait in slices of 10 minutes or less,
    never an unbounded wait. After each slice handle what finished; on a timeout check each running
    child once, nudge or interrupt one whose output has not moved, append a progress-log line, wait
    again. A child with children of its own waits the same way. Report only when every child has
@@ -65,8 +61,9 @@
    last commit, check commands and counts, files changed, anything you started and removed,
    trade-offs, ORACLE rows you added, surprises. If a "Stop and ask L0 if" line fires, stop and
    report instead of guessing.
-11. SHARED WORKTREE: commit with `git commit -m ... -- <your paths>`. Never `--amend` or rewrite
-   history. Delete only scratch you created yourself.
+11. HISTORY: never `--amend` or rewrite history. Delete only scratch you created yourself. In a
+   shared worktree (the TASK block names the other writer), run lint, format and fix commands on
+   your own paths only, never repo-wide, and commit with `git commit -m ... -- <your paths>`.
 12. FIX ROUND (any re-brief after a review): a finding is one case of a class. For each finding,
    name the class, list every site or input shape of that class in the code this task owns (from a
    grep or a run, pasted in the report), fix the whole list, and pin it with one test that walks

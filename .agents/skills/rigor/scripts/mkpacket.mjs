@@ -2,7 +2,8 @@
 // Build an implementer packet: task text + chain preferences + pack rules + project rules.
 //   node mkpacket.mjs --slug S --wt W --base B --branch BR --task FILE --out FILE
 //                     [--ref R] [--task-id T] [--band B] [--kind K] [--deliverables A,B]
-//                     [--change behaviour|refactor] [--project-rules FILE] [--repo DIR]
+//                     [--change behaviour|refactor] [--role implementer|takeover]
+//                     [--project-rules FILE] [--repo DIR]
 // --repo (default cwd) supplies .audit/<slug>.preferences.md (required),
 // docs/agents/packet-rules.md (used when --project-rules is absent) and
 // docs/agents/workflow.md (read for the "Self-review lenses" line when --band is given).
@@ -31,6 +32,10 @@
 // read-only lenses are the whole self-review. A bad change exits 2. --deliverables is a
 // comma-separated list of the deliverable files the task names; it fills each brief (default
 // "none").
+// <role> fills {delegate} in packet rule 5: implementer (default) delegates by the TASK line's
+// size; takeover (CHAIN.md step 4.5) does the work itself with no worker or scout. Both keep the
+// in-turn wait: a takeover that ends its turn while a self-review child runs reads as finished.
+// A bad role exits 2.
 // The project rules file's "## Architecture rules" section, when present, is lifted out of the
 // PROJECT RULES block and inlined as ARCHITECTURE RULES right after the task, so no implementer or
 // reviewer has to open another file for the checklist; rule 6 asks the standards lens to end with a
@@ -112,6 +117,20 @@ if (!KINDS.includes(kind)) die(`--kind must be one of ${KINDS.join(", ")}: ${kin
 const change = args.change ?? "behaviour";
 if (!CHANGES.includes(change)) die(`--change must be one of ${CHANGES.join(", ")}: ${change}`);
 const TOP = ["hard", "critical"];
+const ROLES = {
+  implementer: `DELEGATE by size. The TASK line says "small change: you edit" or "delegate". Small change:
+   edit it yourself, no worker. Delegate: if your harness has child agents, a worker writes the red
+   test then the fix, a fresh reviewer reads each round (at most 3 review->fix loops), and a scout
+   runs only when the scope is unclear. Pass agent names only, never a model. Without child agents,
+   do the steps yourself in that order. Load your harness's subagent policy first, if the PROJECT
+   RULES name one.`,
+  takeover: `TAKEOVER: earlier attempts at this task failed; the TASK block lists them, their reviews
+   and the failure pattern. Do the work yourself, with no worker or scout; your self-review (rule 6)
+   still starts its children. Load your harness's subagent policy first, if the PROJECT RULES name
+   one.`,
+};
+const role = args.role ?? "implementer";
+if (!(role in ROLES)) die(`--role must be one of ${Object.keys(ROLES).join(", ")}: ${role}`);
 
 // The task's ARCHITECTURE section: from its label line to the next heading or capitalised label.
 function architectureOf(text) {
@@ -183,6 +202,7 @@ const vars = {
   task: taskId.toLowerCase(),
   commit_subject: "",
   commit_trailer: "",
+  delegate: ROLES[role],
   lenses: required.map((k) => LENSES[k]).join("; "),
   lens_briefs: required.map((k) => {
     const [name, body] = BODIES[k];

@@ -6,7 +6,7 @@ Verified against the Claude Code skills and memory docs (2026-10-20).
 - **Instructions.** Reads `CLAUDE.md`; reads `AGENTS.md` only without a `CLAUDE.md`, or when `CLAUDE.md` imports `@AGENTS.md`.
 - **Children.** The Agent (Task) tool. A subagent definition's `skills:` field preloads advertised skills only. Always send the absolute-path packet anyway.
 - **Parallel.** Several Agent calls in one message; background agents notify on completion.
-- **Wait / loop.** `/loop` and scheduled wakeups.
+- **Wait / loop.** `/loop` and scheduled wakeups. A run-to-completion session (a takeover or verify driver a delegation tool drives) never ends its turn while a child runs: ending it is its finish notification. It starts children in the foreground (several Agent calls in one message run at once) or waits in 10-minute slices.
 - **Model roles.** `model:` in `.claude/agents/*.md`. Families other than Claude are unverified, so cross-family review is usually unavailable: label reviews "single-family". Never enable fast mode (`/fast`) for a run or a child.
 - **Transcripts.** `~/.claude/projects/<cwd-slug>/*.jsonl`.
 - **Subagent lifetime.** An Agent-tool subagent has a short prompt cache (about 5 minutes), so only disposable work goes there: a narrow review or a scout, one brief, one result in `tmp/`, never resumed. Long roles (planner, takeover, verify driver) run as full sessions through the delegation adapter, and a session idle for over an hour is handed over from a state file, never resumed.

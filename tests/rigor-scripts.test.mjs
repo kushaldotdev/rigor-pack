@@ -477,6 +477,38 @@ test("self-review method: the implementer greps for deleted names and runs the t
   assert.match(method, /Tests together: run every test file the range adds or touches in ONE test-runner call/);
 });
 
+test("mkpacket: --role takeover drops delegation and keeps the in-turn wait; a bad role exits 2", () => {
+  const imp = packet(repo()).text;
+  assert.match(imp, /5\. DELEGATE by size\./);
+  const tk = packet(repo(), ["--role", "takeover"]);
+  assert.equal(tk.r.status, 0, tk.r.stderr);
+  assert.match(tk.text, /5\. TAKEOVER: earlier attempts at this task failed/);
+  assert.ok(!tk.text.includes("DELEGATE by size") && !tk.text.includes("a worker writes the red"), "no delegation lines");
+  for (const text of [imp, tk.text]) {
+    assert.match(text, /NEVER end your turn while a child runs \(a worker, a\s+lens reviewer, the probe\): ending it is your report\./);
+    assert.match(text, /Report only when every child has\s+finished\./);
+  }
+  const bad = packet(repo(), ["--role", "boss"]);
+  assert.equal(bad.r.status, 2);
+  assert.match(bad.r.stderr, /--role must be one of implementer, takeover: boss/);
+});
+
+test("packet rules: a shared-worktree writer lints, formats and commits only its own paths", () => {
+  const text = packet(repo()).text;
+  assert.match(text, /11\. HISTORY: never `--amend`/);
+  assert.match(text, /run lint, format and fix commands on\s+your own paths only, never repo-wide, and commit with `git commit -m \.\.\. -- <your paths>`/);
+});
+
+test("CHAIN.md: parallel tasks, the first-repeat scope ruling and lanes; no landing overlap", () => {
+  const chain = readFileSync(fileURLToPath(new URL("../.agents/skills/rigor/CHAIN.md", import.meta.url)), "utf8");
+  assert.match(chain, /\*\*Per task, parallel by default\.\*\*[\s\S]*?own worktree on `fix\/<id>-<task>`[\s\S]*?in plan order/);
+  assert.match(chain, /\*\*On the first repeat\*\*[\s\S]*?\*\*scope ruling\*\*[\s\S]*?input shapes × caller configurations, crossed in full[\s\S]*?the next round is rung 1/);
+  assert.ok(!/\*\*Overlap\.\*\*|landing overlap/.test(chain), "no landing overlap (dropped by the owner)");
+  assert.match(chain, /`mkpacket\.mjs --role takeover`/);
+  assert.match(chain, /## Lanes[\s\S]*?`\.audit\/<slug>\.lane-<x>\.\{handoff\.md,tsv,gates\.md\}`[\s\S]*?Closing a session closes only its own lane/);
+  assert.ok(!chain.includes("A second act-on finding in a class already fixed once"), "old ladder trigger gone");
+});
+
 // A project rules file whose Architecture section quotes skill text with INLINE lines.
 function inlineRepo(archLines, files = {}) {
   const dir = repo(undefined, `## Check commands\n\n- lint\n\n## Architecture rules\n\n${archLines}\n\n## Cleanup duties\n\n- rm scratch\n`);

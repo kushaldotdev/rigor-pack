@@ -179,6 +179,14 @@ They stay in `vendors/` for the next upgrade. Nothing in an installed pack runs 
 - `scripts/review-file.mjs`: a failing ARCHITECTURE check names the heading (or end of file) that ended the standards section and any label left past it; the lens list parses both rule 6 wordings.
 - `harness/pi.md`: a removal prompt may not take "Allow once" through a delegation tool; L0 removes the file and denies.
 
+2026-11-14, from one chain's ledgers: two tickets spent over six hours each climbing the escalation ladder on one finding class, with the scope ruling that ended it written only in the third re-brief; tasks with disjoint files ran one after another; a repo-wide lint fix in a shared worktree touched another writer's work; and a takeover agent ended its turn while its children ran.
+
+- `CHAIN.md`: tasks run in parallel by default, each in its own worktree branched from the ticket branch and merged back in plan order, from the plan's `Depends on` list and fence; a shared worktree only when the caps leave no choice, its writers linting and committing their own paths only. On a class's first repeat L0 writes a scope ruling (in-scope shapes; unbounded ones such as arbitrary-predicate guards are nits) and restates the ORACLE as input shapes × caller configurations crossed in full, and the next round is rung 1; the later rungs are unchanged. A contract's ORACLE row says the same. New opt-in Lanes section: N L0 session lines on disjoint session-plan rows, each with its own handoff, trail, gates and ledger (one trail per lane, since the lanes share the main checkout), main-checkout writes under one `flock`, shared caps and suite lock, the second lander re-gating, and each lane starting and closing only its own sessions.
+- `scripts/mkpacket.mjs`: `--role takeover` fills packet rule 5 with a takeover line (no worker or scout) instead of the delegation line; both roles keep the in-turn wait.
+- `templates/packet-rules.txt`: rule 5 says ending the turn is the report; rule 11 scopes lint, format and fix commands to the writer's own paths in a shared worktree.
+- `templates/arch-pass.txt` (planner part): every task gets a `Depends on:` line and a fence, and a contract's ORACLE is written as shapes × callers from the start.
+- `harness/claude.md`: a run-to-completion Claude session waits for its children in its turn. The setup workflow template gains `Parallel tasks` and `Lanes` settings.
+
 ## Lost on purpose
 
 - Direct slash entry to `/architect`, `/interrogate`, `/blast-radius`, `/how`, `/why`, `/swarm`, `/arena`, `/figure-it-out`, `/correct`, `/benchmark-checklist`, `/statechart`. Reach them through their host skill's mode or a `rigor` route.

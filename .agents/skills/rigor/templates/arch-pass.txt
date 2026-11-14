@@ -34,6 +34,11 @@ HOW TO RUN IT UNATTENDED
   deletion-test result from it; a plan decision that departs from the file says why.
 - Size every task so one implementer finishes it, self-review and two fix rounds included, inside
   the implementer context ceiling workflow.md sets (default ~180k tokens); split one that will not.
+- Give every task a `Depends on:` line (task ids, or none) and its fence (You may change / Do not
+  touch): tasks with disjoint fences and no dependency between them run at once.
+- Write the ORACLE of a contract (what commits, what a guard holds, who owns a value) as input
+  shapes x caller configurations, crossed in full, one row per pair; name the unbounded shapes (a
+  guard on an arbitrary predicate) that are out of scope.
 [[plan-review]]
 - You review a plan, but you form your own view first: write every heading above from the code and
   the quoted skills alone, without opening the plan ({plan}). Only then read the plan and add:

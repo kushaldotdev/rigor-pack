@@ -35,6 +35,8 @@ test("mkbrief planner: step 1 quotes both skills in full before the project brie
   assert.ok(!/sub-agent you started|replaces the skill's steps/.test(o), "no explorer and no step-replacement text");
   assert.match(o, /No HTML report, no browser, no question to the user/);
   assert.ok(!o.includes("[[plan-review]]") && !o.includes("## Plan comparison"), "only the planner part");
+  assert.match(o, /a `Depends on:` line \(task ids, or none\) and its fence/);
+  assert.match(o, /ORACLE of a contract \(what commits, what a guard holds, who owns a value\) as input\s+shapes x caller configurations, crossed in full/);
 });
 
 test("mkbrief: plan-review forms its view before opening the plan; landing names the diff", () => {
