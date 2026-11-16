@@ -36,6 +36,14 @@
 // size; takeover (CHAIN.md step 4.5) does the work itself with no worker or scout. Both keep the
 // in-turn wait: a takeover that ends its turn while a self-review child runs reads as finished.
 // A bad role exits 2.
+// Rule 6 points at the method and tools of the rigor skill this script runs from ({rigor}), not at the
+// worktree's copy, which may predate them. It also gets the commands that keep the self-review's
+// form right by construction: {packet}
+// (this packet's absolute path, --out), {briefs} ({wt}/tmp/lens-briefs-{ticket}-{task}, where
+// lens-brief.mjs writes the children's briefs), {cr} (the self-review file) and {lens_check}: the
+// workflow.md line "Lens check: `<command>`" (first backticked span), its {band}, {kind}, {wt} and
+// {repo} filled from this build (--repo resolved), which the implementer runs right after launching
+// the loop-1 lens children. Without --band, or without that line, {lens_check} says there is none.
 // The project rules file's "## Architecture rules" section, when present, is lifted out of the
 // PROJECT RULES block and inlined as ARCHITECTURE RULES right after the task, so no implementer or
 // reviewer has to open another file for the checklist; rule 6 asks the standards lens to end with a
@@ -172,6 +180,17 @@ function lensesFor(band) {
   }
   return chosen;
 }
+// The project's lens check, from workflow.md's "Lens check" line, filled for this build.
+function lensCheck() {
+  const why = "none (this project names no lens check)";
+  if (band === undefined) return "none (packet built without --band)";
+  const wfPath = join(repo, "docs", "agents", "workflow.md");
+  const line = existsSync(wfPath) && read(wfPath, "workflow").split("\n").find((l) => /^\s*-\s*Lens check:/.test(l));
+  const cmd = line && line.match(/`([^`]+)`/)?.[1].trim();
+  if (!cmd) return why;
+  const fill = { band, kind, wt: args.wt, repo };
+  return `\`${cmd.replace(/\{(band|kind|wt|repo)\}/g, (_, k) => fill[k])}\``;
+}
 const lenses = lensesFor(band);
 if (kind === "assessment") lenses.add("interrogate");
 const required = Object.keys(LENSES).filter((k) => lenses.has(k));
@@ -203,12 +222,15 @@ const vars = {
   commit_subject: "",
   commit_trailer: "",
   delegate: ROLES[role],
+  packet: resolve(args.out),
+  rigor: resolve(script, ".."), // the rigor skill this packet was built from, so an older worktree's copy is never used
+  lens_check: lensCheck(),
   lenses: required.map((k) => LENSES[k]).join("; "),
   lens_briefs: required.map((k) => {
     const [name, body] = BODIES[k];
     return `   - Lens: ${name}. Read ${args.wt}/.agents/skills/code-review/references/${body} in full first, then review ${args.base}..HEAD in ${args.wt} and every deliverable the task names: ${deliverables}. Read-only: edit nothing, run nothing that writes.`;
   }).join("\n"),
-  probe: probeNone ?? `one probe child, once, on the final loop only (the read-only lenses came back with an empty act-on list), started with this brief verbatim plus the ORACLE and the PROJECT RULES on tests in isolation:
+  probe: probeNone ?? `one probe child, once, on the final loop only (the read-only lenses came back with an empty act-on list), started with the file lens-brief.mjs --probe writes (this brief verbatim plus the ORACLE, the ARCHITECTURE RULES and the PROJECT RULES on tests in isolation):
    - Probe, final loop, once. ${probed.map((k) => `Lens: ${BODIES[k][0]}.`).join(" ")} Read ${probed.map((k) => `${args.wt}/.agents/skills/code-review/references/${BODIES[k][1]}`).join(" and ")} in full first, then attack HEAD (range ${args.base}..HEAD, deliverables: ${deliverables}) in a throwaway copy under ${args.wt}/tmp/probe/; never edit ${args.wt}. Run every attack yourself and report each finding with its command and output; a finding with no run is "unproven". Limits: 15 minutes of attacks; at most 5 attacks, picked from the ORACLE rows by risk; a mutant table only if the ORACLE asks for one; targeted test files by path only, never the whole suite or a runner call without a test path; foreground commands under \`timeout\`, no \`sleep\` polling; one container pair, removed before you report. Budget: 25 minutes wall time in all; past 20 minutes, stop and report what ran, listing the rest as "not run". Never ask to be resumed.`,
 };
 if (ref && /^\d+$/.test(ref)) { // tracker issue
@@ -223,6 +245,9 @@ if (ref && /^\d+$/.test(ref)) { // tracker issue
   vars.commit_subject = "`<type>(<scope>): <imperative>`";
   vars.commit_trailer = "no trailer";
 }
+
+vars.briefs = `${args.wt}/tmp/lens-briefs-${vars.ticket}-${vars.task}`;
+vars.cr = `${args.wt}/tmp/cr-${vars.ticket}-${vars.task}.md`;
 
 const sub = (text) => text.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
 

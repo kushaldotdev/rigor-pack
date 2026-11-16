@@ -18,19 +18,30 @@
    again. A child with children of its own waits the same way. Report only when every child has
    finished.
 6. SELF-REVIEW before the report, by the method in
-   {wt}/.agents/skills/rigor/templates/self-review.txt (read it first), over task
+   {rigor}/templates/self-review.txt (read it first), over task
    base..last commit AND every deliverable file the task names, committed or not, with these
    lenses: {lenses}. Before the first loop you yourself read each lens body in full: a child's
-   read is not yours, and L0 checks your own session for it. Each loop starts one fresh read-only
-   child per lens, all in one parallel call, each with its brief below copied verbatim, followed
-   by the task's ORACLE section (and, for the standards + spec lens, this packet's ARCHITECTURE
-   RULES section, verbatim):
+   read is not yours, and L0 checks your own session for it. Loop 1 runs every lens over the
+   whole range; each later loop reviews only the fix commits since the previous loop, with
+   standards + spec plus each lens whose finding those commits fix. Every lens is a read-only
+   child started with the file this command writes for it, verbatim (its brief below, plus the
+   task's ORACLE and, for standards + spec, this packet's ARCHITECTURE RULES section):
+     node {rigor}/scripts/lens-brief.mjs --packet {packet} --out-dir {briefs}
+   Later loops add `--loop <n> --since <previous loop's last commit> --lenses <lenses whose
+   findings were fixed>`; a fix round after a review (rule 12) uses `--fix-round --since <the tip
+   the review saw>` (plus `--class <class>` per finding class when this task gets a probe); the
+   final loop's probe uses `--probe`. The standards + spec child may start as soon as the code is
+   committed, while the targeted tests and coverage still run. The loop-1 briefs:
 {lens_briefs}
    Probe: {probe}
-   The standards + spec section of the file ends with this block, one line per item, each
-   filled from a read or a run (the ARCHITECTURE RULES section of this packet is the checklist).
-   No heading between that section's heading and the block may name a lens or the probe: one
-   ends the section before the block:
+   Lens check: right after the loop-1 lens children are launched, run {lens_check}. A failing row
+   means a child went out without its lens body: stop it and relaunch it from its brief file now.
+   Start the self-review file before the first loop with
+     node {rigor}/scripts/review-file.mjs --packet {packet} --init {cr}
+   It writes one section per lens (no lens ranks another) and, at the end of the standards + spec
+   section, this block, one line per item, each to be filled from a read or a run (the
+   ARCHITECTURE RULES section of this packet is the checklist). No heading between that section's
+   heading and the block may name a lens or the probe: one ends the section before the block:
      ARCHITECTURE
      - Deletion test: <each new or changed module>: <passes / fails, and why>
      - Duplicated owners: <a default, parse or decision now owned in two places, or none>
@@ -38,10 +49,10 @@
      - Single-implementation seams: <an interface, registry or option with one implementation, or none>
      - ADRs: <each ADR for the area, kept or contradicted, or none apply>
      - Lint/contract output: <the import-contract or lint command and its result line>
-   Write the review to {wt}/tmp/cr-{ticket}-{task}.md, one section per lens (no lens ranks
-   another), fix every act-on finding, and list fixed / deferred / rejected with reasons. L0 checks
-   that file has every lens above and the ARCHITECTURE block, and counts your child calls before
-   accepting.
+   Fix every act-on finding and list fixed / deferred / rejected with reasons. Before you report,
+   run `node {rigor}/scripts/review-file.mjs --packet {packet} {cr}` and report
+   only when it exits 0. L0 checks that file has every lens above and the ARCHITECTURE block,
+   reruns the lens check, and counts your child calls before accepting.
 7. COMMITS on {branch} only, as often as useful: {commit_subject}, with a hyphen-bullet body
    starting with verbs and {commit_trailer}. Note the branch tip first: that is the task base
    ({base}). Never push, merge, touch the main branch or the tracker. Scratch output, probe files
@@ -67,8 +78,10 @@
 12. FIX ROUND (any re-brief after a review): a finding is one case of a class. For each finding,
    name the class, list every site or input shape of that class in the code this task owns (from a
    grep or a run, pasted in the report), fix the whole list, and pin it with one test that walks
-   the list. A round that fixes only the cited case comes back. Then run rule 6 on the round's
-   range.
+   the list. A round that fixes only the cited case comes back. The round's self-review is not
+   the whole of rule 6 again: standards + spec on the round's delta (`lens-brief.mjs --fix-round`),
+   plus one probe targeted on the finding's class when this task gets a probe; record it as a
+   loop in the self-review file and rerun review-file.mjs before you report.
 13. GUARD REACH: what a guard (scan, validator, lint, check) catches is stated once, in its own
    docstring, generated from its constants or pinned by a test against them. Other docs and
    comments cite that docstring and never restate or widen its reach.

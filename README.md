@@ -166,7 +166,7 @@ flowchart TD
   P["L0 picks the next ticket in order<br/>halt check by band: easy go · medium post a plan ·<br/>hard and critical park until the plan is approved"] --> O["Task block per task: fence, ORACLE, required test,<br/>'Earlier reviews found' classes"]
   O --> K["mkpacket builds the packet: task, standing orders, pack rules, project rules<br/>(exits 2 on a stale base, a task with no ORACLE,<br/>or a hard or critical task with no ARCHITECTURE)"]
   K --> I["L1 implements: red test from the ORACLE, then the fix<br/>(differential against the base for a today's-behaviour table)"]
-  I --> SR["L1 self-review: one read-only child per lens, in parallel, every loop<br/>hard or critical behaviour change: one time-boxed probe child<br/>runs blast radius and interrogate attacks once, on the final loop"]
+  I --> SR["L1 self-review: loop 1, one read-only child per lens over the whole range<br/>later loops: the fix delta only, standards + spec plus the lenses it answers<br/>hard or critical behaviour change: one time-boxed probe child<br/>runs blast radius and interrogate attacks once, on the final loop"]
   SR --> R["L1 reports the range, the red and green output, the self-review file"]
   R --> C["L0 checks the report: reruns red on the base and green on the tip,<br/>reads the self-review file, counts child calls"]
   C --> RV["L0 review, sized by band (a task of hardness 4+ in a hard or critical ticket:<br/>reviewers A and B on the same tip, one fix round for both): each act-on finding gets a class"]
@@ -188,6 +188,8 @@ What keeps a chain from going in circles:
 - **L0 states the failing case, never the design.** A fix L0 dictates skips the implementer's own review.
 - **Findings travel.** The class of every act-on finding goes into the later and sibling task packets of the ticket.
 - **Proof, not summary.** L0 reruns red and green itself, and a probe child's finding counts only with its command and output.
+- **Review what changed, once.** Self-review loop 1 runs every lens over the whole range; each later loop, and each fix round after a review, reviews only its delta, so every line is seen by every lens once and every later change is seen again. Lens children carry over between loops while their context is small enough.
+- **Form by construction.** `lens-brief.mjs` writes every self-review child's brief from the packet, lens body path included; `review-file.mjs --init` writes the self-review file's headings; the implementer runs the project's lens check right after launching the children and `review-file.mjs` before reporting.
 - **Suites run on settled commits.** The full suite runs once per ticket, as the gate on the staged squash, only when every review is accepted; a fold after the gate means a new stage.
 - **Architecture is checked, not assumed.** A hard or critical task names its modules and their deletion-test result (`ARCHITECTURE`), the packet inlines the project's Architecture rules, and the standards lens ends with a fixed ARCHITECTURE block that `review-file.mjs` checks. From medium up, an architecture pass on the staged squash writes an `arch` trail row, and `land-check.mjs` refuses to land without a passing one. Planners and architecture reviewers get the pass as step 1 of their brief (`mkbrief.mjs` quotes both architecture skills in full), and `arch-check.mjs` checks the pass file before L0 reads a plan or a verdict.
 

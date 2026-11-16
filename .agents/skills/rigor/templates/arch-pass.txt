@@ -32,8 +32,9 @@ HOW TO RUN IT UNATTENDED
 [[planner]]
 - Then write the plan. Its ARCHITECTURE section cites {arch_out} by path and takes every owner and
   deletion-test result from it; a plan decision that departs from the file says why.
-- Size every task so one implementer finishes it, self-review and two fix rounds included, inside
-  the implementer context ceiling workflow.md sets (default ~180k tokens); split one that will not.
+- Size every task so one implementer finishes the first build and its self-review inside the
+  implementation context ceiling workflow.md sets, and two fix rounds inside its fix-round
+  ceiling; split one that will not.
 - Give every task a `Depends on:` line (task ids, or none) and its fence (You may change / Do not
   touch): tasks with disjoint fences and no dependency between them run at once.
 - Write the ORACLE of a contract (what commits, what a guard holds, who owns a value) as input

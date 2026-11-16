@@ -84,7 +84,7 @@ Fix rounds after review go to a fresh child with consolidated scope (poteto-mode
 - **tickets vs parallel build.** A ticket built in parallel must name the files it owns.
 - **unslop.** Always on for prose surfaces.
 - **merge.** Babysit and shipping stop at merge-ready unless the brief grants merge authority.
-- **chain.** In a chain run, [CHAIN.md](CHAIN.md) wins: fix rounds go to the same implementer while it is under its context ceiling, implementers run targeted checks and L0 runs the full gate once on the staged squash, and tickets land as squash commits (PRs only when workflow.md says so).
+- **chain.** In a chain run, [CHAIN.md](CHAIN.md) wins: fix rounds go to the same implementer while it is under its fix-round context ceiling, implementers run targeted checks and L0 runs the full gate once on the staged squash, and tickets land as squash commits (PRs only when workflow.md says so).
 - **glossary.** Bodies say `GLOSSARY.md`; use the filename `docs/agents/domain.md` records.
 
 ## 4. Sessions

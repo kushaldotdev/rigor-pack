@@ -184,7 +184,7 @@ const withWorkflow = (line = LENS_LINE) => {
 };
 // The lens list packet rule 6 names, by short name.
 const lensesIn = (text) => {
-  const m = text.match(/with these\s+lenses: ([\s\S]*?)\. Each loop starts/);
+  const m = text.match(/with these\s+lenses: ([\s\S]*?)\.\s+Before the first loop/);
   assert.ok(m, "rule 6 lens list not found");
   return [...m[1].matchAll(/(standards \+ spec|blast radius|interrogate) \(/g)].map((x) => x[1]);
 };
@@ -196,7 +196,7 @@ test("mkpacket: --band fills rule 6 with that band's lenses from workflow.md", (
     const { r, text } = packet(dir, ["--ref", "364", "--band", band]);
     assert.equal(r.status, 0, r.stderr);
     assert.deepEqual(lensesIn(text), lenses, band);
-    assert.match(text, /tmp\/cr-364-t1\.md, one section per lens/);
+    assert.match(text, /--init \S+\/tmp\/cr-364-t1\.md\n\s+It writes one section per lens/);
     assert.doesNotMatch(text, /\{lenses\}/);
   }
   assert.match(packet(dir, ["--band", "hard"]).text, /Findings and Dropped lists/);
@@ -466,14 +466,14 @@ test("review-file: still reads the lens list of a packet built before rule 6 nam
 test("packet rules: the implementer reads each lens body itself, and a guard's reach has one owner", () => {
   const text = packet(repo()).text;
   assert.match(text, /you yourself read each lens body in full: a child's\s+read is not yours/);
-  assert.match(text, /No heading between that section's heading and the block may name a lens or the probe/);
+  assert.match(text, /No heading between that section's\s+heading and the block may name a lens or the probe/);
   assert.match(text, /13\. GUARD REACH:[\s\S]*?once, in its own\s+docstring, generated from its constants or pinned by a test against them[\s\S]*?never restate or widen its reach/);
 });
 
 test("self-review method: the implementer greps for deleted names and runs the touched tests together", () => {
   const method = readFileSync(fileURLToPath(new URL("../.agents/skills/rigor/templates/self-review.txt", import.meta.url)), "utf8");
   assert.match(method, /YOUR OWN RUNS, EVERY LOOP/);
-  assert.match(method, /Deletions: for each symbol[\s\S]*?grep its name across code,\s+comments and docs/);
+  assert.match(method, /Deletions: for each symbol[\s\S]*?grep its name across\s+code, comments and docs/);
   assert.match(method, /Tests together: run every test file the range adds or touches in ONE test-runner call/);
 });
 
@@ -627,4 +627,192 @@ test("land-check: misuse exits 2", () => {
   assert.equal(landCheck({ dir: t.dir, file: join(t.dir, "absent.tsv") }, "375", "hard").status, 2);
   writeFileSync(t.file, "a\tb\n");
   assert.match(landCheck(t, "375", "hard").stderr, /header row has no "phase" column/);
+});
+
+// ---- 2026-11-16: incremental self-review loops, form by construction, heartbeat and reviewer availability.
+const ALL_LENSES = "- Self-review lenses: `standards+spec always; blast-radius at medium, hard and critical; interrogate at hard and critical`\n";
+function lensRepo(extraWorkflow = "") {
+  const dir = withWorkflow(ALL_LENSES + extraWorkflow);
+  writeFileSync(join(dir, "docs", "agents", "packet-rules.md"), "## Check commands\n\n- lint\n\n## Tests in isolation\n\n- start a throwaway db with ./tdb.sh\n\n## Architecture rules\n\n- one owner per default\n\n## Cleanup duties\n\n- rm scratch\n");
+  writeFileSync(join(dir, "task.md"), "TASK: fix it in {wt}.\nORACLE: today's behaviour\n| input | main |\n| null | 0 |\nARCHITECTURE: none (fixture)\nStop and ask L0 if: x\n");
+  return dir;
+}
+const brief = (dir, args) => run("lens-brief.mjs", ["--out-dir", join(dir, "briefs"), ...args]);
+const readOut = (r) => r.stdout.trim().split("\n").filter(Boolean).map((f) => [f.split("/").at(-1), readFileSync(f, "utf8")]);
+
+test("review-file --init writes the headings and the packet's ARCHITECTURE block, which fail until filled", () => {
+  const dir = lensRepo();
+  const { r, out } = packet(dir, ["--ref", "364", "--band", "hard"]);
+  assert.equal(r.status, 0, r.stderr);
+  const cr = join(dir, "cr.md");
+  const init = run("review-file.mjs", ["--packet", out, "--init", cr]);
+  assert.equal(init.status, 0, init.stderr);
+  assert.equal(init.stdout.trim(), cr);
+  const text = readFileSync(cr, "utf8");
+  assert.deepEqual([...text.matchAll(/^## (.*)$/gm)].map((m) => m[1]), ["Loops", "Own runs", "Standards + spec", "Blast radius", "Interrogate", "Probe (final loop)"]);
+  assert.match(text, /## Standards \+ spec\n\n.*\n\nARCHITECTURE\n- Deletion test: <each new or changed module>: <passes \/ fails, and why>\n- Duplicated owners: /);
+  const check = run("review-file.mjs", ["--packet", out, cr]);
+  assert.equal(check.status, 1, "placeholders fail the check");
+  assert.match(check.stdout, /lens standards \+ spec section:yes\nlens blast radius section:yes\nlens interrogate section:yes\nprobe required:yes section:yes\narchitecture block:no missing:Deletion test, Duplicated owners, Shims left, Single-implementation seams, ADRs, Lint\/contract output/);
+  writeFileSync(cr, text.replace(/ARCHITECTURE\n(- .*\n)+/, ARCH_OK));
+  assert.equal(run("review-file.mjs", ["--packet", out, cr]).status, 0, "filled in place, it passes");
+  const again = run("review-file.mjs", ["--packet", out, "--init", cr]);
+  assert.equal(again.status, 2);
+  assert.match(again.stderr, /exists; --init never overwrites/);
+  const medium = packet(dir, ["--band", "medium"]);
+  const cr2 = join(dir, "cr2.md");
+  assert.equal(run("review-file.mjs", ["--packet", medium.out, "--init", cr2]).status, 0);
+  assert.deepEqual([...readFileSync(cr2, "utf8").matchAll(/^## (.*)$/gm)].map((m) => m[1]), ["Loops", "Own runs", "Standards + spec", "Blast radius"], "no probe heading without a probe");
+  assert.equal(run("review-file.mjs", ["--packet", medium.out, "--bogus", cr2]).status, 2);
+});
+
+test("review-file --init takes the block from rule 6, not from a task's own bare ARCHITECTURE section", () => {
+  const dir = lensRepo();
+  writeFileSync(join(dir, "task.md"), "TASK: fix it.\nORACLE: none (fixture)\nARCHITECTURE\n- `fees.resolve`: deletion test passes\n");
+  const { r, out } = packet(dir, ["--band", "hard"]);
+  assert.equal(r.status, 0, r.stderr);
+  const cr = join(dir, "cr.md");
+  assert.equal(run("review-file.mjs", ["--packet", out, "--init", cr]).status, 0);
+  const text = readFileSync(cr, "utf8");
+  assert.doesNotMatch(text, /fees\.resolve/);
+  assert.match(text, /- Lint\/contract output: <the import-contract or lint command and its result line>/);
+});
+
+test("lens-brief: loop 1 writes each lens's packet brief verbatim, with the ORACLE, and ARCHITECTURE RULES for standards", () => {
+  const dir = lensRepo();
+  const { r, out, text } = packet(dir, ["--ref", "364", "--band", "hard"]);
+  assert.equal(r.status, 0, r.stderr);
+  const b = brief(dir, ["--packet", out]);
+  assert.equal(b.status, 0, b.stderr);
+  const files = readOut(b);
+  assert.deepEqual(files.map(([f]) => f), ["loop1-standards-spec.txt", "loop1-blast-radius.txt", "loop1-interrogate.txt"]);
+  const packetBriefs = briefsIn(text);
+  files.forEach(([, body], i) => {
+    assert.ok(body.startsWith(packetBriefs[i] + "\n\nNever read any .env file.\n\nThe task's ORACLE section, verbatim from the packet:\nORACLE: today's behaviour\n| input | main |\n| null | 0 |\n"), files[i][0]);
+    assert.doesNotMatch(body, /ARCHITECTURE: none \(fixture\)|Stop and ask/, "the ORACLE section ends at the next label");
+  });
+  assert.match(files[0][1], /ARCHITECTURE RULES \(binding\): the project's checklist[\s\S]*one owner per default/);
+  for (const [, body] of files.slice(1)) assert.doesNotMatch(body, /ARCHITECTURE RULES/);
+  assert.equal(brief(dir, ["--packet", out, "--loop", "1"]).status, 0, "--loop 1 is the default made explicit");
+});
+
+test("lens-brief: a later loop reviews only the delta, standards + spec plus the named lenses, each naming its body", () => {
+  const dir = lensRepo();
+  const { out } = packet(dir, ["--ref", "364", "--band", "hard"]);
+  const b = brief(dir, ["--packet", out, "--loop", "2", "--since", "abc123", "--lenses", "interrogate"]);
+  assert.equal(b.status, 0, b.stderr);
+  const files = readOut(b);
+  assert.deepEqual(files.map(([f]) => f), ["loop2-standards-spec.txt", "loop2-interrogate.txt"]);
+  for (const [f, body] of files) {
+    const lens = f.includes("standards") ? "standards + spec" : "interrogate";
+    assert.match(body, new RegExp(`^Lens: ${esc(lens)}\\. Loop 2, delta review\\. Read ${esc(WT)}/\\.agents/skills/${esc(BODIES[lens])} in full first`), f);
+    assert.match(body, new RegExp(`review only abc123\\.\\.HEAD in ${esc(WT)}: the fix commits since the previous loop\\.`), f);
+    assert.match(body, /tmp\/cr-364-t1\.md/, f);
+    assert.match(body, /Read-only: edit nothing, run nothing that writes\./, f);
+    assert.match(body, /ORACLE: today's behaviour/, f);
+  }
+  const only = readOut(brief(dir, ["--packet", out, "--loop", "3", "--since", "def456"]));
+  assert.deepEqual(only.map(([f]) => f), ["loop3-standards-spec.txt"], "standards + spec always runs");
+  for (const [args, why] of [
+    [["--loop", "2"], /--loop 2 needs --since/],
+    [["--loop", "2", "--since", "x", "--lenses", "fuzzing"], /unknown lens in --lenses: fuzzing/],
+    [["--since", "x"], /--since goes with/],
+    [["--loop", "0"], /--loop must be a whole number from 1/],
+    [["--loop", "2", "--since", "x", "--probe"], /exclusive/],
+  ]) {
+    const r = brief(dir, ["--packet", out, ...args]);
+    assert.equal(r.status, 2, args.join(" "));
+    assert.match(r.stderr, why, args.join(" "));
+  }
+  const medium = packet(dir, ["--band", "medium"]);
+  const notRequired = brief(dir, ["--packet", medium.out, "--loop", "2", "--since", "x", "--lenses", "interrogate"]);
+  assert.equal(notRequired.status, 2);
+  assert.match(notRequired.stderr, /--lenses names interrogate, which this packet does not require/);
+});
+
+test("lens-brief: a fix round is standards + spec on its delta, plus one probe on the finding class when the task gets a probe", () => {
+  const dir = lensRepo();
+  const hard = packet(dir, ["--ref", "364", "--band", "hard"]);
+  const noClass = brief(dir, ["--packet", hard.out, "--fix-round", "--since", "t1"]);
+  assert.equal(noClass.status, 2);
+  assert.match(noClass.stderr, /needs --class/);
+  const b = brief(dir, ["--packet", hard.out, "--fix-round", "--since", "t1", "--class", "unvalidated sort key", "--class", "mock leak"]);
+  assert.equal(b.status, 0, b.stderr);
+  const files = readOut(b);
+  assert.deepEqual(files.map(([f]) => f), ["fix-round-standards-spec.txt", "fix-round-probe.txt"]);
+  assert.match(files[0][1], /^Lens: standards \+ spec\. Fix round after a review, delta review\. Read \S+code-review\.md in full first[\s\S]*review only t1\.\.HEAD/);
+  const probe = files[1][1];
+  assert.match(probe, /^Probe, fix round, once, targeted\. Lens: blast radius\. Lens: interrogate\. Read \S+blast-radius\.md and \S+interrogate\.md in full first, then attack only the finding class\(es\) "unvalidated sort key", "mock leak" at HEAD: the fix range t1\.\.HEAD/);
+  for (const limit of [/15 minutes of attacks/, /at most 5 attacks/, /25 minutes wall time/]) assert.match(probe, limit);
+  assert.match(probe, /tests in isolation, verbatim:\n## Tests in isolation\n\n- start a throwaway db with \.\/tdb\.sh/);
+  const medium = packet(dir, ["--band", "medium"]);
+  assert.deepEqual(readOut(brief(dir, ["--packet", medium.out, "--fix-round", "--since", "t1"])).map(([f]) => f), ["fix-round-standards-spec.txt"]);
+  const stray = brief(dir, ["--packet", medium.out, "--fix-round", "--since", "t1", "--class", "x"]);
+  assert.equal(stray.status, 2);
+  assert.match(stray.stderr, /gets no probe, so --class has nothing to target/);
+  const noProbe = brief(dir, ["--packet", medium.out, "--probe"]);
+  assert.equal(noProbe.status, 2);
+  assert.match(noProbe.stderr, /this task gets no probe/);
+  const again = packet(dir, ["--ref", "364", "--band", "hard"]); // packet() reuses one path: rebuild the hard packet
+  const final = readOut(brief(dir, ["--packet", again.out, "--probe"]));
+  assert.deepEqual(final.map(([f]) => f), ["probe-probe.txt"]);
+  assert.ok(final[0][1].startsWith(`Probe, final loop, once. ${probeIn(again.text)}\n`), "the packet's probe brief, verbatim");
+  assert.match(final[0][1], /ARCHITECTURE RULES[\s\S]*Tests in isolation/);
+});
+
+test("lens-brief: misuse and a packet with no lens list or no ORACLE exit 2", () => {
+  const dir = tmp();
+  writeFileSync(join(dir, "p.md"), "not a packet\n");
+  assert.equal(brief(dir, ["--packet", join(dir, "p.md")]).status, 2);
+  assert.equal(brief(dir, ["--packet", join(dir, "absent.md")]).status, 2);
+  assert.equal(brief(dir, []).status, 2);
+  const l = lensRepo();
+  const { out, text } = packet(l, ["--band", "easy"]);
+  writeFileSync(join(dir, "noracle.md"), text.replace(/^ORACLE: .*$/m, "No oracle here."));
+  const r = brief(dir, ["--packet", join(dir, "noracle.md")]);
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /no ORACLE section/);
+  assert.equal(brief(dir, ["--packet", out, "--wat", "1"]).status, 2);
+});
+
+test("mkpacket: rule 6 names the brief, scaffold and check commands, and fills the project's lens check", () => {
+  const dir = lensRepo("- Lens check: `node {repo}/scripts/lens-check.mjs --band {band} --kind {kind} --for {wt}` <!-- note -->\n");
+  const { r, out, text } = packet(dir, ["--ref", "364", "--band", "medium", "--task-id", "T2"]);
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(text, new RegExp(`lens-brief\\.mjs --packet ${esc(out)} --out-dir ${esc(WT)}/tmp/lens-briefs-364-t2\\n`));
+  assert.match(text, new RegExp(`review-file\\.mjs --packet ${esc(out)} --init ${esc(WT)}/tmp/cr-364-t2\\.md\\n`));
+  assert.match(text, new RegExp(`\`node \\S+/\\.agents/skills/rigor/scripts/review-file\\.mjs --packet ${esc(out)} ${esc(WT)}/tmp/cr-364-t2\\.md\` and report\\s+only when it exits 0`));
+  assert.match(text, new RegExp(`Lens check: right after the loop-1 lens children are launched, run \`node ${esc(dir)}/scripts/lens-check\\.mjs --band medium --kind code --for ${esc(WT)}\`\\.`));
+  const rigorDir = fileURLToPath(new URL("../.agents/skills/rigor", import.meta.url));
+  assert.match(text, new RegExp(`by the method in\\s+${esc(rigorDir)}/templates/self-review\\.txt`), "the building rigor skill, not the worktree's copy");
+  assert.doesNotMatch(text, new RegExp(`${esc(WT)}/\\.agents/skills/rigor/`));
+  assert.match(text, /Loop 1 runs every lens over the\s+whole range; each later loop reviews only the fix commits since the previous loop/);
+  assert.match(text, /standards \+ spec child may start as soon as the code is\s+committed/);
+  assert.match(packet(withWorkflow(), ["--band", "easy"]).text, /run none \(this project names no lens check\)\./);
+  assert.match(packet(lensRepo("- Lens check: `x --band {band}`\n")).text, /run none \(packet built without --band\)\./);
+  assert.match(text, /12\. FIX ROUND[\s\S]*?not\s+the whole of rule 6 again: standards \+ spec on the round's delta[\s\S]*?targeted on the finding's class/);
+});
+
+test("self-review method: incremental loops, the coverage invariant, carried lens children and the fix-round delta", () => {
+  const method = readFileSync(fileURLToPath(new URL("../.agents/skills/rigor/templates/self-review.txt", import.meta.url)), "utf8");
+  assert.match(method, /Loop 1: every lens the packet names, each over the whole range/);
+  assert.match(method, /Loop 2 and later: only the fix commits since the previous loop[\s\S]*?standards \+ spec plus each lens that raised a finding those commits fix/);
+  assert.match(method, /Coverage invariant: every line of the range is seen by every required lens once, and every line\s+changed afterwards is seen again/);
+  assert.match(method, /The same child across loops:[\s\S]*?lens-child ceiling the project's workflow settings set\s+\(default ~150k tokens\)[\s\S]*?never the child that wrote the task's code/);
+  assert.match(method, /A FIX ROUND AFTER A REVIEW[\s\S]*?Not the whole method again[\s\S]*?one probe targeted on the\s+finding's class/);
+  assert.match(method, /Right after the loop-1 lens children are launched, run the project's lens check/);
+  assert.match(method, /Report only on exit 0/);
+  assert.match(method, /PROBE LIMITS/, "the probe limits stay");
+});
+
+test("CHAIN.md: the heartbeat watches every agent, reviewer availability is read before every launch, no hang wait", () => {
+  const chain = readFileSync(fileURLToPath(new URL("../.agents/skills/rigor/CHAIN.md", import.meta.url)), "utf8");
+  assert.match(chain, /While any agent of this lane runs, a heartbeat[\s\S]*?implementers, reviewers, planners/);
+  assert.match(chain, /no activity for 15 minutes or more[\s\S]*?\*\*A quota or usage error:\*\* archive it, record the reviewer's unavailability[\s\S]*?relaunch the same brief on the fallback now/);
+  assert.match(chain, /\*\*Silent, no error:\*\* one nudge[\s\S]*?Still no activity at the next tick: relaunch/);
+  assert.ok(!/written nothing for one wait slice is hung/.test(chain), "the old hang wait is gone");
+  assert.match(chain, /Before every review launch, not once per session, read the project's reviewer-availability record/);
+  assert.match(chain, /fix-round context ceiling/);
+  assert.ok(!/~180k/.test(chain), "no pack default for the implementer ceiling: the project sets it");
+  assert.match(chain, /L0's reviewers \(step 4\.3\) see the diff only after its act-on list is empty/, "external reviewers still wait for the self-review");
 });
