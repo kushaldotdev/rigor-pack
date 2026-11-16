@@ -14,6 +14,12 @@ LOOPS, AND WHAT EACH ONE SEES
 - The loops end when a loop's act-on list is empty and no commit landed after its range (a test
   fix made while the early standards + spec child ran is such a commit: the next loop's delta).
   Then comes the probe, if the task gets one.
+- Loop cap: at most the loop cap the project's workflow settings set (default 3) per attempt,
+  loop 1 included. A loop at the cap whose act-on list is not empty ends the loops anyway: fix
+  what is quick in that loop's delta without a further lens loop, run the probe if due, and list
+  every finding still unfixed under `## Open at cap` in the self-review file, each with its
+  class, file:line and why it is open. The delegator rules each one in its own review; a report
+  with that section is not a missing self-review.
 - Log every loop in the file's Loops section: range, lenses, act-on count.
 
 WHO RUNS A LENS
