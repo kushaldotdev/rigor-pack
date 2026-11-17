@@ -29,8 +29,8 @@
      node {rigor}/scripts/lens-brief.mjs --packet {packet} --out-dir {briefs}
    Later loops add `--loop <n> --since <previous loop's last commit> --lenses <lenses whose
    findings were fixed>`; a fix round after a review (rule 12) uses `--fix-round --since <the tip
-   the review saw>` (plus `--class <class>` per finding class when this task gets a probe); the
-   final loop's probe uses `--probe`. The standards + spec child may start as soon as the code is
+   the review saw> --class <class>` (one --class per finding class); the final loop's probe uses
+   `--probe`. The standards + spec child may start as soon as the code is
    committed, while the targeted tests and coverage still run. The loop-1 briefs:
 {lens_briefs}
    Probe: {probe}
@@ -78,10 +78,12 @@
 12. FIX ROUND (any re-brief after a review): a finding is one case of a class. For each finding,
    name the class, list every site or input shape of that class in the code this task owns (from a
    grep or a run, pasted in the report), fix the whole list, and pin it with one test that walks
-   the list. A round that fixes only the cited case comes back. The round's self-review is not
-   the whole of rule 6 again: standards + spec on the round's delta (`lens-brief.mjs --fix-round`),
-   plus one probe targeted on the finding's class when this task gets a probe; record it as a
-   loop in the self-review file and rerun review-file.mjs before you report.
+   the list. A round that fixes only the cited case comes back. Then run the checks (rule 8). The
+   round's self-review is one loop aimed at the finding's class, not the whole of rule 6 again:
+   standards + spec on the round's delta (`lens-brief.mjs --fix-round --class`), checking each
+   class at every site in the task range, plus one probe on the class when this task gets a
+   probe; no other lens runs again. Record it as a loop in the self-review file and rerun
+   review-file.mjs before you report.
 13. GUARD REACH: what a guard (scan, validator, lint, check) catches is stated once, in its own
    docstring, generated from its constants or pinned by a test against them. Other docs and
    comments cite that docstring and never restate or widen its reach.

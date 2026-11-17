@@ -37,8 +37,7 @@ Where a chain run differs from `## Authority` above. Every number here is a sett
 - Plan approval: owner <!-- or: L0 for the owner (delegated), listed at every close for overturning -->
 - Concurrency caps: `<n>` implementers, `<n>` ticket worktrees, `<n>` reviewer sessions at once
 - Context ceilings: implementation `<n>k` (the first build plus its self-review; planners size tasks to it), review fix rounds `<n>k` (the same implementer keeps fixing review findings under it; past it, a fresh implementer), lens child `<n>k` (default ~150k; a self-review lens child gets later loops' deltas as follow-ups under it), long session `<n>k`
-- Attempts per task: `<n>` (`<n>` to get it right, `<n>` for review findings), then a takeover
-- Hard tickets: `<n>` implementer fix round, then a takeover
+- Attempts per band: easy and medium `4` implementer rounds (build, fix 1, fix 2, a fresh implementer) and `2` takeover rounds, at most `6` L0 reviews; hard, critical or a high-risk area `3` (build, fix 1, a fresh implementer) and `2`, at most `5`; then park the task in gates <!-- pack defaults: rigor/CHAIN.md step 4.4 -->
 - Parallel tasks: each in its own worktree, `<command>` from the ticket branch <!-- rigor/CHAIN.md step 4; a shared worktree only when the caps leave no choice -->
 - Lanes: `1` <!-- or n: each lane its own L0 session on disjoint session-plan rows marked with its lane (rigor/CHAIN.md → Lanes) -->
 - Solo band: `hard` <!-- or: critical, or none. A ticket at or above it runs alone in its own session -->
@@ -52,6 +51,7 @@ Where a chain run differs from `## Authority` above. Every number here is a sett
 - Red/green: `<command that runs one test path, red on the base and green on the tip>`
 - Mutation check: `<command>` <!-- or: none -->
 - Full gate: `<command, run on the staged squash>`
+- Out-of-fence pre-run: `<command that greps tests outside the fence for a changed public symbol and runs them>` <!-- rigor/CHAIN.md step 5, before staging -->
 - Verify skill: `.agents/skills/verify-<app>/SKILL.md`<!-- or: none -->
 - Packet project rules: `docs/agents/packet-rules.md` <!-- mkpacket.mjs reads this path; for another file, pass it as --project-rules -->
 - Cleanup at landing: `<worktree, workspace, agents, branch, stage ref>`
@@ -67,7 +67,6 @@ Where a chain run differs from `## Authority` above. Every number here is a sett
 | reviewer fallback | none | |
 | planner | `<provider/model>` | `<level>` <!-- the strongest model: every planner, and the critical plan review --> |
 | plan reviewer | `<provider/model>` | `<level>` <!-- hard tickets: the L1 implementer model; on REGRESSED, or disagreement with the plan on an owner or a seam, the review runs again on the planner role --> |
-| second implementer | none <!-- or: a second cheap model, the escalation ladder's middle rung --> | |
 | takeover | `<provider/model>` | `<level>` |
 | verify driver | `<provider/model>` | `<level>` |
 

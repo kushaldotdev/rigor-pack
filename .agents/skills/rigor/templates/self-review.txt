@@ -63,6 +63,10 @@ YOUR OWN RUNS, EVERY LOOP (paste each command and its output in the file)
 - Tests together: run every test file the range adds or touches in ONE test-runner call, as well
   as one by one. A test that passes alone and fails beside the others leaks state (a mock, patch,
   cache or fixture that outlives its test): a finding.
+- Docs claims: every docs or docstring sentence the range adds or changes that states a rule's
+  reach, order or owner cites the code line or test that proves it; one with no proof is a
+  finding. Grep the repo for the claim's key wording and paste the grep: each other restatement
+  it finds is checked the same way.
 
 PROBE LIMITS (the probe brief repeats them; a probe over them is stopped and reported as partial)
 - Time box: 15 minutes of attacks. Report what ran by then; list the rest as "not run".
@@ -103,11 +107,16 @@ WHAT COUNTS AS A FINDING
 - Name each finding's class, then look for its siblings before you fix (packet rule 12).
 
 A FIX ROUND AFTER A REVIEW (packet rule 12: L0's review, or any re-brief with findings)
-- Not the whole method again. The round's self-review is standards + spec on the round's delta
-  (<the tip the review saw>..HEAD, `lens-brief.mjs --fix-round`), plus one probe targeted on the
-  finding's class (`--class`) when the packet gives this task a probe, within the probe limits.
-  Log it as a loop in the file, and rerun `review-file.mjs` before the report. L0's own delta
-  review follows as before.
+- One loop, aimed at the finding's class, not the whole method again. First fix the class
+  everywhere in the task range (task base..HEAD), not only where the reviewer pointed: list every
+  site or input shape from a grep or a run. Then run the check commands and the targeted tests.
+- Then one standards + spec child on the round's delta, from `lens-brief.mjs --fix-round --since
+  <the tip the review saw> --class <class>` (one --class per finding class): it checks each class
+  is fixed at every site in the task range. When the packet gives this task a probe, one probe
+  on those classes runs beside it, within the probe limits. No other lens runs again.
+- That is the round's only loop. Fix what it finds in the same round without another lens loop,
+  or list it under `## Open at cap`. Log the loop in the file and rerun `review-file.mjs` before
+  the report. L0's own delta review follows as before.
 - The reviewer re-reads every changed deliverable whole, not only the lines the findings name,
   and lists each claim the rewrite newly makes. Run each claim of changed behaviour.
 

@@ -58,6 +58,12 @@
 // "ARCHITECTURE"): the modules the task adds or changes and their deletion-test result, or
 // "ARCHITECTURE: none" with the reason. Without one, or with one that names no module (a backticked
 // name or a path) or no deletion test, the build exits 2.
+// The chain's class ledger, .audit/<slug>.classes.md under --repo, when it exists, adds a REVIEW
+// CLASSES section after the standing orders: the 5 classes with the most lines, each with its count
+// and the newest fix shape, most frequent first (ties: the newer class first). A ledger line reads
+// "- <class> | <ticket> <task> r<round> | <fix shape>"; a trailing "(...)" on the class (a repeat
+// note) is dropped before counting, and a fix shape of "?" does not count as the newest. Other lines
+// are ignored. No ledger, or no line in it, adds no section.
 // The task file must carry an ORACLE section (a line starting "ORACLE", optionally a markdown
 // heading): what right looks like, as CHAIN.md -> The implementer packet says. Without one the
 // build exits 2: an implementer with no oracle optimises the rules it can check.
@@ -92,6 +98,28 @@ const read = (p, what) => { try { return readFileSync(p, "utf8"); } catch (e) { 
 const prefsPath = join(repo, ".audit", `${args.slug}.preferences.md`);
 if (!existsSync(prefsPath)) die(`no preferences at ${prefsPath}`);
 const prefs = read(prefsPath, "preferences");
+
+function topClasses(text, n = 5) {
+  const seen = new Map(); // class -> { count, last, fix }
+  text.split("\n").forEach((line, i) => {
+    const m = line.match(/^- (.+?) \| (.+?) \| (.*)$/);
+    if (!m) return;
+    const name = m[1].replace(/\s*\([^()]*\)\s*$/, "").trim();
+    if (!name) return;
+    const row = seen.get(name) ?? { count: 0, last: -1, fix: null };
+    row.count += 1;
+    row.last = i;
+    const fix = m[3].trim();
+    if (fix && !fix.startsWith("?")) row.fix = fix;
+    seen.set(name, row);
+  });
+  return [...seen].sort((a, b) => b[1].count - a[1].count || b[1].last - a[1].last).slice(0, n);
+}
+const classesPath = join(repo, ".audit", `${args.slug}.classes.md`);
+const top = existsSync(classesPath) ? topClasses(read(classesPath, "class ledger")) : [];
+const classBlock = top.length
+  ? `\n\nREVIEW CLASSES (the chain's most frequent act-on review classes, from .audit/${args.slug}.classes.md; check your range for each before you report):\n${top.map(([name, r]) => `- ${name} (${r.count}x)${r.fix ? `: last closed by ${r.fix}` : ""}`).join("\n")}`
+  : "";
 
 const packPath = join(script, "..", "templates", "packet-rules.txt");
 if (!existsSync(packPath)) die(`no pack rules at ${packPath}`);
@@ -255,7 +283,7 @@ const body = sub(task);
 const archBlock = archRules === null
   ? "none in the project rules: the ARCHITECTURE block items in rule 6 are the checklist."
   : `the project's checklist, inlined here so no other file is needed for it; a file it names is background reading, not a precondition:\n${sub(archRules)}`;
-const out = `${body}\n\nARCHITECTURE RULES (binding): ${archBlock}\n\nSTANDING ORDERS (binding):\n${sub(prefs)}\n\nRULES:\n${sub(pack)}\n\nPROJECT RULES:\n${sub(projBody)}`;
+const out = `${body}\n\nARCHITECTURE RULES (binding): ${archBlock}\n\nSTANDING ORDERS (binding):\n${sub(prefs)}${classBlock}\n\nRULES:\n${sub(pack)}\n\nPROJECT RULES:\n${sub(projBody)}`;
 
 const left = [...out.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).filter((k) => k in vars);
 if (left.length) die(`unreplaced placeholder(s) in ${args.out}: ${[...new Set(left)].map((k) => `{${k}}`).join(", ")}`);

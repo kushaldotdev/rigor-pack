@@ -115,6 +115,35 @@ test("mkpacket: digits ref is a tracker ticket", () => {
   assert.match(r.stdout, new RegExp(`${out}: \\d+ task chars, \\d+ total chars`));
 });
 
+test("mkpacket: the class ledger's most frequent classes ride every packet, after the standing orders", () => {
+  const dir = repo();
+  assert.doesNotMatch(packet(dir).text, /REVIEW CLASSES/, "no ledger, no section");
+  writeFileSync(join(dir, ".audit", `${SLUG}.classes.md`), [
+    "# ledger", "", "## Lane A",
+    "- docs overstate a rule's reach | #1 T1 r1 | 3 sites narrowed",
+    "- frozen clock | #2 T2 r1 | real_asyncio at 12 sites",
+    "- docs overstate a rule's reach (repeat: parity) | #3 T3 r2 | ?",
+    "- frozen clock (repeat 2) | #2 T2 r3 | fail-closed guard",
+    "- docs overstate a rule's reach | #4 T1 r1 | ? (doc wording fix)",
+    "- a | #5 T1 r1 | fa", "- b | #5 T1 r1 | fb", "- c | #5 T1 r1 | fc", "- d | #5 T1 r1 | fd",
+    "not a ledger line | x | y", "",
+  ].join("\n"));
+  const { r, text } = packet(dir);
+  assert.equal(r.status, 0, r.stderr);
+  const block = text.match(/REVIEW CLASSES \([^\n]*\n((?:- [^\n]*\n?)+)/);
+  assert.ok(block, "a REVIEW CLASSES section");
+  assert.deepEqual(block[1].trim().split("\n"), [
+    "- docs overstate a rule's reach (3x): last closed by 3 sites narrowed",
+    "- frozen clock (2x): last closed by fail-closed guard",
+    "- d (1x): last closed by fd",
+    "- c (1x): last closed by fc",
+    "- b (1x): last closed by fb",
+  ], "top 5 by count, repeat notes folded, '?' fix shapes skipped, ties newest first");
+  assert.ok(text.indexOf("STANDING ORDERS") < text.indexOf("REVIEW CLASSES") && text.indexOf("REVIEW CLASSES") < text.indexOf("\n\nRULES:"));
+  writeFileSync(join(dir, ".audit", `${SLUG}.classes.md`), "# empty ledger\n");
+  assert.doesNotMatch(packet(dir).text, /REVIEW CLASSES/, "a ledger with no line adds nothing");
+});
+
 test("mkpacket: unit ref is a chain unit, no issue number", () => {
   const dir = repo();
   const { text } = packet(dir, ["--ref", "U2"]);
@@ -730,7 +759,7 @@ test("lens-brief: a later loop reviews only the delta, standards + spec plus the
   assert.match(notRequired.stderr, /--lenses names interrogate, which this packet does not require/);
 });
 
-test("lens-brief: a fix round is standards + spec on its delta, plus one probe on the finding class when the task gets a probe", () => {
+test("lens-brief: a fix round is one loop aimed at the class: standards + spec on its delta over the task range, plus one probe when the task gets a probe", () => {
   const dir = lensRepo();
   const hard = packet(dir, ["--ref", "364", "--band", "hard"]);
   const noClass = brief(dir, ["--packet", hard.out, "--fix-round", "--since", "t1"]);
@@ -740,16 +769,20 @@ test("lens-brief: a fix round is standards + spec on its delta, plus one probe o
   assert.equal(b.status, 0, b.stderr);
   const files = readOut(b);
   assert.deepEqual(files.map(([f]) => f), ["fix-round-standards-spec.txt", "fix-round-probe.txt"]);
-  assert.match(files[0][1], /^Lens: standards \+ spec\. Fix round after a review, delta review\. Read \S+code-review\.md in full first[\s\S]*review only t1\.\.HEAD/);
+  assert.match(files[0][1], /^Lens: standards \+ spec\. Fix round after a review, the round's one loop, delta review\. Read \S+code-review\.md in full first[\s\S]*review only t1\.\.HEAD/);
+  assert.match(files[0][1], /Aimed at the finding class\(es\) "unvalidated sort key", "mock leak": grep \S+\.\.HEAD in \S+ for every site or input shape of each/, "the class sweep covers the task range");
+  assert.doesNotMatch(files[0][1], /grep t1\.\.HEAD/, "the sweep starts at the task base, not the reviewed tip");
   const probe = files[1][1];
   assert.match(probe, /^Probe, fix round, once, targeted\. Lens: blast radius\. Lens: interrogate\. Read \S+blast-radius\.md and \S+interrogate\.md in full first, then attack only the finding class\(es\) "unvalidated sort key", "mock leak" at HEAD: the fix range t1\.\.HEAD/);
   for (const limit of [/15 minutes of attacks/, /at most 5 attacks/, /25 minutes wall time/]) assert.match(probe, limit);
   assert.match(probe, /tests in isolation, verbatim:\n## Tests in isolation\n\n- start a throwaway db with \.\/tdb\.sh/);
   const medium = packet(dir, ["--band", "medium"]);
-  assert.deepEqual(readOut(brief(dir, ["--packet", medium.out, "--fix-round", "--since", "t1"])).map(([f]) => f), ["fix-round-standards-spec.txt"]);
-  const stray = brief(dir, ["--packet", medium.out, "--fix-round", "--since", "t1", "--class", "x"]);
-  assert.equal(stray.status, 2);
-  assert.match(stray.stderr, /gets no probe, so --class has nothing to target/);
+  const mediumNoClass = brief(dir, ["--packet", medium.out, "--fix-round", "--since", "t1"]);
+  assert.equal(mediumNoClass.status, 2, "every fix round is aimed at a class, probe or not");
+  assert.match(mediumNoClass.stderr, /needs --class/);
+  const aimed = readOut(brief(dir, ["--packet", medium.out, "--fix-round", "--since", "t1", "--class", "x"]));
+  assert.deepEqual(aimed.map(([f]) => f), ["fix-round-standards-spec.txt"], "no probe on a medium task");
+  assert.match(aimed[0][1], /Aimed at the finding class\(es\) "x"/);
   const noProbe = brief(dir, ["--packet", medium.out, "--probe"]);
   assert.equal(noProbe.status, 2);
   assert.match(noProbe.stderr, /this task gets no probe/);
@@ -790,7 +823,7 @@ test("mkpacket: rule 6 names the brief, scaffold and check commands, and fills t
   assert.match(text, /standards \+ spec child may start as soon as the code is\s+committed/);
   assert.match(packet(withWorkflow(), ["--band", "easy"]).text, /run none \(this project names no lens check\)\./);
   assert.match(packet(lensRepo("- Lens check: `x --band {band}`\n")).text, /run none \(packet built without --band\)\./);
-  assert.match(text, /12\. FIX ROUND[\s\S]*?not\s+the whole of rule 6 again: standards \+ spec on the round's delta[\s\S]*?targeted on the finding's class/);
+  assert.match(text, /12\. FIX ROUND[\s\S]*?one loop aimed at the finding's class, not the whole of rule 6 again:\s+standards \+ spec on the round's delta[\s\S]*?no other lens runs again/);
 });
 
 test("self-review method: incremental loops, the coverage invariant, carried lens children and the fix-round delta", () => {
@@ -799,7 +832,8 @@ test("self-review method: incremental loops, the coverage invariant, carried len
   assert.match(method, /Loop 2 and later: only the fix commits since the previous loop[\s\S]*?standards \+ spec plus each lens that raised a finding those commits fix/);
   assert.match(method, /Coverage invariant: every line of the range is seen by every required lens once, and every line\s+changed afterwards is seen again/);
   assert.match(method, /The same child across loops:[\s\S]*?lens-child ceiling the project's workflow settings set\s+\(default ~150k tokens\)[\s\S]*?never the child that wrote the task's code/);
-  assert.match(method, /A FIX ROUND AFTER A REVIEW[\s\S]*?Not the whole method again[\s\S]*?one probe targeted on the\s+finding's class/);
+  assert.match(method, /A FIX ROUND AFTER A REVIEW[\s\S]*?One loop, aimed at the finding's class, not the whole method again[\s\S]*?everywhere in the task range[\s\S]*?No other lens runs again[\s\S]*?That is the round's only loop/);
+  assert.match(method, /Docs claims: every docs or docstring sentence the range adds or changes that states a rule's\s+reach, order or owner cites the code line or test that proves it[\s\S]*?Grep the repo for the claim's key wording/);
   assert.match(method, /Right after the loop-1 lens children are launched, run the project's lens check/);
   assert.match(method, /Report only on exit 0/);
   assert.match(method, /PROBE LIMITS/, "the probe limits stay");

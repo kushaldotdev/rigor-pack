@@ -3,7 +3,7 @@
 // child is ever briefed from the implementer's own summary of a lens (templates/self-review.txt).
 //   node lens-brief.mjs --packet <packet.md> --out-dir <dir> [--loop 1]
 //   node lens-brief.mjs --packet <packet.md> --out-dir <dir> --loop <n> --since <rev> [--lenses <a,b>]
-//   node lens-brief.mjs --packet <packet.md> --out-dir <dir> --fix-round --since <rev> [--class <text>]...
+//   node lens-brief.mjs --packet <packet.md> --out-dir <dir> --fix-round --since <rev> --class <text>...
 //   node lens-brief.mjs --packet <packet.md> --out-dir <dir> --probe
 // The packet is mkpacket.mjs output. Its rule 6 names the required lenses ("with these lenses: ...")
 // and carries one "- Lens: <name>. Read <body> in full first, ..." brief per lens and, when the task
@@ -13,10 +13,11 @@
 // previous loop) for standards + spec, always, plus each lens --lenses names (blast-radius,
 // interrogate: the lenses that raised a finding those commits fix). A lens the packet does not
 // require exits 2.
-// --fix-round with --since <rev> (the tip the review saw): a delta brief for standards + spec only,
-// plus, when the packet gives the task a probe, one probe brief targeted on the finding classes
-// --class names (one --class per class; at least one is required then). --class on a task with no
-// probe exits 2.
+// --fix-round with --since <rev> (the tip the review saw) and one --class per finding class (at
+// least one; without one it exits 2): the round's one loop, aimed at those classes. A delta brief
+// for standards + spec only, which also checks each class at every site in the task range (the
+// packet's base..HEAD), plus, when the packet gives the task a probe, one probe brief targeted on
+// the same classes.
 // --probe: the final loop's probe brief, the packet's own.
 // Every brief, delta or not, names its lens body by path, so a child's text always carries it. Each
 // file appends, verbatim from the packet: the task's ORACLE section; for standards + spec and the
@@ -107,14 +108,14 @@ if (args.probe) {
   if (!probeLine) die(`${args.packet}: this task gets no probe (rule 6 says why)`);
   out.push(["probe-probe", probeLine, ["oracle", "arch", "tests"]]);
 } else if (args["fix-round"]) {
-  out.push(["fix-round-standards-spec", deltaBrief("standards + spec", "Fix round after a review, delta review", "the commits answering the review's findings."), extras("standards + spec")]);
-  if (probeLine && !args.class.length) die(`${args.packet}: this task gets a probe, so a fix round needs --class <finding class> for its targeted probe`);
-  if (!probeLine && args.class.length) die(`${args.packet}: this task gets no probe, so --class has nothing to target`);
+  if (!args.class.length) die("--fix-round needs --class <finding class> (one per class): the round's one loop is aimed at them");
+  const classes = args.class.map((c) => `"${c}"`).join(", ");
+  const base = briefs[required[0]].match(/then review (\S+)\.\.HEAD in /)?.[1] ?? die(`${args.packet}: the lens brief names no task base`);
+  out.push(["fix-round-standards-spec", `${deltaBrief("standards + spec", "Fix round after a review, the round's one loop, delta review", "the commits answering the review's findings.")} Aimed at the finding class(es) ${classes}: grep ${base}..HEAD in ${wt} for every site or input shape of each, and report any site the round left unfixed, inside the task range and not only where the review pointed.`, extras("standards + spec")]);
   if (probeLine) {
     const heads = probeLine.match(/^Probe, final loop, once\. ((?:Lens: [^.]+\. )+)/)?.[1] ?? "";
     const reads = probeLine.match(/Read (.+?) in full first/)?.[1] ?? die(`${args.packet}: the probe brief names no body`);
     const limits = probeLine.match(/(Run every attack yourself[\s\S]*)$/)?.[1] ?? die(`${args.packet}: the probe brief has no limits`);
-    const classes = args.class.map((c) => `"${c}"`).join(", ");
     out.push(["fix-round-probe", `Probe, fix round, once, targeted. ${heads}Read ${reads} in full first, then attack only the finding class(es) ${classes} at HEAD: the fix range ${args.since}..HEAD in ${wt} and every site or input shape of each class the round lists in ${crFile}, in a throwaway copy under ${wt}/tmp/probe/; never edit ${wt}. ${limits}`, ["oracle", "arch", "tests"]]);
   }
 } else if (loop === 1) {
