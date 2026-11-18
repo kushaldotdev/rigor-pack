@@ -14,10 +14,11 @@ LOOPS, AND WHAT EACH ONE SEES
 - The loops end when a loop's act-on list is empty and no commit landed after its range (a test
   fix made while the early standards + spec child ran is such a commit: the next loop's delta).
   Then comes the probe, if the task gets one.
-- Loop cap: at most the loop cap the project's workflow settings set (default 3) per attempt,
-  loop 1 included. A loop at the cap whose act-on list is not empty ends the loops anyway: fix
-  what is quick in that loop's delta without a further lens loop, run the probe if due, and list
-  every finding still unfixed under `## Open at cap` in the self-review file, each with its
+- Loop cap: at most the loop cap the project's workflow settings set per band (pack default: easy and
+  medium 1 loop, hard and critical 3) per attempt, loop 1 included. External review is the second
+  pass, not another lens loop. A loop at the cap whose act-on list is not empty ends the loops
+  anyway: fix what is quick in that loop's delta without a further lens loop, run the probe if due,
+  and list every finding still unfixed under `## Open at cap` in the self-review file, each with its
   class, file:line and why it is open. The delegator rules each one in its own review; a report
   with that section is not a missing self-review.
 - Log every loop in the file's Loops section: range, lenses, act-on count.
@@ -63,10 +64,19 @@ YOUR OWN RUNS, EVERY LOOP (paste each command and its output in the file)
 - Tests together: run every test file the range adds or touches in ONE test-runner call, as well
   as one by one. A test that passes alone and fails beside the others leaks state (a mock, patch,
   cache or fixture that outlives its test): a finding.
+- Mutants, at every band: one deliberate mutant per rule the task moves or adds and per ORACLE
+  row (a refactor task: one per moved guard). Record each as a row of a `## Mutants` table in this
+  file: `rule/row | mutant | test that killed it | killed?`. A survivor is a finding: either a test
+  that misses the edge, fixed here, or a ruled equivalence with its reason in the cell.
+  `review-file.mjs` fails the file without the table, and fails a survivor with no reason.
+- Out-of-fence pre-run: run the project's pre-run command (packet rule 8) over the tests outside
+  your fence that name a changed public symbol **and** those that mock or patch a module you
+  changed, whether or not they name a changed symbol. Paste its output and each failing file.
 - Docs claims: every docs or docstring sentence the range adds or changes that states a rule's
   reach, order or owner cites the code line or test that proves it; one with no proof is a
   finding. Grep the repo for the claim's key wording and paste the grep: each other restatement
-  it finds is checked the same way.
+  it finds is checked the same way. When the packet names a Docs-claim command, run it and paste
+  its output with exit 0: `review-file.mjs` checks that it is there.
 
 PROBE LIMITS (the probe brief repeats them; a probe over them is stopped and reported as partial)
 - Time box: 15 minutes of attacks. Report what ran by then; list the rest as "not run".
@@ -109,7 +119,10 @@ WHAT COUNTS AS A FINDING
 A FIX ROUND AFTER A REVIEW (packet rule 12: L0's review, or any re-brief with findings)
 - One loop, aimed at the finding's class, not the whole method again. First fix the class
   everywhere in the task range (task base..HEAD), not only where the reviewer pointed: list every
-  site or input shape from a grep or a run. Then run the check commands and the targeted tests.
+  site or input shape from a grep or a run. That grep covers every reader of the value, type,
+  default or rule the finding moves, in whatever module it lives (callers, field readers, UI
+  consumers, serializers), each hit pinned by a test or ruled out in one line. Then run the check
+  commands, the mutants for the changed rules and the targeted tests.
 - Then one standards + spec child on the round's delta, from `lens-brief.mjs --fix-round --since
   <the tip the review saw> --class <class>` (one --class per finding class): it checks each class
   is fixed at every site in the task range. When the packet gives this task a probe, one probe
@@ -123,5 +136,8 @@ A FIX ROUND AFTER A REVIEW (packet rule 12: L0's review, or any re-brief with fi
 THE FILE
 - One section per lens; no lens ranks another. Per finding: class, proof (command and output, or
   for a refactor the cited lines and named tests), and fixed / deferred / rejected with the reason.
+- A `## Mutants` table at every band: `rule/row | mutant | test that killed it | killed?`, one row
+  per rule the task moves or adds and per ORACLE row (a refactor task: one per moved guard).
+- When the packet names a Docs-claim command, its output pasted with exit 0.
 - The standards + spec section ends with the ARCHITECTURE block packet rule 6 lays out, with no
   heading naming a lens or the probe before it inside that section.

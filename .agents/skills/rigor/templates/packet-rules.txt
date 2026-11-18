@@ -11,19 +11,20 @@
    your work. Mock only true I/O borders.
 4. TRADE-OFFS: name every behaviour change beyond the fix, even ones you think are fine. A result
    that differs from an ORACLE row is not a trade-off: stop and report it (rule 10).
-5. {delegate} NEVER end your turn while a child runs (a worker, a
+5. {delegate} Ask L0 rather than guess: the ADAPTER question call in this packet's PROJECT RULES
+   hands a question to L0's agent ({l0}), which keeps working on what the question does not block;
+   with no such call, ask at the report.
+   NEVER end your turn while a child runs (a worker, a
    lens reviewer, the probe): ending it is your report. Wait in slices of 10 minutes or less,
-   never an unbounded wait. After each slice handle what finished; on a timeout check each running
-   child once, nudge or interrupt one whose output has not moved, append a progress-log line, wait
-   again. A child with children of its own waits the same way. Report only when every child has
-   finished.
+   never an unbounded wait. After each slice handle what finished; on a timeout check each
+   running child once, nudge or interrupt one whose output has not moved, append a progress-log
+   line, wait again. A child with children of its own waits the same way.
+   Report only when every child has finished.
 6. SELF-REVIEW before the report, by the method in
    {rigor}/templates/self-review.txt (read it first), over task
    base..last commit AND every deliverable file the task names, committed or not, with these
    lenses: {lenses}. Before the first loop you yourself read each lens body in full: a child's
-   read is not yours, and L0 checks your own session for it. Loop 1 runs every lens over the
-   whole range; each later loop reviews only the fix commits since the previous loop, with
-   standards + spec plus each lens whose finding those commits fix. Every lens is a read-only
+   read is not yours, and L0 checks your own session for it. {loop} Every lens is a read-only
    child started with the file this command writes for it, verbatim (its brief below, plus the
    task's ORACLE and, for standards + spec, this packet's ARCHITECTURE RULES section):
      node {rigor}/scripts/lens-brief.mjs --packet {packet} --out-dir {briefs}
@@ -49,8 +50,9 @@
      - Single-implementation seams: <an interface, registry or option with one implementation, or none>
      - ADRs: <each ADR for the area, kept or contradicted, or none apply>
      - Lint/contract output: <the import-contract or lint command and its result line>
-   Fix every act-on finding and list fixed / deferred / rejected with reasons. Before you report,
-   run `node {rigor}/scripts/review-file.mjs --packet {packet} {cr}` and report
+   Fix every act-on finding and list fixed / deferred / rejected with reasons. Mutants: {mutants}.
+   Before you report, run
+   `node {rigor}/scripts/review-file.mjs --packet {packet} {cr}` and report
    only when it exits 0. L0 checks that file has every lens above and the ARCHITECTURE block,
    reruns the lens check, and counts your child calls before accepting.
 7. COMMITS on {branch} only, as often as useful: {commit_subject}, with a hyphen-bullet body
@@ -64,7 +66,10 @@
    changed (grep for it; a changed signature breaks callers outside your fence). Run the full
    suite only when the TASK line says so, once, on a commit whose self-review act-on list is
    empty, never on a commit you already know you will change. Commit the doc half in the same
-   range.
+   range. Before you report, run the out-of-fence pre-run over the tests outside your fence: every
+   one that names a changed public symbol, and every one that mocks or patches a module you
+   changed, whether or not it names a changed symbol (a `vi.mock("<module>")` or `patch("app.<module>")`
+   names only the module). The command is {pre_run}; paste its output and each failing file.
 9. PROGRESS LOG: append `HH:MM UTC | step | next | blocker or none` (date -u) to
    {wt}/tmp/l1-progress.log every 15 minutes and after every step. Wrap anything that can run over
    10 minutes in `timeout`. If the same step shows on 3 lines in a row, stop and report.
@@ -86,4 +91,9 @@
    review-file.mjs before you report.
 13. GUARD REACH: what a guard (scan, validator, lint, check) catches is stated once, in its own
    docstring, generated from its constants or pinned by a test against them. Other docs and
-   comments cite that docstring and never restate or widen its reach.
+   comments cite that docstring and never restate or widen its reach. A universal word in a docs,
+   docstring or comment line you add or change (every, only, always, never, one place, sole) is a
+   claim about the whole repo: paste the grep behind it. Docs-claim command: {docs_claim}.
+14. PROOF, NOT CONFIDENCE: a statement about the code in a packet or a plan ("X keeps its
+   contract", "Y already locks first", "only Z reads it") is a claim to check, never a fact. Run the
+   grep or the test that settles it before you build on it, and report it if it is wrong.

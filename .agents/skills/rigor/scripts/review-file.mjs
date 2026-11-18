@@ -3,11 +3,12 @@
 //   node review-file.mjs --packet <packet.md> <cr-file.md>
 //   node review-file.mjs --packet <packet.md> --init <cr-file.md>
 // --init writes the file's skeleton, so its shape is right by construction: a Loops section (one
-// line per loop: range, lenses, act-on count), an Own runs section, one "## " heading per required
-// lens in the packet's order with the ARCHITECTURE block (its items copied from the packet's rule 6,
-// "<...>" placeholders and all) at the end of the standards + spec section, and a probe heading when
-// the packet asks for one. The placeholders fail the check until they are filled. It refuses to
-// overwrite a file (exit 2) and prints the path it wrote.
+// line per loop: range, lenses, act-on count), an Own runs section, a "## Mutants" table with its
+// columns, one "## " heading per required lens in the packet's order with the ARCHITECTURE block
+// (its items copied from the packet's rule 6, "<...>" placeholders and all) at the end of the
+// standards + spec section, and a probe heading when the packet asks for one. The placeholders fail
+// the check until they are filled. It refuses to overwrite a file (exit 2) and prints the path it
+// wrote.
 // The packet (mkpacket.mjs output) names the required lenses in rule 6 ("with these lenses: ...")
 // and carries a "- Probe, final loop, once." brief when the task gets a probe. The self-review file
 // must hold one markdown heading per required lens (its name anywhere in the heading text), a
@@ -15,10 +16,19 @@
 // before the next lens heading, a line starting "ARCHITECTURE" followed by the six items packet rule
 // 6 lays out, each as "- <item>: <text>" with no "<...>" placeholder left.
 // Prints one line per check: "lens <name> section:<yes|no>", "probe required:<yes|no>
-// section:<yes|no|n/a>", "architecture block:<yes|no> missing:<items or none>". A failing block line
-// adds what ended the standards section: `cut by:"<heading>" (line <n>)` or `cut by:end of file`,
-// plus `ARCHITECTURE at line <n> falls outside` when the label sits past the cut. Exits 0 when every
+// section:<yes|no|n/a>", "architecture block:<yes|no> missing:<items or none>", "mutants
+// required:<yes|no> table:<yes|no|n/a> rows:<n>", "docs-claim required:<yes|no> output:<yes|no|n/a>". A failing block line adds what
+// ended the standards section: `cut by:"<heading>" (line <n>)` or `cut by:end of file`, plus
+// `ARCHITECTURE at line <n> falls outside` when the label sits past the cut. Exits 0 when every
 // check passes, 1 when one does not, 2 on misuse.
+// The Mutants check reads the packet's rule 6 line "Mutants: required, ..." (the mkpacket.mjs build
+// writes it for every behaviour task, at every band, and one per moved guard for a refactor task):
+// the file then needs a "## Mutants" heading with at least one table row, and a row whose killed
+// cell says no (none, no, survived, alive, equivalent) needs a note in that cell, a living mutant or
+// a ruled equivalence with its reason. "Mutants: none" needs no table.
+// The docs-claim check reads the packet's rule 13 "Docs-claim command: `...`": when the packet names
+// one, the file needs its output pasted, and that output must show exit 0, either a line reading
+// "exit 0" or the run's own "exit=0" / "exit code 0". A packet with no command skips the check.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 
@@ -42,6 +52,11 @@ const lenses = [...listed[1].matchAll(/(standards \+ spec|blast radius|interroga
 const probe = /^\s*- Probe, final loop, once\./m.test(packet);
 const LABEL = /^\s*(?:#+\s*)?(?:\*\*)?ARCHITECTURE\b/;
 const ITEMS = ["Deletion test", "Duplicated owners", "Shims left", "Single-implementation seams", "ADRs", "Lint/contract output"];
+const ROW = "rule/row | mutant | test that killed it | killed?";
+
+const mutantsLine = packet.match(/Mutants: ([^\n]*)$/m)?.[1].trim() ?? null;
+const mutantsRequired = !!mutantsLine && !/^none\b/i.test(mutantsLine);
+const docsClaim = packet.match(/Docs-claim command: `([^`]+)`/m)?.[1] ?? null;
 
 // The packet's ARCHITECTURE block lines, as rule 6 lays them out; the fixed items if it has none.
 function archBlock() {
@@ -55,6 +70,8 @@ if (init) {
   const parts = ["# Self-review", "", `Packet: ${packetPath}`, "", "## Loops", "",
     "- Loop 1: <task base>..<last commit>, lenses: all, act-on: <n>", "", "## Own runs", "",
     "<deleted-name greps and the touched tests run together, each command with its output, per loop>", ""];
+  if (docsClaim) parts.push("## Docs claim", "", `\`${docsClaim}\` and its output, exit 0`, "");
+  if (mutantsRequired) parts.push("## Mutants", "", `| ${ROW} |`, "|---|---|---|---|", "| <rule or ORACLE row> | <the mutant> | <the test> | yes |", "");
   for (const lens of lenses) {
     parts.push(`## ${HEADINGS[lens]}`, "", "<per finding: class, proof, fixed / deferred / rejected with the reason; or none>", "");
     if (lens === "standards + spec") parts.push("ARCHITECTURE", ...archBlock(), "");
@@ -100,4 +117,28 @@ if (std) {
   }
 }
 say(`architecture block:${missing.length ? "no" : "yes"} missing:${missing.length ? missing.join(", ") + cut : "none"}`, !missing.length);
+
+// The mutant table: one row per moved or new rule and per ORACLE row (or per moved guard).
+function mutants() {
+  if (!mutantsRequired) return ["mutants required:no table:n/a rows:0", true];
+  const h = headings.find((x) => /^\s*mutants\b/i.test(x.text));
+  if (!h) return ["mutants required:yes table:no rows:0", false];
+  const next = headings.find((x) => x.i > h.i);
+  const span = lines.slice(h.i + 1, next ? next.i : lines.length);
+  const rows = span.filter((l) => /^\s*\|/.test(l) && !/^\s*\|[-: |]+\|\s*$/.test(l) && !/rule\/row/i.test(l));
+  const cells = (l) => l.replace(/^\s*\|/, "").replace(/\|\s*$/, "").split("|").map((c) => c.trim());
+  const survivors = rows.filter((l) => /^(no|none|survived|alive|equivalent)\b/i.test(cells(l)[3] ?? ""));
+  // A survivor is a living mutant or a ruled equivalence and needs its reason on the row, after the word.
+  const bare = survivors.filter((l) => !/^(no|none|survived|alive|equivalent)\b[\s,;:–—-]+\S/i.test(cells(l)[3] ?? ""));
+  const empty = rows.filter((l) => !(cells(l)[3] ?? ""));
+  const bad = rows.length === 0 || bare.length > 0 || empty.length > 0;
+  const why = rows.length === 0 ? " table:empty" : bare.length ? ` survivor-with-no-reason:${bare.length}` : empty.length ? ` killed-cell-empty:${empty.length}` : "";
+  return [`mutants required:yes table:${rows.length ? "yes" : "no"} rows:${rows.length}${survivors.length ? ` survivors:${survivors.length}` : ""}${why}`, !bad];
+}
+const [mutantLine, mutantOk] = mutants();
+say(mutantLine, mutantOk);
+
+// The docs-claim command's output, pasted with exit 0.
+const ran = !docsClaim || (lines.some((l) => l.includes(docsClaim)) && lines.some((l) => /\bexit(?:=|\s+code\s+|\s+)(?:is\s+)?0\b/i.test(l)));
+say(`docs-claim required:${docsClaim ? "yes" : "no"} output:${docsClaim ? (ran ? "yes" : "no") : "n/a"}`, ran);
 process.exit(ok ? 0 : 1);

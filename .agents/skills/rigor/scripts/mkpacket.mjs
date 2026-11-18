@@ -2,8 +2,8 @@
 // Build an implementer packet: task text + chain preferences + pack rules + project rules.
 //   node mkpacket.mjs --slug S --wt W --base B --branch BR --task FILE --out FILE
 //                     [--ref R] [--task-id T] [--band B] [--kind K] [--deliverables A,B]
-//                     [--change behaviour|refactor] [--role implementer|takeover]
-//                     [--project-rules FILE] [--repo DIR]
+//                     [--change behaviour|refactor] [--role implementer|takeover|rung1]
+//                     [--l0-id ID] [--project-rules FILE] [--repo DIR]
 // --repo (default cwd) supplies .audit/<slug>.preferences.md (required),
 // docs/agents/packet-rules.md (used when --project-rules is absent) and
 // docs/agents/workflow.md (read for the "Self-review lenses" line when --band is given).
@@ -63,7 +63,19 @@
 // and the newest fix shape, most frequent first (ties: the newer class first). A ledger line reads
 // "- <class> | <ticket> <task> r<round> | <fix shape>"; a trailing "(...)" on the class (a repeat
 // note) is dropped before counting, and a fix shape of "?" does not count as the newest. Other lines
-// are ignored. No ledger, or no line in it, adds no section.
+// are ignored. No ledger, or no line in it, adds no section. Class names are normalised before
+// counting (case, spacing and punctuation folded), so "Docs over-claim" and "docs  overclaim." are one
+// class, and a ticket+class pair counts once: three rounds of it in one ticket are one line of
+// evidence. An alias file .audit/<slug>.class-aliases next to the ledger, one "alias => canonical"
+// line per alias (same normalisation on both sides), folds names a human reads as one class.
+// A "last closed by" value that names a ruling rather than a fix (it reads "ruling", "ruled" or
+// "scope ruling") does not count as the newest fix shape: a ledger line records a fix.
+// <l0-id> (default $PASEO_AGENT_ID at build time) is the L0 agent id the L1 can question; rule 5
+// gets it with the adapter's question call, and without one it says to ask at the report instead.
+// <role> rung1 builds a fresh implementer's rung-1 packet (CHAIN.md step 4.4) instead of a full build
+// packet: the structural brief the task file carries, the mutant table, and one self-review loop
+// aimed at the repeated class. Rule 6's briefs are then that one loop's: a single standards + spec
+// child over the task range with the class sweep, plus the targeted probe when the task gets one.
 // The task file must carry an ORACLE section (a line starting "ORACLE", optionally a markdown
 // heading): what right looks like, as CHAIN.md -> The implementer packet says. Without one the
 // build exits 2: an implementer with no oracle optimises the rules it can check.
@@ -99,26 +111,58 @@ const prefsPath = join(repo, ".audit", `${args.slug}.preferences.md`);
 if (!existsSync(prefsPath)) die(`no preferences at ${prefsPath}`);
 const prefs = read(prefsPath, "preferences");
 
-function topClasses(text, n = 5) {
-  const seen = new Map(); // class -> { count, last, fix }
+// One class name: case, spacing and punctuation folded, so two spellings of one class count once.
+const normClass = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
+// "alias => canonical" lines beside the ledger, read before counting.
+function classAliases(slug) {
+  const p = join(repo, ".audit", `${slug}.class-aliases`);
+  const map = new Map();
+  if (!existsSync(p)) return map;
+  for (const line of read(p, "class aliases").split("\n")) {
+    const m = line.match(/^\s*([^=#][^=]*?)\s*=>\s*([^=]+?)\s*$/);
+    if (!m) continue;
+    const from = normClass(m[1]);
+    const to = m[2].trim();
+    if (from && to) map.set(from, to);
+  }
+  return map;
+}
+
+// A fix shape, or null when the cell has none yet ("?") or names a ruling, not a fix.
+function fixShape(cell) {
+  const fix = cell.trim();
+  if (!fix || fix.startsWith("?")) return null;
+  if (/^\W*(?:the\s+)?(?:scope\s+)?rul(?:e|ed|ing)\b/i.test(fix)) return null;
+  return fix;
+}
+
+function topClasses(text, n = 5, aliases = new Map()) {
+  const seen = new Map(); // canonical class -> { count, last, fix }
+  const counted = new Set(); // "ticket::class", so a class counts once per ticket
   text.split("\n").forEach((line, i) => {
     const m = line.match(/^- (.+?) \| (.+?) \| (.*)$/);
     if (!m) return;
-    const name = m[1].replace(/\s*\([^()]*\)\s*$/, "").trim();
-    if (!name) return;
-    const row = seen.get(name) ?? { count: 0, last: -1, fix: null };
-    row.count += 1;
+    const raw = m[1].replace(/\s*\([^()]*\)\s*$/, "").trim();
+    if (!raw) return;
+    const key = normClass(raw);
+    const alias = aliases.get(key);
+    const canon = normClass(alias ?? raw);
+    const ticket = m[2].trim().split(/\s+/)[0]; // one line of evidence per ticket and class
+    const row = seen.get(canon) ?? { count: 0, last: -1, fix: null, name: alias ?? raw };
+    if (alias) row.name = alias; // the alias file's spelling is the canonical one
+    if (!counted.has(`${ticket}::${canon}`)) { row.count += 1; counted.add(`${ticket}::${canon}`); }
     row.last = i;
-    const fix = m[3].trim();
-    if (fix && !fix.startsWith("?")) row.fix = fix;
-    seen.set(name, row);
+    const fix = fixShape(m[3]);
+    if (fix) row.fix = fix;
+    seen.set(canon, row);
   });
   return [...seen].sort((a, b) => b[1].count - a[1].count || b[1].last - a[1].last).slice(0, n);
 }
 const classesPath = join(repo, ".audit", `${args.slug}.classes.md`);
-const top = existsSync(classesPath) ? topClasses(read(classesPath, "class ledger")) : [];
+const top = existsSync(classesPath) ? topClasses(read(classesPath, "class ledger"), 5, classAliases(args.slug)) : [];
 const classBlock = top.length
-  ? `\n\nREVIEW CLASSES (the chain's most frequent act-on review classes, from .audit/${args.slug}.classes.md; check your range for each before you report):\n${top.map(([name, r]) => `- ${name} (${r.count}x)${r.fix ? `: last closed by ${r.fix}` : ""}`).join("\n")}`
+  ? `\n\nREVIEW CLASSES (the chain's most frequent act-on review classes, from .audit/${args.slug}.classes.md; check your range for each before you report):\n${top.map(([, r]) => `- ${r.name} (${r.count}x)${r.fix ? `: last closed by ${r.fix}` : ""}`).join("\n")}`
   : "";
 
 const packPath = join(script, "..", "templates", "packet-rules.txt");
@@ -153,6 +197,7 @@ if (!KINDS.includes(kind)) die(`--kind must be one of ${KINDS.join(", ")}: ${kin
 const change = args.change ?? "behaviour";
 if (!CHANGES.includes(change)) die(`--change must be one of ${CHANGES.join(", ")}: ${change}`);
 const TOP = ["hard", "critical"];
+const rung1 = args.role === "rung1";
 const ROLES = {
   implementer: `DELEGATE by size. The TASK line says "small change: you edit" or "delegate". Small change:
    edit it yourself, no worker. Delegate: if your harness has child agents, a worker writes the red
@@ -164,9 +209,24 @@ const ROLES = {
    and the failure pattern. Do the work yourself, with no worker or scout; your self-review (rule 6)
    still starts its children. Load your harness's subagent policy first, if the PROJECT RULES name
    one.`,
+  rung1: `RUNG 1: this task's class came back after an earlier round fixed it, so this is not a fresh
+   build. The TASK block carries the structural brief (the scope ruling, the ORACLE crossed in full
+   and the mutant table) and this packet's self-review is that round's one loop, aimed at the
+   repeated class, not a full build review. Do the code yourself, with no worker or scout; your
+   self-review (rule 6) still starts its child. Load your harness's subagent policy first, if the
+   PROJECT RULES name one.`,
 };
 const role = args.role ?? "implementer";
 if (!(role in ROLES)) die(`--role must be one of ${Object.keys(ROLES).join(", ")}: ${role}`);
+
+// L0's agent id, so an L1 can ask it a question through the adapter (or at its report).
+const l0Id = args["l0-id"] ?? process.env.PASEO_AGENT_ID ?? "";
+if (l0Id && !/^[A-Za-z0-9][A-Za-z0-9._:-]*$/.test(l0Id)) die(`--l0-id must be an agent id: ${l0Id}`);
+// A rung-1 packet is one class-aimed loop, so the mutant table and the structural brief it carries
+// are the task file's own; a build packet names the full lens set.
+if (rung1 && !/^##\s*Mutants\b/m.test(task) && !/^\s*(?:\*\*)?MUTANT TABLE\b/m.test(task)) {
+  die(`${args.task}: a rung-1 packet needs the structural brief's mutant table (a "## Mutants" section): CHAIN.md step 4.4`);
+}
 
 // The task's ARCHITECTURE section: from its label line to the next heading or capitalised label.
 function architectureOf(text) {
@@ -209,6 +269,19 @@ function lensesFor(band) {
   return chosen;
 }
 // The project's lens check, from workflow.md's "Lens check" line, filled for this build.
+function wfLine(name) {
+  const wfPath = join(repo, "docs", "agents", "workflow.md");
+  if (!existsSync(wfPath)) return null;
+  const line = read(wfPath, "workflow").split("\n").find((l) => new RegExp(`^\\s*-\\s*${name}:`).test(l));
+  return line ? line.replace(new RegExp(`^\\s*-\\s*${name}:`), "").trim() : null;
+}
+// A command setting: its first backticked span, or null when the line is absent, empty or "none".
+function wfCommand(name) {
+  const rest = wfLine(name);
+  if (!rest) return null;
+  const cmd = (rest.match(/`([^`]+)`/)?.[1] ?? rest.replace(/<!--.*?-->/g, "")).trim();
+  return !cmd || /^none\b/i.test(cmd) ? null : cmd;
+}
 function lensCheck() {
   const why = "none (this project names no lens check)";
   if (band === undefined) return "none (packet built without --band)";
@@ -219,13 +292,14 @@ function lensCheck() {
   const fill = { band, kind, wt: args.wt, repo };
   return `\`${cmd.replace(/\{(band|kind|wt|repo)\}/g, (_, k) => fill[k])}\``;
 }
-const lenses = lensesFor(band);
-if (kind === "assessment") lenses.add("interrogate");
+const lenses = rung1 ? new Set(["standards+spec"]) : lensesFor(band);
+if (kind === "assessment" && !rung1) lenses.add("interrogate");
 const required = Object.keys(LENSES).filter((k) => lenses.has(k));
 const deliverables = (args.deliverables ?? "").split(",").map((d) => d.trim()).filter(Boolean).join(", ") || "none";
 const PROBE = new Set(["blast-radius", "interrogate"]); // lenses the final-loop probe runs
-const probed = required.filter((k) => PROBE.has(k));
-const probeNone = !probed.length ? "none: no lens this task requires runs as a probe"
+// A rung-1 packet's probe is aimed at the repeated class, so it does not depend on a band lens.
+const probed = rung1 ? [] : required.filter((k) => PROBE.has(k));
+const probeNone = !probed.length ? (rung1 ? "none: this rung-1 packet's loop is the class-aimed one" : "none: no lens this task requires runs as a probe")
   : !TOP.includes(band) ? `none: ${band === undefined ? "a band-less" : band === "easy" ? "an easy" : `a ${band}`} task keeps read-only lenses on every loop`
   : change === "refactor" ? "none: a refactor that keeps behaviour keeps read-only lenses on every loop"
   : null;
@@ -238,6 +312,18 @@ const archRaw = proj.match(ARCH)?.[1].trim() ?? null;
 const archRules = archRaw === null ? null : expand(archRaw);
 const projBody = archRules === null ? proj : proj.replace(ARCH, "## Architecture rules\n\nInlined above as ARCHITECTURE RULES.\n\n");
 
+const rung1Loop = "Loop 1 is this packet's one loop: standards + spec over the whole task range, aimed at the repeated class named in the TASK block's structural brief, sweeping the range for every site or input shape of it. No other lens runs, and there is no second loop: fix what it finds in the same round or list it under `## Open at cap`.";
+// Whether the mutant table is due, and what it covers (CHAIN.md step 4.4, self-review method).
+const oracleSection = task.match(/^\s*(?:#+\s*)?(?:\*\*)?ORACLE\b[^\n]*/m)?.[0] ?? "";
+const mutants = /^\s*(?:#+\s*)?(?:\*\*)?ORACLE(?:\*\*)?\s*:?\s*none\b/i.test(oracleSection) && change !== "refactor"
+  ? "none (the task's ORACLE is none: no rule and no ORACLE row to mutate)"
+  : change === "refactor"
+    ? "required, one per moved guard (a refactor task): a `## Mutants` table in the self-review file, one row per guard whose condition or branch moves"
+    : "required, one per moved or new rule and one per ORACLE row (a behaviour task, at every band): a `## Mutants` table in the self-review file";
+// A command setting may name this build's worktree or repo; the packet fills both.
+const fillCmd = (cmd) => cmd === null ? null : cmd.replace(/\{(wt|repo|band|kind)\}/g, (_, k) => ({ wt: args.wt, repo, band: args.band ?? "", kind: args.kind ?? "code" })[k]);
+const preRun = fillCmd(wfCommand("Pre-run command"));
+const docsClaim = fillCmd(wfCommand("Docs-claim command"));
 const slug = args.slug;
 const vars = {
   wt: args.wt,
@@ -250,15 +336,26 @@ const vars = {
   commit_subject: "",
   commit_trailer: "",
   delegate: ROLES[role],
+  l0: l0Id || "none: this packet was built without L0's agent id, so ask at the report",
   packet: resolve(args.out),
   rigor: resolve(script, ".."), // the rigor skill this packet was built from, so an older worktree's copy is never used
   lens_check: lensCheck(),
   lenses: required.map((k) => LENSES[k]).join("; "),
+  loop: rung1 ? rung1Loop : "Loop 1 runs every lens over the whole range; each later loop reviews only the fix commits since the previous loop.",
+  mutants: rung1
+    ? `one per row of the mutant table in the TASK block's structural brief; a survivor is a finding of this round (${mutants})`
+    : mutants,
+  pre_run: preRun
+    ? `\`${preRun}\` (workflow.md → Pre-run command)`
+    : "none (workflow.md names no Pre-run command)",
+  docs_claim: docsClaim ? `\`${docsClaim}\`` : "none (workflow.md names no Docs-claim command)",
   lens_briefs: required.map((k) => {
     const [name, body] = BODIES[k];
     return `   - Lens: ${name}. Read ${args.wt}/.agents/skills/code-review/references/${body} in full first, then review ${args.base}..HEAD in ${args.wt} and every deliverable the task names: ${deliverables}. Read-only: edit nothing, run nothing that writes.`;
   }).join("\n"),
-  probe: probeNone ?? `one probe child, once, on the final loop only (the read-only lenses came back with an empty act-on list), started with the file lens-brief.mjs --probe writes (this brief verbatim plus the ORACLE, the ARCHITECTURE RULES and the PROJECT RULES on tests in isolation):
+  probe: rung1
+    ? `one probe child on this round's delta, targeted on the repeated class: start it with the file lens-brief.mjs --fix-round writes (one --class per class the TASK block names), within the probe limits in templates/self-review.txt.`
+    : probeNone ?? `one probe child, once, on the final loop only (the read-only lenses came back with an empty act-on list), started with the file lens-brief.mjs --probe writes (this brief verbatim plus the ORACLE, the ARCHITECTURE RULES and the PROJECT RULES on tests in isolation):
    - Probe, final loop, once. ${probed.map((k) => `Lens: ${BODIES[k][0]}.`).join(" ")} Read ${probed.map((k) => `${args.wt}/.agents/skills/code-review/references/${BODIES[k][1]}`).join(" and ")} in full first, then attack HEAD (range ${args.base}..HEAD, deliverables: ${deliverables}) in a throwaway copy under ${args.wt}/tmp/probe/; never edit ${args.wt}. Run every attack yourself and report each finding with its command and output; a finding with no run is "unproven". Limits: 15 minutes of attacks; at most 5 attacks, picked from the ORACLE rows by risk; a mutant table only if the ORACLE asks for one; targeted test files by path only, never the whole suite or a runner call without a test path; foreground commands under \`timeout\`, no \`sleep\` polling; one container pair, removed before you report. Budget: 25 minutes wall time in all; past 20 minutes, stop and report what ran, listing the rest as "not run". Never ask to be resumed.`,
 };
 if (ref && /^\d+$/.test(ref)) { // tracker issue

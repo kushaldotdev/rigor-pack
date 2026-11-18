@@ -123,7 +123,7 @@ test("mkpacket: the class ledger's most frequent classes ride every packet, afte
     "- docs overstate a rule's reach | #1 T1 r1 | 3 sites narrowed",
     "- frozen clock | #2 T2 r1 | real_asyncio at 12 sites",
     "- docs overstate a rule's reach (repeat: parity) | #3 T3 r2 | ?",
-    "- frozen clock (repeat 2) | #2 T2 r3 | fail-closed guard",
+    "- frozen clock (repeat 2) | #6 T2 r3 | fail-closed guard",
     "- docs overstate a rule's reach | #4 T1 r1 | ? (doc wording fix)",
     "- a | #5 T1 r1 | fa", "- b | #5 T1 r1 | fb", "- c | #5 T1 r1 | fc", "- d | #5 T1 r1 | fd",
     "not a ledger line | x | y", "",
@@ -138,7 +138,21 @@ test("mkpacket: the class ledger's most frequent classes ride every packet, afte
     "- d (1x): last closed by fd",
     "- c (1x): last closed by fc",
     "- b (1x): last closed by fb",
-  ], "top 5 by count, repeat notes folded, '?' fix shapes skipped, ties newest first");
+  ], "top 5 by count, repeat notes folded, '?' fix shapes skipped, ties newest first, a class counted once per ticket");
+
+  // Normalisation and alias folding happen before counting, so one class spelled three ways is one row.
+  writeFileSync(join(dir, ".audit", `${SLUG}.classes.md`), [
+    "- Docs over-claim | #1 T1 r1 | ?",
+    "- docs  overclaim. | #2 T1 r1 | grep each universal word",
+    "- docs overclaim | #3 T1 r1 | ? ruling: out of scope",
+    "- Frozen clock | #4 T1 r1 | real_asyncio",
+  ].join("\n"));
+  writeFileSync(join(dir, ".audit", `${SLUG}.class-aliases`), "# aliases\nfrozen clock => time source faked\ndocs overclaim => docs over-claim\n");
+  const norm = packet(dir).text.match(/REVIEW CLASSES \([^\n]*\n((?:- [^\n]*\n?)+)/)[1].trim().split("\n");
+  assert.deepEqual(norm, [
+    "- docs over-claim (3x): last closed by grep each universal word",
+    "- time source faked (1x): last closed by real_asyncio",
+  ], "case, spacing and punctuation folded, the alias file applied, a ruling never the last fix");
   assert.ok(text.indexOf("STANDING ORDERS") < text.indexOf("REVIEW CLASSES") && text.indexOf("REVIEW CLASSES") < text.indexOf("\n\nRULES:"));
   writeFileSync(join(dir, ".audit", `${SLUG}.classes.md`), "# empty ledger\n");
   assert.doesNotMatch(packet(dir).text, /REVIEW CLASSES/, "a ledger with no line adds nothing");
@@ -450,7 +464,7 @@ function reviewCheck(packetArgs, review) {
 test("review-file: passes a file with every lens, the probe and a filled ARCHITECTURE block", () => {
   const ok = reviewCheck(["--band", "hard"], `# Self-review\n\n## Standards + spec\n- finding\n\n${ARCH_OK}\n## Blast radius\n- x\n\n## Interrogate\n- y\n\n## Probe (final loop)\n- ran\n`);
   assert.equal(ok.status, 0, ok.stdout + ok.stderr);
-  assert.equal(ok.stdout, "lens standards + spec section:yes\nlens blast radius section:yes\nlens interrogate section:yes\nprobe required:yes section:yes\narchitecture block:yes missing:none\n");
+  assert.equal(ok.stdout, "lens standards + spec section:yes\nlens blast radius section:yes\nlens interrogate section:yes\nprobe required:yes section:yes\narchitecture block:yes missing:none\nmutants required:no table:n/a rows:0\ndocs-claim required:no output:n/a\n");
   const medium = reviewCheck(["--band", "medium"], `## standards+spec\n### ARCHITECTURE\n${ARCH_OK.split("\n").slice(1).join("\n")}\n## blast-radius\n`);
   assert.equal(medium.status, 0, medium.stdout);
   assert.match(medium.stdout, /probe required:no section:n\/a/);
@@ -519,7 +533,7 @@ test("mkpacket: --role takeover drops delegation and keeps the in-turn wait; a b
   }
   const bad = packet(repo(), ["--role", "boss"]);
   assert.equal(bad.r.status, 2);
-  assert.match(bad.r.stderr, /--role must be one of implementer, takeover: boss/);
+  assert.match(bad.r.stderr, /--role must be one of implementer, takeover, rung1: boss/);
 });
 
 test("packet rules: a shared-worktree writer lints, formats and commits only its own paths", () => {
@@ -678,7 +692,7 @@ test("review-file --init writes the headings and the packet's ARCHITECTURE block
   assert.equal(init.status, 0, init.stderr);
   assert.equal(init.stdout.trim(), cr);
   const text = readFileSync(cr, "utf8");
-  assert.deepEqual([...text.matchAll(/^## (.*)$/gm)].map((m) => m[1]), ["Loops", "Own runs", "Standards + spec", "Blast radius", "Interrogate", "Probe (final loop)"]);
+  assert.deepEqual([...text.matchAll(/^## (.*)$/gm)].map((m) => m[1]), ["Loops", "Own runs", "Mutants", "Standards + spec", "Blast radius", "Interrogate", "Probe (final loop)"]);
   assert.match(text, /## Standards \+ spec\n\n.*\n\nARCHITECTURE\n- Deletion test: <each new or changed module>: <passes \/ fails, and why>\n- Duplicated owners: /);
   const check = run("review-file.mjs", ["--packet", out, cr]);
   assert.equal(check.status, 1, "placeholders fail the check");
@@ -691,7 +705,7 @@ test("review-file --init writes the headings and the packet's ARCHITECTURE block
   const medium = packet(dir, ["--band", "medium"]);
   const cr2 = join(dir, "cr2.md");
   assert.equal(run("review-file.mjs", ["--packet", medium.out, "--init", cr2]).status, 0);
-  assert.deepEqual([...readFileSync(cr2, "utf8").matchAll(/^## (.*)$/gm)].map((m) => m[1]), ["Loops", "Own runs", "Standards + spec", "Blast radius"], "no probe heading without a probe");
+  assert.deepEqual([...readFileSync(cr2, "utf8").matchAll(/^## (.*)$/gm)].map((m) => m[1]), ["Loops", "Own runs", "Mutants", "Standards + spec", "Blast radius"], "no probe heading without a probe");
   assert.equal(run("review-file.mjs", ["--packet", medium.out, "--bogus", cr2]).status, 2);
 });
 
@@ -849,4 +863,266 @@ test("CHAIN.md: the heartbeat watches every agent, reviewer availability is read
   assert.match(chain, /fix-round context ceiling/);
   assert.ok(!/~180k/.test(chain), "no pack default for the implementer ceiling: the project sets it");
   assert.match(chain, /L0's reviewers \(step 4\.3\) see the diff only after its act-on list is empty/, "external reviewers still wait for the self-review");
+});
+
+// ---- 2026-11-19: gate on acceptance, mutants, rung 1, the sweep over readers, silent fix rounds,
+// the heartbeat watch command, L0's own 429, the combined fallback reviewer, pre-run v2, docs claims,
+// the plan review's shape run, ledger hygiene, the pi recipe card and the L1-to-L0 question channel.
+test("reset-at: the reset is the 429's own timestamp plus its value, never now", () => {
+  const at = (args, env = process.env) => run("reset-at.mjs", args, env);
+  const r = at(["reset after 45m42s", "--from", "2026-11-23T04:00:00Z", "--tz", "UTC"]);
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(r.stdout.trimEnd(), "UTC 2026-11-23T04:45:42Z\nlocal 2026-11-23T04:45:42 (UTC)\nepoch 1795409142000");
+  // Units add up across a compact value, a spaced one, and the long forms.
+  assert.match(at(["resets in 1h30m", "--from", "2026-11-23T04:00:00Z", "--tz", "UTC"]).stdout, /^UTC 2026-11-23T05:30:00Z$/m);
+  assert.match(at(["reset after 2 days and 3 hours", "--from", "2026-11-23T04:00:00Z", "--tz", "UTC"]).stdout, /^UTC 2026-11-25T07:00:00Z$/m);
+  // A bare number is seconds; epoch millis are a timestamp.
+  assert.match(at(["retry after 90", "--from", "1795406400000", "--tz", "UTC"]).stdout, /^UTC 2026-11-23T04:01:30Z$/m);
+  // An absolute time in the value is printed as it stands, whatever --from says.
+  assert.match(at(["reset after 2026-11-23T09:54:00Z", "--from", "2026-11-23T04:00:00Z", "--tz", "UTC"]).stdout, /^UTC 2026-11-23T09:54:00Z$/m);
+  // TZ sets the local zone when --tz does not.
+  const sind = at(["reset after 1h", "--from", "2026-11-23T04:00:00Z"], { ...process.env, TZ: "Asia/Kolkata" });
+  assert.match(sind.stdout, /^local 2026-11-23T10:30:00/m);
+  assert.match(sind.stdout, /\(Asia\/Kolkata\)$/m);
+  for (const [args, why] of [
+    [["reset after 45m"], /--from .* is required/],
+    [["nothing here", "--from", "2026-11-23T04:00:00Z"], /no duration or time/],
+    [["reset after 1m", "--from", "nonsense"], /cannot read --from/],
+    [["reset after 1m", "--from", "2026-11-23T04:00:00Z", "--tz", "Nowhere/Bad"], /unknown zone/],
+    [[], /usage:/],
+  ]) {
+    const bad = at(args);
+    assert.equal(bad.status, 2, args.join(" "));
+    assert.match(bad.stderr, why, args.join(" "));
+  }
+});
+
+const packFile = (rel) => readFileSync(fileURLToPath(new URL(`../.agents/skills/${rel}`, import.meta.url)), "utf8");
+const TPL = (rel) => readFileSync(fileURLToPath(new URL(`../.agents/skills/setup/templates/${rel}`, import.meta.url)), "utf8");
+
+test("CHAIN.md: a ticket is gated on acceptance, and a gate stands only while main leaves its files alone", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /\*\*Gate on acceptance, not on a pair\.\*\*[\s\S]*?as soon as its last task is accepted and the host's suite lock is free[\s\S]*?never hold an accepted ticket for one still building/);
+  assert.match(chain, /A gate still stands after main moves when main's new commits touch no staged file and no file the pre-run selected; otherwise re-gate/);
+  assert.match(chain, /The next ticket starts here, at landing: post-land verify runs beside it, and a verify failure becomes a new ticket or a revert/);
+});
+
+test("CHAIN.md: the first build's self-review stops at the band's loop cap, and the mutant table rides every band", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /The first build also keeps the full self-review, but stops at its loop cap: easy and medium 1 loop, hard and critical 3/);
+  assert.match(chain, /External review is the second pass, not another lens loop/);
+  assert.match(chain, /\*\*A mutant per rule and per ORACLE row, at every band\.\*\*[\s\S]*?one deliberate mutant per rule it moves or adds and per ORACLE row[\s\S]*?A refactor task runs one per moved guard[\s\S]*?`review-file\.mjs` fails a behaviour task's file with no table or a survivor with no reason/);
+  assert.match(TPL("workflow.md"), /- Self-review loop cap: easy and medium `1` loop, hard and critical `3`/);
+});
+
+test("CHAIN.md: rung 1 is a class-aimed round, not a full build packet", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /then \(1\) \*\*rung 1\*\*,[\s\S]*?`mkpacket\.mjs --role rung1`: the structural brief the task file carries, its mutant table, and one self-review loop aimed at the repeated class over the task range, not a full build packet/);
+  assert.match(chain, /`--role rung1` builds the structural brief the task file carries, requires its mutant table/);
+});
+
+test("CHAIN.md: the class sweep reaches consumers, and packet statements are claims to check", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /\*\*The sweep reaches consumers, not only producers\.\*\*[\s\S]*?every reader of the value, type, default or rule the finding moves[\s\S]*?the callers, the field readers, the UI consumers, the serializer that copies it[\s\S]*?pinned by a test or ruled out in one line/);
+  assert.match(chain, /every statement a packet or a plan makes about the code \("X keeps its contract", "Y already locks first", "only Z reads it"\) is a claim for the implementer to check, not a fact/);
+  const method = packFile("rigor/templates/self-review.txt");
+  assert.match(method, /That grep covers every reader of the value, type,\s+default or rule the finding moves, in whatever module it lives \(callers, field readers, UI\s+consumers, serializers\), each hit pinned by a test or ruled out in one line/);
+});
+
+test("CHAIN.md: a silent fix round with its commit in and a passing self-review is accepted at the first tick", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /\*\*A fix round that is silent, with its commit in and `review-file\.mjs` at exit 0:\*\* accepted at the first silent tick\. Archive it and launch its one delta reviewer at once/);
+  assert.match(chain, /A fix round is never accepted without that delta reviewer, and a silent build round is not accepted this way/);
+});
+
+test("CHAIN.md: the L1 watches its worker's tail, probe children are timeboxed, easy and medium have no worker layer", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /\*\*The L1 reads its worker's transcript tail in every wait block\*\*[\s\S]*?on the same failure seen twice it takes the work over or re-briefs/);
+  assert.match(chain, /Probe and lens children get a ~25 minute timebox in their brief and stop themselves with partial findings/);
+  assert.match(chain, /At easy and medium the L1 writes the code itself: no worker layer/);
+});
+
+test("CHAIN.md: a relayed rule change binds in-flight work, and L0's own 429 resets from its own timestamp", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /\*\*A rule change reaches running work at once\.\*\*[\s\S]*?steer, with the rule text or its path\. It binds that agent's next report, not its next task[\s\S]*?A relay never says "leave in-flight work as it is"/);
+  assert.match(chain, /\*\*L0's own 429\.\*\*[\s\S]*?on resume L0 first reads every notification and report that arrived during the stall[\s\S]*?computes each reset time from the 429's own timestamp plus its "reset after" value \(`scripts\/reset-at\.mjs`\), never from now/);
+  assert.ok(!/leave in-flight work as it is(?!")/.test(chain), "no relay tells an agent to leave in-flight work alone");
+});
+
+test("CHAIN.md: the heartbeat runs the project's watch command first and judges liveness by three signals", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /When workflow\.md names a `Watch command`, the tick runs it first[\s\S]*?when it prints nothing the tick replies one line and reads no activity at all/);
+  assert.match(chain, /liveness is the newest of its transcript, its worktree's last commit and its progress log\*\*, never the progress log alone/);
+  assert.match(TPL("workflow.md"), /- Watch command: none <!-- or: the L0 heartbeat's script/);
+});
+
+test("CHAIN.md: milestone bookkeeping amends only a tip no open ticket branch is based on", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /no open ticket branch is based on it \(`git branch --contains HEAD` lists only main\), amend it instead of adding one; when a branch is based on it, add a new commit\. A session start or close commit is never amended/);
+});
+
+test("CHAIN.md: the fallback reviewer may combine A and B only at the bands the project names", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /\*\*On the fallback reviewer\*\* \(a single slot\) the project's `Combine A and B on the fallback` setting names the bands where A and B become one reviewer[\s\S]*?with no such setting, and always for a hard, critical or high-risk task, they stay two/);
+  assert.match(TPL("workflow.md"), /- Combine A and B on the fallback: none <!-- or: easy, medium/);
+});
+
+test("CHAIN.md and the packet rules: the pre-run covers mocked modules, the implementer runs it, L0 re-runs it", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /the tests outside its fence that name a changed public symbol \*\*and\*\* those that mock or patch a changed module, whether or not they name a changed symbol[\s\S]*?workflow\.md → Pre-run command[\s\S]*?The implementer ran it before its report; the stage re-runs it/);
+  const rules = packFile("rigor/templates/packet-rules.txt");
+  assert.match(rules, /8\. CHECKS:[\s\S]*?run the out-of-fence pre-run over the tests outside your fence: every\s+one that names a changed public symbol, and every one that mocks or patches a module you\s+changed[\s\S]*?`vi\.mock\("<module>"\)` or\s+`patch\("app\.<module>"\)`/);
+  assert.match(TPL("workflow.md"), /- Pre-run command: `<command that takes a worktree and a fence/);
+});
+
+test("packet rules and the method: universal words need their grep, and the docs-claim command is checked", () => {
+  const rules = packFile("rigor/templates/packet-rules.txt");
+  assert.match(rules, /13\. GUARD REACH:[\s\S]*?A universal word in a docs,\s+docstring or comment line you add or change \(every, only, always, never, one place, sole\) is a\s+claim about the whole repo: paste the grep behind it\. Docs-claim command: \{docs_claim\}/);
+  assert.match(rules, /14\. PROOF, NOT CONFIDENCE:[\s\S]*?is a claim to check, never a fact/);
+  const method = packFile("rigor/templates/self-review.txt");
+  assert.match(method, /When the packet names a Docs-claim command, run it and paste\s+its output with exit 0: `review-file\.mjs` checks that it is there/);
+});
+
+test("CHAIN.md: the plan review runs the proposed shape once, not only reads it", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /\*\*It also checks once that the proposed module shape would import or run\*\*: a cheap static or scratch check, not a reading[\s\S]*?A shape that cannot import is an act-on finding/);
+});
+
+test("CHAIN.md: the class ledger's fix cell names a fix, never a ruling", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /its fix-shape cell names the fix, never a ruling \(a ruling is a scope decision, not a fix\)\. `mkpacket\.mjs` normalises the names before counting[\s\S]*?class-aliases[\s\S]*?counts a ticket and class once/);
+});
+
+test("harness/pi.md: the recipe card names the compress shape, single async launches, agent names and the rest", () => {
+  const pi = packFile("rigor/harness/pi.md");
+  assert.match(pi, /\*\*`compress`\*\* takes `content: \[\{ startId, endId, summary \}\]`/);
+  assert.match(pi, /Start children as single async `subagent` calls[\s\S]*?never `tools\.subagent` inside code mode/);
+  assert.match(pi, /Pass agent names, never model ids/);
+  assert.match(pi, /The `reviewer` agent has no exec tool/);
+  assert.match(pi, /Shell variables and exports do not persist between `bash` calls/);
+  assert.match(pi, /When the `read` tool misbehaves[\s\S]*?Never retry the same read twice/);
+  assert.match(pi, /Ask L0 through the delegation adapter's question call[\s\S]*?never `contact_supervisor`/);
+});
+
+test("delegation/paseo.md: an L1 asks L0 with paseo send --no-wait to L0's id, and a relay is a steer", () => {
+  const paseo = packFile("rigor/delegation/paseo.md");
+  assert.match(paseo, /\| question from an L1 to L0 \| `paseo send --no-wait <L0 agent id> "<question>"`[\s\S]*?`contact_supervisor` is not this channel/);
+  assert.match(paseo, /A rule change is a steer, not a new task\./);
+});
+
+test("mkpacket: rule 5 carries L0's agent id for the question call, and says so when there is none", () => {
+  const dir = repo();
+  const withId = packet(dir, ["--l0-id", "0e3414d4-00c2-430e-91dc-84fc6ced6d43"]);
+  assert.equal(withId.r.status, 0, withId.r.stderr);
+  assert.match(withId.text, /5\. DELEGATE by size\.[\s\S]*?Ask L0 rather than guess: the ADAPTER question call in this packet's PROJECT RULES\s+hands a question to L0's agent \(0e3414d4-00c2-430e-91dc-84fc6ced6d43\)/);
+  const env = packet(dir);
+  const fromEnv = run("mkpacket.mjs", ["--slug", SLUG, "--wt", WT, "--base", BASE, "--branch", "u22-fix", "--task", join(dir, "task.md"), "--out", env.out, "--repo", dir], { ...process.env, PASEO_AGENT_ID: "abc-123" });
+  assert.equal(fromEnv.status, 0, fromEnv.stderr);
+  assert.match(readFileSync(env.out, "utf8"), /hands a question to L0's agent \(abc-123\)/);
+  const bare = { ...process.env };
+  delete bare.PASEO_AGENT_ID;
+  const out2 = join(dir, "p2.md");
+  const noId = run("mkpacket.mjs", ["--slug", SLUG, "--wt", WT, "--base", BASE, "--branch", "u22-fix", "--task", join(dir, "task.md"), "--out", out2, "--repo", dir], bare);
+  assert.equal(noId.status, 0, noId.stderr);
+  assert.match(readFileSync(out2, "utf8"), /hands a question to L0's agent \(none: this packet was built without L0's agent id, so ask at the report\)/);
+});
+
+test("mkpacket: --role rung1 builds one class-aimed loop and requires the structural brief's mutant table", () => {
+  const dir = lensRepo();
+  writeFileSync(join(dir, "task.md"), "TASK: fix the class.\nORACLE: today's behaviour\n| input | main |\n| null | 0 |\nARCHITECTURE: none (fixture)\n## Mutants\n| rule/row | mutant | test that killed it | killed? |\n|---|---|---|---|\n| row 1 | drop the null guard | test_null | yes |\n");
+  const { r, text } = packet(dir, ["--ref", "364", "--band", "hard", "--role", "rung1"]);
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(text, /5\. RUNG 1: this task's class came back after an earlier round fixed it/);
+  assert.deepEqual(lensesIn(text), ["standards + spec"], "one class-aimed loop, not the band's full lens set");
+  assert.match(text, /Loop 1 is this packet's one loop: standards \+ spec over the whole task range, aimed at the repeated class/);
+  assert.match(text, /Mutants: one per row of the mutant table in the TASK block's structural brief; a survivor is a finding of this round/);
+  assert.match(text, /Probe: one probe child on this round's delta, targeted on the repeated class/);
+  assert.doesNotMatch(text, /Probe: none/);
+  // A structural brief without its mutant table is not a rung-1 task.
+  writeFileSync(join(dir, "task.md"), "TASK: fix the class.\nORACLE: today's behaviour\n| input | main |\n| null | 0 |\nARCHITECTURE: none (fixture)\n");
+  const noTable = packet(dir, ["--band", "hard", "--role", "rung1"]);
+  assert.equal(noTable.r.status, 2);
+  assert.match(noTable.r.stderr, /a rung-1 packet needs the structural brief's mutant table/);
+});
+
+test("mkpacket: rule 6 asks for the mutant table at every band, and for none where the ORACLE is none", () => {
+  const dir = lensRepo();
+  for (const band of ["easy", "medium", "hard"]) {
+    const { r, text } = packet(dir, ["--band", band]);
+    assert.equal(r.status, 0, r.stderr);
+    assert.match(text, /Mutants: required, one per moved or new rule and one per ORACLE row \(a behaviour task, at every band\)/, band);
+  }
+  assert.match(packet(dir, ["--band", "hard", "--change", "refactor"]).text, /Mutants: required, one per moved guard \(a refactor task\)/);
+  assert.match(packet(repo()).text, /Mutants: none \(the task's ORACLE is none/);
+});
+
+test("review-file: the mutant table is required for a behaviour task and a survivor needs its reason", () => {
+  const dir = lensRepo();
+  const { out } = packet(dir, ["--band", "medium"]);
+  const base = `## Standards + spec\n${ARCH_OK}\n## Blast radius\n- none\n`;
+  const cr = join(dir, "cr.md");
+  const check = (text) => { writeFileSync(cr, text); return run("review-file.mjs", ["--packet", out, cr]); };
+  const none = check(base);
+  assert.equal(none.status, 1);
+  assert.match(none.stdout, /^mutants required:yes table:no rows:0$/m);
+  const empty = check(`${base}\n## Mutants\n\n| rule/row | mutant | test that killed it | killed? |\n|---|---|---|---|\n`);
+  assert.equal(empty.status, 1, "the header row is not a row");
+  assert.match(empty.stdout, /^mutants required:yes table:no rows:0 table:empty$/m);
+  const ok = check(`${base}\n## Mutants\n\n| rule/row | mutant | test that killed it | killed? |\n|---|---|---|---|\n| null guard | drop the early return | test_null | yes |\n`);
+  assert.equal(ok.status, 0, ok.stdout);
+  assert.match(ok.stdout, /^mutants required:yes table:yes rows:1$/m);
+  const survivor = check(`${base}\n## Mutants\n\n| rule/row | mutant | test that killed it | killed? |\n|---|---|---|---|\n| null guard | drop the early return | none | no |\n`);
+  assert.equal(survivor.status, 1, "a survivor with no reason fails");
+  assert.match(survivor.stdout, /survivors:1 survivor-with-no-reason:1/);
+  const reasoned = check(`${base}\n## Mutants\n\n| rule/row | mutant | test that killed it | killed? |\n|---|---|---|---|\n| null guard | drop the early return | none | no: the guard is unreachable behind the parser's own check, ruled equivalent |\n`);
+  assert.equal(reasoned.status, 0, reasoned.stdout);
+  assert.match(reasoned.stdout, /survivors:1$/m);
+});
+
+test("review-file: a docs-claim command's output is required with exit 0 when the packet names one", () => {
+  const dir = lensRepo();
+  writeFileSync(join(dir, "docs", "agents", "workflow.md"), `${ALL_LENSES}- Docs-claim command: \`node scripts/docs-claims.mjs\`\n`);
+  const { out } = packet(dir, ["--band", "medium"]);
+  assert.match(readFileSync(out, "utf8"), /Docs-claim command: `node scripts\/docs-claims\.mjs`/);
+  const base = `## Standards + spec\n${ARCH_OK}\n## Blast radius\n- none\n\n## Mutants\n\n| rule/row | mutant | test that killed it | killed? |\n|---|---|---|---|\n| r | m | t | yes |\n`;
+  const cr = join(dir, "cr.md");
+  const check = (text) => { writeFileSync(cr, text); return run("review-file.mjs", ["--packet", out, cr]); };
+  const missing = check(base);
+  assert.equal(missing.status, 1);
+  assert.match(missing.stdout, /^docs-claim required:yes output:no$/m);
+  const failing = check(`${base}\n## Docs claim\n\n$ node scripts/docs-claims.mjs\nsrc/a.ts:12: "every caller" has no proof\nexit 1\n`);
+  assert.equal(failing.status, 1, "exit 1 is not a pass");
+  assert.match(failing.stdout, /^docs-claim required:yes output:no$/m);
+  const passing = check(`${base}\n## Docs claim\n\n$ node scripts/docs-claims.mjs\nok: 12 universal words, all with a pasted grep\n$ echo "exit 0"\nexit 0\n`);
+  assert.equal(passing.status, 0, passing.stdout);
+  assert.match(passing.stdout, /^docs-claim required:yes output:yes$/m);
+});
+
+test("review-file --init scaffolds the mutants table and the docs-claim run when the packet asks for them", () => {
+  const dir = lensRepo();
+  writeFileSync(join(dir, "docs", "agents", "workflow.md"), `${ALL_LENSES}- Docs-claim command: \`node scripts/docs-claims.mjs\`\n`);
+  const { out } = packet(dir, ["--band", "medium"]);
+  const cr = join(dir, "cr.md");
+  assert.equal(run("review-file.mjs", ["--packet", out, "--init", cr]).status, 0);
+  const text = readFileSync(cr, "utf8");
+  assert.deepEqual([...text.matchAll(/^## (.*)$/gm)].map((m) => m[1]), ["Loops", "Own runs", "Docs claim", "Mutants", "Standards + spec", "Blast radius"]);
+  assert.match(text, /## Mutants\n\n\| rule\/row \| mutant \| test that killed it \| killed\? \|/);
+  assert.match(text, /## Docs claim\n\n`node scripts\/docs-claims\.mjs` and its output, exit 0/);
+  // A packet whose ORACLE is none scaffolds no mutants table.
+  writeFileSync(join(dir, "task.md"), "TASK: docs only.\nORACLE: none (docs)\nARCHITECTURE: none (fixture)\n");
+  const docs = packet(dir, ["--band", "medium"]);
+  const cr2 = join(dir, "cr2.md");
+  assert.equal(run("review-file.mjs", ["--packet", docs.out, "--init", cr2]).status, 0);
+  assert.doesNotMatch(readFileSync(cr2, "utf8"), /## Mutants/);
+});
+
+test("mkpacket: the pre-run and docs-claim commands come from workflow.md, and say so when absent", () => {
+  const dir = lensRepo("- Pre-run command: `node scripts/pre-run.mjs --wt {wt}`\n- Docs-claim command: `node scripts/docs-claims.mjs`\n");
+  const { r, text } = packet(dir, ["--band", "medium"]);
+  assert.equal(r.status, 0, r.stderr);
+  assert.ok(text.includes("The command is `node scripts/pre-run.mjs --wt " + WT + "` (workflow.md → Pre-run command); paste its output and each failing file"), "the pre-run command, filled with this worktree");
+  assert.match(text, /Docs-claim command: `node scripts\/docs-claims\.mjs`\./);
+  const bare = packet(repo());
+  assert.match(bare.text, /The command is none \(workflow\.md names no Pre-run command\)/);
+  assert.match(bare.text, /Docs-claim command: none \(workflow\.md names no Docs-claim command\)\./);
 });
