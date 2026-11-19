@@ -35,26 +35,27 @@ Where a chain run differs from `## Authority` above. Every number here is a sett
 - Push: only when the owner asks in that session <!-- or: push each landing -->
 - PRs: none <!-- or: one per ticket -->
 - Plan approval: owner <!-- or: L0 for the owner (delegated), listed at every close for overturning -->
-- Concurrency caps: `<n>` implementers, `<n>` ticket worktrees, `<n>` reviewer sessions at once
-- Context ceilings: implementation `<n>k` (the first build plus its self-review; planners size tasks to it), review fix rounds `<n>k` (the same implementer keeps fixing review findings under it; past it, a fresh implementer), lens child `<n>k` (default ~150k; a self-review lens child gets later loops' deltas as follow-ups under it), long session `<n>k`
-- Attempts per band: easy and medium `4` implementer rounds (build, fix 1, fix 2, a fresh implementer) and `2` takeover rounds, at most `6` L0 reviews; hard, critical or a high-risk area `3` (build, fix 1, a fresh implementer) and `2`, at most `5`; then park the task in gates <!-- pack defaults: rigor/CHAIN.md step 4.4 -->
+- Concurrency caps: `<n>` builders and their one L1 coordinator per task, `<n>` ticket worktrees, `<n>` reviewer sessions at once
+- Context ceilings: coordinator `<n>k` soft and `<n>k` hard (default ~150k and ~200k; past the soft limit L0 hands the task to a fresh L1 at the next fix-round boundary, which adopts the running builder), implementation `<n>k` (the first build plus its self-review; planners size tasks to it), review fix rounds `<n>k` (the same builder keeps fixing review findings under it; past it, a fresh builder), lens child `<n>k` (default ~150k; a self-review lens child gets later loops' deltas as follow-ups under it), long session `<n>k`
+- Attempts per band: easy and medium `4` builder rounds (build, fix 1, fix 2, a fresh builder) and `2` takeover rounds, at most `6` L0 reviews; hard, critical or a high-risk area `3` (build, fix 1, a fresh builder) and `2`, at most `5`; then park the task in gates <!-- pack defaults: rigor/CHAIN.md step 4.4 -->
 - Parallel tasks: each in its own worktree, `<command>` from the ticket branch <!-- rigor/CHAIN.md step 4; a shared worktree only when the caps leave no choice -->
 - Lanes: `1` <!-- or n: each lane its own L0 session on disjoint session-plan rows marked with its lane (rigor/CHAIN.md → Lanes) -->
 - Solo band: `hard` <!-- or: critical, or none. A ticket at or above it runs alone in its own session -->
-- Lens check: `<command that checks, from the implementer's session, that each lens child got its lens body; {band}, {kind}, {wt} and {repo} are filled by mkpacket.mjs>` <!-- or: none. The packet has the implementer run it right after launching the loop-1 lens children; L0 runs it again at the report -->
-- Self-review lenses: `standards+spec always; blast-radius at medium; interrogate at hard and critical` <!-- the implementer's own review, run before L0's reviewers see the diff. mkpacket.mjs --band reads this line. standards+spec always runs. Each other lens is "<lens> at <band>[, <band>][ and <band>]", or "<lens> always". Lenses: blast-radius, interrogate. interrogate is the expensive one: each adversary works in its own worktree and proves its findings with real runs. Cheaper: interrogate at critical only; blast-radius at medium and hard. Drop a clause to skip that lens. Loop 1 runs every lens read-only over the whole range; later loops review only the fix delta, with standards+spec plus the lenses whose findings it fixes; only a hard or critical task that changes behaviour adds one probe child (blast radius and interrogate with real runs, time-boxed) on the final loop -->
+- Lens check: `<command that checks, from the builder's session, that each lens child got its lens body; {band}, {kind}, {wt} and {repo} are filled by mkpacket.mjs>` <!-- or: none. The packet has the builder run it right after launching the loop-1 lens children; L0 runs it again at the report -->
+- Self-review lenses: `standards+spec always; blast-radius at medium; interrogate at hard and critical` <!-- the builder's own review, run before L0's reviewers see the diff. mkpacket.mjs --band reads this line. standards+spec always runs. Each other lens is "<lens> at <band>[, <band>][ and <band>]", or "<lens> always". Lenses: blast-radius, interrogate. interrogate is the expensive one: each adversary works in its own worktree and proves its findings with real runs. Cheaper: interrogate at critical only; blast-radius at medium and hard. Drop a clause to skip that lens. Loop 1 runs every lens read-only over the whole range; later loops review only the fix delta, with standards+spec plus the lenses whose findings it fixes; only a hard or critical task that changes behaviour adds one probe child (blast radius and interrogate with real runs, time-boxed) on the final loop -->
 - Review depth: a post-land delta over `<n>` lines is re-reviewed
 - Architecture pass: every ticket of band medium and above, on its staged squash, inside the final axis-A review (and, for hard and critical, on the plan before approval); `arch` trail row; pass files `.audit/<slug>/arch/<id>[-plan].md`; landing gate `node .agents/skills/rigor/scripts/land-check.mjs --trail .audit/<slug>.tsv --ticket <id> --band <band>` (it runs arch-check on the pass file); planner and pass briefs `node .agents/skills/rigor/scripts/mkbrief.mjs --role planner|plan-review|landing ...` (planner: `--brief <project planner brief>`; landing: appended to the final axis-A reviewer's brief), pass files checked with `node .agents/skills/rigor/scripts/arch-check.mjs` <!-- pack default (rigor/CHAIN.md → Land, Planner, Plan review); keep it unless the owner drops it -->
-- L0 heartbeat: every 15 minutes <!-- default -->, over every running agent of the lane (implementers, reviewers, planners); the newest of an agent's transcript, its worktree's last commit and its progress log is what `Stuck` is judged on (never the progress log alone): older than `<n>` minutes, or the same step on `<n>` lines in a row. An agent silent 15+ minutes gets its activity read (rigor/CHAIN.md → The delegation adapter)
-- L1/L2 wait slice: 10 minutes max <!-- default; never an unbounded wait -->
+- L0 heartbeat: every 30 minutes <!-- default; keep the interval under the harness's prompt-cache lifetime. Covers every agent of the lane by status alone (builders, reviewers, planners, plan reviewers, takeovers, verify drivers) plus the parked gates, and runs the Watch command when one is named: never a transcript. Stuck means an agent's newest status is older than `<n>` minutes, or the same step on `<n>` reads in a row. No periodic status report goes to L0 from this tick (rigor/CHAIN.md → The delegation adapter) -->
+- L1 heartbeat: every 30 minutes <!-- default; keep the interval under the harness's prompt-cache lifetime. Read by L1 itself, never by a script: per builder, its status, then the tail of its log (20 lines) against the previous tick. No periodic status report goes to L0 from this tick -->
+- L2/L3 wait slice: 10 minutes max <!-- default; never an unbounded wait. The L2 builder and any L3 with children, by packet rule 5 -->
 - Reviewer fallback: none <!-- or: a named model when the first is out of quota, and the availability record (a file every lane reads before every review launch) where a quota error's refill time is written -->
 - Combine A and B on the fallback: none <!-- or: easy, medium. On the fallback reviewer (a single slot) these bands get one reviewer whose brief covers both axes. Default none. Hard, critical and high-risk tasks always keep A and B -->
 - Self-review loop cap: easy and medium `1` loop, hard and critical `3` <!-- the first build's self-review loops per attempt; external review is the second pass. A fix round after a review is always one class-aimed loop -->
-- Watch command: none <!-- or: the L0 heartbeat's script, e.g. `node scripts/chain/watch.sh --lane <x>`. Each tick runs it first; when it prints nothing the tick replies one line and reads no activity. Liveness is the newest of an agent's transcript, its worktree's last commit and its progress log, never the progress log alone -->
+- Watch command: none <!-- or: the L0 heartbeat's script, e.g. `node scripts/chain/watch.sh --lane <x>`. Each tick runs it first; when it prints nothing the tick replies one line and reads no activity. It judges by status and the worktree's last commit, never a transcript -->
 - Red/green: `<command that runs one test path, red on the base and green on the tip>`
 - Mutation check: `<command>` <!-- or: none -->
 - Full gate: `<command, run on the staged squash>`
-- Pre-run command: `<command that takes a worktree and a fence and runs the out-of-fence tests: those naming a changed public symbol, and those mocking or patching a changed module>` <!-- rigor/CHAIN.md step 5. The implementer runs it before its report and L0 runs it again at staging -->
+- Pre-run command: `<command that takes a worktree and a fence and runs the out-of-fence tests: those naming a changed public symbol, and those mocking or patching a changed module>` <!-- rigor/CHAIN.md step 5. The builder runs it before its report and L0 runs it again at staging -->
 - Docs-claim command: `<command that checks every added or changed docs, docstring or comment line holding a universal word against a pasted grep or a file:line, and every backticked symbol or path against the tip>` <!-- or: none. When set, the self-review's own runs paste its output with exit 0 and review-file.mjs checks that it is there -->
 - Verify skill: `.agents/skills/verify-<app>/SKILL.md`<!-- or: none -->
 - Packet project rules: `docs/agents/packet-rules.md` <!-- mkpacket.mjs reads this path; for another file, pass it as --project-rules -->
@@ -64,13 +65,14 @@ Where a chain run differs from `## Authority` above. Every number here is a sett
 
 | Role | Model | Thinking |
 |---|---|---|
-| L1 implementer, L2 worker | `<provider/model>` | `<level>` |
-| L2 scout | `<provider/model>` | `<level>` |
-| L2 reviewer | `<provider/model>` | `<level>` |
+| L1 coordinator | `<provider/model>` | `<level>` |
+| L2 builder, L3 worker | `<provider/model>` | `<level>` |
+| L3 scout | `<provider/model>` | `<level>` |
+| L3 reviewer | `<provider/model>` | `<level>` |
 | L0 reviewers | `<provider/model>` | `<level>` |
 | reviewer fallback | none | |
 | planner | `<provider/model>` | `<level>` <!-- the strongest model: every planner, and the critical plan review --> |
-| plan reviewer | `<provider/model>` | `<level>` <!-- hard tickets: the L1 implementer model; on REGRESSED, or disagreement with the plan on an owner or a seam, the review runs again on the planner role --> |
+| plan reviewer | `<provider/model>` | `<level>` <!-- hard tickets: the L2 builder model; on REGRESSED, or disagreement with the plan on an owner or a seam, the review runs again on the planner role --> |
 | takeover | `<provider/model>` | `<level>` |
 | verify driver | `<provider/model>` | `<level>` |
 

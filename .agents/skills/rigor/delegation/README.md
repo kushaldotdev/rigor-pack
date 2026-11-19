@@ -7,16 +7,18 @@
 | Operation | Meaning | Expected result |
 |---|---|---|
 | create or reuse a workspace for a worktree | A named home for one ticket's agents, rooted at that ticket's worktree | A workspace id to reuse for every task of the ticket |
-| spawn an agent | Start one implementer: provider/model, thinking level, title, labels (`effort` and `ticket`), cwd | An agent id, and a finish notification when its turn ends |
+| spawn an agent | Start one builder: provider/model, thinking level, title, labels (`effort` and `ticket`), cwd, and a finish notice | An agent id, and a finish notification when its turn ends |
+| start a coordinator | Start one L1 with its task block, its model and level, and no finish notice | An agent id; the coordinator's only wake-up is a message |
+| report or ask a question | A message to the agent that launched the sender: a builder's report to its L1, or an L1's report, block or question to L0 | The receiver wakes on it, and answers by the same call |
 | send a follow-up | A re-brief or a fix round to the same agent, keeping its context | The same agent working again, with its history |
 | get status, activity and context usage | Is it running, what did it last do, how full is its context | Running or finished; its recent steps; a context size to compare with workflow.md's ceiling |
 | recover a lost finish notification | Find out how an agent ended when the notification never arrived | The agent's last activity and its final message |
-| archive an agent | Retire a finished implementer | The agent off the running list, its transcript kept |
+| archive an agent | Retire a finished builder | The agent off the running list, its transcript kept |
 | archive a workspace and its leftovers | Retire a ticket's workspace, plus anything the tool registered for it | Nothing of that ticket left running or listed |
-| create and delete a recurring heartbeat to self | The watch loop: a prompt back to L0 on a cron cadence | A heartbeat that pings L0; deleted at session end |
+| create and delete a recurring heartbeat to self | The tick: a prompt back to L0, or to an L1 over its own builder, on a cron cadence | A heartbeat that pings on that cadence; deleted when the task or the session ends |
 | start a top-level successor session with labels | The self-continuing handover: a new session that is not a child of this one | A session id to record in the trail's `next` row |
 | list running sessions by label | Is another session of this chain alive | The matching sessions, or none |
-| count running agents against the caps | How many implementers and workspaces exist right now | Counts to compare with the caps in workflow.md |
+| count running agents against the caps | How many builders and workspaces exist right now | Counts to compare with the caps in workflow.md |
 
 ## When the tool is missing
 

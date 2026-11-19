@@ -11,9 +11,10 @@
    your work. Mock only true I/O borders.
 4. TRADE-OFFS: name every behaviour change beyond the fix, even ones you think are fine. A result
    that differs from an ORACLE row is not a trade-off: stop and report it (rule 10).
-5. {delegate} Ask L0 rather than guess: the ADAPTER question call in this packet's PROJECT RULES
-   hands a question to L0's agent ({l0}), which keeps working on what the question does not block;
-   with no such call, ask at the report.
+5. {delegate} Ask your L1 rather than guess: the ADAPTER question call in this packet's PROJECT RULES
+   hands a question to L1's agent ({l1}), which keeps working on what the question does not block;
+   with no such call, ask at the report. Decide anything your brief already allows; ask only about
+   what it leaves open.
    NEVER end your turn while a child runs (a worker, a
    lens reviewer, the probe): ending it is your report. Wait in slices of 10 minutes or less,
    never an unbounded wait. After each slice handle what finished; on a timeout check each
@@ -76,7 +77,9 @@
 10. REPORT: base..last commit with subjects, test names, red output on the base, green on your
    last commit, check commands and counts, files changed, anything you started and removed,
    trade-offs, ORACLE rows you added, surprises. If a "Stop and ask L0 if" line fires, stop and
-   report instead of guessing.
+   report instead of guessing. The report is one message to L1, through the ADAPTER report call
+   in this packet's PROJECT RULES, shaped `done|question|blocked: <report path or question>`: it is
+   the last action of every turn, so L1 hears even when the finish notice fails.
 11. HISTORY: never `--amend` or rewrite history. Delete only scratch you created yourself. In a
    shared worktree (the TASK block names the other writer), run lint, format and fix commands on
    your own paths only, never repo-wide, and commit with `git commit -m ... -- <your paths>`.

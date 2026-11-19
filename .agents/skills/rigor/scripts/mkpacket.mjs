@@ -3,7 +3,7 @@
 //   node mkpacket.mjs --slug S --wt W --base B --branch BR --task FILE --out FILE
 //                     [--ref R] [--task-id T] [--band B] [--kind K] [--deliverables A,B]
 //                     [--change behaviour|refactor] [--role implementer|takeover|rung1]
-//                     [--l0-id ID] [--project-rules FILE] [--repo DIR]
+//                     [--l1-id ID] [--project-rules FILE] [--repo DIR]
 // --repo (default cwd) supplies .audit/<slug>.preferences.md (required),
 // docs/agents/packet-rules.md (used when --project-rules is absent) and
 // docs/agents/workflow.md (read for the "Self-review lenses" line when --band is given).
@@ -32,7 +32,7 @@
 // read-only lenses are the whole self-review. A bad change exits 2. --deliverables is a
 // comma-separated list of the deliverable files the task names; it fills each brief (default
 // "none").
-// <role> fills {delegate} in packet rule 5: implementer (default) delegates by the TASK line's
+// <role> fills {delegate} in packet rule 5: implementer (default, the builder) delegates by the TASK line's
 // size; takeover (CHAIN.md step 4.5) does the work itself with no worker or scout. Both keep the
 // in-turn wait: a takeover that ends its turn while a self-review child runs reads as finished.
 // A bad role exits 2.
@@ -70,15 +70,17 @@
 // line per alias (same normalisation on both sides), folds names a human reads as one class.
 // A "last closed by" value that names a ruling rather than a fix (it reads "ruling", "ruled" or
 // "scope ruling") does not count as the newest fix shape: a ledger line records a fix.
-// <l0-id> (default $PASEO_AGENT_ID at build time) is the L0 agent id the L1 can question; rule 5
-// gets it with the adapter's question call, and without one it says to ask at the report instead.
+// <l1-id> is the L1 agent id the builder can question and reports to; rule 5 gets it with the
+// adapter's question call, and rule 10 its report call. It is never taken from the environment: the
+// builder that runs mkpacket is not L1, so its own id is the wrong one. Without --l1-id the packet
+// says to ask at the report.
 // <role> rung1 builds a fresh implementer's rung-1 packet (CHAIN.md step 4.4) instead of a full build
 // packet: the structural brief the task file carries, the mutant table, and one self-review loop
 // aimed at the repeated class. Rule 6's briefs are then that one loop's: a single standards + spec
 // child over the task range with the class sweep, plus the targeted probe when the task gets one.
 // The task file must carry an ORACLE section (a line starting "ORACLE", optionally a markdown
-// heading): what right looks like, as CHAIN.md -> The implementer packet says. Without one the
-// build exits 2: an implementer with no oracle optimises the rules it can check.
+// heading): what right looks like, as CHAIN.md -> The builder packet says. Without one the
+// build exits 2: a builder with no oracle optimises the rules it can check.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -219,9 +221,10 @@ const ROLES = {
 const role = args.role ?? "implementer";
 if (!(role in ROLES)) die(`--role must be one of ${Object.keys(ROLES).join(", ")}: ${role}`);
 
-// L0's agent id, so an L1 can ask it a question through the adapter (or at its report).
-const l0Id = args["l0-id"] ?? process.env.PASEO_AGENT_ID ?? "";
-if (l0Id && !/^[A-Za-z0-9][A-Za-z0-9._:-]*$/.test(l0Id)) die(`--l0-id must be an agent id: ${l0Id}`);
+// L1's agent id, so its builder can ask it a question and report to it through the adapter. No
+// environment fallback: this process runs as the packet's builder or as L0, never as L1.
+const l1Id = args["l1-id"] ?? "";
+if (l1Id && !/^[A-Za-z0-9][A-Za-z0-9._:-]*$/.test(l1Id)) die(`--l1-id must be an agent id: ${l1Id}`);
 // A rung-1 packet is one class-aimed loop, so the mutant table and the structural brief it carries
 // are the task file's own; a build packet names the full lens set.
 if (rung1 && !/^##\s*Mutants\b/m.test(task) && !/^\s*(?:\*\*)?MUTANT TABLE\b/m.test(task)) {
@@ -336,7 +339,7 @@ const vars = {
   commit_subject: "",
   commit_trailer: "",
   delegate: ROLES[role],
-  l0: l0Id || "none: this packet was built without L0's agent id, so ask at the report",
+  l1: l1Id || "none: this packet was built without L1's agent id, so ask at the report",
   packet: resolve(args.out),
   rigor: resolve(script, ".."), // the rigor skill this packet was built from, so an older worktree's copy is never used
   lens_check: lensCheck(),

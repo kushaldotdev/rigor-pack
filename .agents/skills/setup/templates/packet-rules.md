@@ -1,6 +1,6 @@
-# Project rules for implementer packets
+# Project rules for builder packets
 
-Build it into every implementer packet: `scripts/mkpacket.mjs` reads this file unless it is passed `--project-rules <file>`. It binds as much as the pack's own packet rules. Replace every `<...>` and delete any line that doesn't apply.
+Build it into every builder packet: `scripts/mkpacket.mjs` reads this file unless it is passed `--project-rules <file>`. It binds as much as the pack's own packet rules. Replace every `<...>` and delete any line that doesn't apply.
 
 ## Environment and secrets
 
@@ -20,7 +20,7 @@ Run these before every report, in this order:
 - `<lint>` · `<format check>` · `<typecheck>`
 - Targeted tests: `<how to run one test file>`
 - Full gate (the lead runs it on the staged squash): `<command>`
-- Cheap gate checks, before every hand-back at every band: `<the gate's fast checks an implementer can run alone, so none of them costs a round at the gate: a new-suppression or lint-baseline check against the task base, import contracts, coverage of the lines the task added>`
+- Cheap gate checks, before every hand-back at every band: `<the gate's fast checks a builder can run alone, so none of them costs a round at the gate: a new-suppression or lint-baseline check against the task base, import contracts, coverage of the lines the task added>`
 
 ## Architecture rules
 

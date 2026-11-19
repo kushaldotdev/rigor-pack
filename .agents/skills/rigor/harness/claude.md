@@ -4,7 +4,7 @@ Verified against the Claude Code skills and memory docs (2026-10-20).
 
 - **Skills.** Does not read `.agents/skills/`; the installer adds per-skill symlinks `.claude/skills/<name>` → `../../.agents/skills/<name>`. Invoke with `/<name>`. The built-in `/code-review` may shadow this pack's, so `rigor` reaches it by path.
 - **Instructions.** Reads `CLAUDE.md`; reads `AGENTS.md` only without a `CLAUDE.md`, or when `CLAUDE.md` imports `@AGENTS.md`.
-- **Children.** The Agent (Task) tool. A definition's `skills:` field preloads advertised skills only; send the absolute-path packet anyway.
+- **Children.** The Agent (Task) tool. A definition's `skills:` field preloads advertised skills only; send the absolute-path packet anyway. A coordinator asked to run one task never uses it: it starts that task's builder through the delegation adapter, ends its turn and is woken by the builder's message. An Agent-tool child of a coordinator would spend this harness's tokens.
 - **Parallel.** Several Agent calls in one message; background agents notify on completion.
 - **Wait / loop.** `/loop` and scheduled wakeups. A run-to-completion session (a takeover or verify driver a delegation tool drives) never ends its turn while a child runs: ending it is its finish notification. It starts children in the foreground (several Agent calls in one message run at once) or waits in 10-minute slices.
 - **Model roles.** `model:` in `.claude/agents/*.md`. Non-Claude families are unverified, so cross-family review is usually unavailable: label reviews "single-family". Never enable fast mode (`/fast`) for a run or a child.

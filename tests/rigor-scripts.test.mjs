@@ -853,10 +853,10 @@ test("self-review method: incremental loops, the coverage invariant, carried len
   assert.match(method, /PROBE LIMITS/, "the probe limits stay");
 });
 
-test("CHAIN.md: the heartbeat watches every agent, reviewer availability is read before every launch, no hang wait", () => {
+test("CHAIN.md: the two heartbeats, reviewer availability is read before every launch, no hang wait", () => {
   const chain = readFileSync(fileURLToPath(new URL("../.agents/skills/rigor/CHAIN.md", import.meta.url)), "utf8");
-  assert.match(chain, /While any agent of this lane runs, a heartbeat[\s\S]*?implementers, reviewers, planners/);
-  assert.match(chain, /no activity for 15 minutes or more[\s\S]*?\*\*A quota or usage error:\*\* archive it, record the reviewer's unavailability[\s\S]*?relaunch the same brief on the fallback now/);
+  assert.match(chain, /\*\*Two heartbeats, neither of them a status report to L0\.\*\* L0's tick covers every agent of the lane by status alone, and L1's tick is the watch on its builder, read by L1 itself, never by a script/);
+  assert.match(chain, /no progress for 15 minutes or more[\s\S]*?\*\*A quota or usage error:\*\* archive it, record the reviewer's unavailability[\s\S]*?relaunch the same brief on the fallback now/);
   assert.match(chain, /\*\*Silent, no error:\*\* one nudge[\s\S]*?Still no activity at the next tick: relaunch/);
   assert.ok(!/written nothing for one wait slice is hung/.test(chain), "the old hang wait is gone");
   assert.match(chain, /Before every review launch, not once per session, read the project's reviewer-availability record/);
@@ -940,11 +940,11 @@ test("CHAIN.md: a silent fix round with its commit in and a passing self-review 
   assert.match(chain, /A fix round is never accepted without that delta reviewer, and a silent build round is not accepted this way/);
 });
 
-test("CHAIN.md: the L1 watches its worker's tail, probe children are timeboxed, easy and medium have no worker layer", () => {
+test("CHAIN.md: the builder watches its worker's tail, probe children are timeboxed, easy and medium have no worker layer", () => {
   const chain = packFile("rigor/CHAIN.md");
-  assert.match(chain, /\*\*The L1 reads its worker's transcript tail in every wait block\*\*[\s\S]*?on the same failure seen twice it takes the work over or re-briefs/);
+  assert.match(chain, /\*\*The builder reads its worker's transcript tail in every wait block\*\*[\s\S]*?on the same failure seen twice it takes the work over or re-briefs/);
   assert.match(chain, /Probe and lens children get a ~25 minute timebox in their brief and stop themselves with partial findings/);
-  assert.match(chain, /At easy and medium the L1 writes the code itself: no worker layer/);
+  assert.match(chain, /At easy and medium the builder writes the code itself: no worker layer/);
 });
 
 test("CHAIN.md: a relayed rule change binds in-flight work, and L0's own 429 resets from its own timestamp", () => {
@@ -957,7 +957,7 @@ test("CHAIN.md: a relayed rule change binds in-flight work, and L0's own 429 res
 test("CHAIN.md: the heartbeat runs the project's watch command first and judges liveness by three signals", () => {
   const chain = packFile("rigor/CHAIN.md");
   assert.match(chain, /When workflow\.md names a `Watch command`, the tick runs it first[\s\S]*?when it prints nothing the tick replies one line and reads no activity at all/);
-  assert.match(chain, /liveness is the newest of its transcript, its worktree's last commit and its progress log\*\*, never the progress log alone/);
+  assert.match(chain, /L0 judges every agent with no L1 \(reviewer, planner, plan reviewer, takeover, verify driver\) by status and its worktree's last commit only, never a transcript/);
   assert.match(TPL("workflow.md"), /- Watch command: none <!-- or: the L0 heartbeat's script/);
 });
 
@@ -972,9 +972,9 @@ test("CHAIN.md: the fallback reviewer may combine A and B only at the bands the 
   assert.match(TPL("workflow.md"), /- Combine A and B on the fallback: none <!-- or: easy, medium/);
 });
 
-test("CHAIN.md and the packet rules: the pre-run covers mocked modules, the implementer runs it, L0 re-runs it", () => {
+test("CHAIN.md and the packet rules: the pre-run covers mocked modules, the builder runs it, L0 re-runs it", () => {
   const chain = packFile("rigor/CHAIN.md");
-  assert.match(chain, /the tests outside its fence that name a changed public symbol \*\*and\*\* those that mock or patch a changed module, whether or not they name a changed symbol[\s\S]*?workflow\.md → Pre-run command[\s\S]*?The implementer ran it before its report; the stage re-runs it/);
+  assert.match(chain, /the tests outside its fence that name a changed public symbol \*\*and\*\* those that mock or patch a changed module, whether or not they name a changed symbol[\s\S]*?workflow\.md → Pre-run command[\s\S]*?The builder ran it before its report; the stage re-runs it/);
   const rules = packFile("rigor/templates/packet-rules.txt");
   assert.match(rules, /8\. CHECKS:[\s\S]*?run the out-of-fence pre-run over the tests outside your fence: every\s+one that names a changed public symbol, and every one that mocks or patches a module you\s+changed[\s\S]*?`vi\.mock\("<module>"\)` or\s+`patch\("app\.<module>"\)`/);
   assert.match(TPL("workflow.md"), /- Pre-run command: `<command that takes a worktree and a fence/);
@@ -1006,30 +1006,34 @@ test("harness/pi.md: the recipe card names the compress shape, single async laun
   assert.match(pi, /The `reviewer` agent has no exec tool/);
   assert.match(pi, /Shell variables and exports do not persist between `bash` calls/);
   assert.match(pi, /When the `read` tool misbehaves[\s\S]*?Never retry the same read twice/);
-  assert.match(pi, /Ask L0 through the delegation adapter's question call[\s\S]*?never `contact_supervisor`/);
+  assert.match(pi, /Ask L1 through the delegation adapter's question call[\s\S]*?never `contact_supervisor`[\s\S]*?The report and the question use the same call/);
 });
 
-test("delegation/paseo.md: an L1 asks L0 with paseo send --no-wait to L0's id, and a relay is a steer", () => {
+test("delegation/paseo.md: a builder reports to its L1, an L1 reports to L0, and a relay is a steer", () => {
   const paseo = packFile("rigor/delegation/paseo.md");
-  assert.match(paseo, /\| question from an L1 to L0 \| `paseo send --no-wait <L0 agent id> "<question>"`[\s\S]*?`contact_supervisor` is not this channel/);
+  assert.match(paseo, /\| the builder's report to its L1 \(the packet's standing order\) \| `paseo send --no-wait <L1 agent id> "done\|question\|blocked: <report path or question>"`/);
+  assert.match(paseo, /\| report, block or question from an L1 to L0 \| `paseo send --no-wait <L0 agent id>/);
+  assert.match(paseo, /`contact_supervisor` is not this channel/);
+  assert.match(paseo, /\| start an L1 coordinator \(no finish notice\) \|[\s\S]*?`notifyOnFinish: false`, `initialPrompt` = the L1 brief/);
+  assert.match(paseo, /Every launch takes it but an L1's: an L1 ends its turn right after launching its builder[\s\S]*?answer it in that turn/);
   assert.match(paseo, /A rule change is a steer, not a new task\./);
 });
 
-test("mkpacket: rule 5 carries L0's agent id for the question call, and says so when there is none", () => {
+test("mkpacket: rules 5 and 10 carry L1's agent id, and say so when there is none", () => {
   const dir = repo();
-  const withId = packet(dir, ["--l0-id", "0e3414d4-00c2-430e-91dc-84fc6ced6d43"]);
+  const withId = packet(dir, ["--l1-id", "0e3414d4-00c2-430e-91dc-84fc6ced6d43"]);
   assert.equal(withId.r.status, 0, withId.r.stderr);
-  assert.match(withId.text, /5\. DELEGATE by size\.[\s\S]*?Ask L0 rather than guess: the ADAPTER question call in this packet's PROJECT RULES\s+hands a question to L0's agent \(0e3414d4-00c2-430e-91dc-84fc6ced6d43\)/);
+  assert.match(withId.text, /5\. DELEGATE by size\.[\s\S]*?Ask your L1 rather than guess: the ADAPTER question call in this packet's PROJECT RULES\s+hands a question to L1's agent \(0e3414d4-00c2-430e-91dc-84fc6ced6d43\)/);
+  assert.match(withId.text, /10\. REPORT:[\s\S]*?one message to L1, through the ADAPTER report call[\s\S]*?`done\|question\|blocked: <report path or question>`[\s\S]*?last action of every turn/);
+  assert.match(withId.text, /Decide anything your brief already allows; ask only about\s+what it leaves open/);
+  // No environment fallback: the packet is built by L0 or by the builder, never by L1.
   const env = packet(dir);
   const fromEnv = run("mkpacket.mjs", ["--slug", SLUG, "--wt", WT, "--base", BASE, "--branch", "u22-fix", "--task", join(dir, "task.md"), "--out", env.out, "--repo", dir], { ...process.env, PASEO_AGENT_ID: "abc-123" });
   assert.equal(fromEnv.status, 0, fromEnv.stderr);
-  assert.match(readFileSync(env.out, "utf8"), /hands a question to L0's agent \(abc-123\)/);
-  const bare = { ...process.env };
-  delete bare.PASEO_AGENT_ID;
-  const out2 = join(dir, "p2.md");
-  const noId = run("mkpacket.mjs", ["--slug", SLUG, "--wt", WT, "--base", BASE, "--branch", "u22-fix", "--task", join(dir, "task.md"), "--out", out2, "--repo", dir], bare);
-  assert.equal(noId.status, 0, noId.stderr);
-  assert.match(readFileSync(out2, "utf8"), /hands a question to L0's agent \(none: this packet was built without L0's agent id, so ask at the report\)/);
+  assert.match(readFileSync(env.out, "utf8"), /hands a question to L1's agent \(none: this packet was built without L1's agent id, so ask at the report\)/);
+  const badId = run("mkpacket.mjs", ["--slug", SLUG, "--wt", WT, "--base", BASE, "--branch", "u22-fix", "--task", join(dir, "task.md"), "--out", join(dir, "p3.md"), "--repo", dir, "--l1-id", "not an id"]);
+  assert.equal(badId.status, 2);
+  assert.match(badId.stderr, /--l1-id must be an agent id: not an id/);
 });
 
 test("mkpacket: --role rung1 builds one class-aimed loop and requires the structural brief's mutant table", () => {
@@ -1130,4 +1134,75 @@ test("mkpacket: the pre-run and docs-claim commands come from workflow.md, and s
   const bare = packet(repo());
   assert.match(bare.text, /The command is none \(workflow\.md names no Pre-run command\)/);
   assert.match(bare.text, /Docs-claim command: none \(workflow\.md names no Docs-claim command\)\./);
+});
+
+// ---- 2026-11-20: L1 as a coordinator over one builder per task, the builder's report
+// as the last action of every turn, the two heartbeats, the L1 handover.
+test("CHAIN.md: L1 coordinates one builder per task and touches no code and no self-review", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /\| L1, one coordinator per task \| Starts that task's one builder with the packet and a finish notice, answers its questions, runs the diff check when it reports, hands L0 one report; spends as few tokens as it can \| Write production code, run the self-review itself, start children of its own harness that spend its tokens, poll \|/);
+  assert.match(chain, /\*\*Brief\*\* L1 \(its brief first; the packet, built with L1's returned agent id, follows as the first message\) with the packet \(below\) and only its own task block[\s\S]*?L1 starts the task's one builder with that packet verbatim, in the task worktree, and a finish notice, and starts nothing else; the packet carries L1's agent id \(`--l1-id`\) so the builder's questions and reports reach it/);
+  assert.match(chain, /\| L2, one builder per task \| Owns one task: does it or delegates to L3, self-reviews, commits on the ticket branch, reports the range/);
+  assert.match(chain, /\*\*The full suite runs once per ticket, on the staged squash\*\* \(the gate\), at every band\. Builders and their children run targeted tests/);
+});
+
+test("CHAIN.md: L1's diff check is skill-free, sends the builder back once, and reports either way", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /When the builder reports, L1 reads its `git diff --stat`, then the changed hunks, and compares them with the packet's ORACLE and acceptance list, loading no skills: a problem goes back to the builder once, and L1 reports to L0 either way with its findings listed/);
+});
+
+test("CHAIN.md: no polling, no finish notice on an L1 launch, and an L1 reports to L0 by message", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /\*\*A finish notice only where no message will arrive\.\*\* L0 starts an L1 without one and L1 starts its builder with one: an L1 reports to L0 by message only, a report, a block or a question, and that message wakes L0\. Reviewer, planner, takeover and verify driver are all started with a notice too\. No agent polls: it ends its turn and the notice wakes it/);
+  assert.match(chain, /so the builder's questions and reports reach it[\s\S]*?\*\*L1's brief\*\* carries the task block, the packet, the builder's title, L0's agent id, and one line naming its duties[\s\S]*?A fence question it passes to L0, which answers it precisely; a change to the task's scope is L0's too/);
+  assert.match(chain, /L1 spawns the task's builder through the adapter with the role's provider, model and thinking level from workflow\.md[\s\S]*?L0 checks the lane's running builders and coordinators and its open worktrees against the caps/);
+});
+
+test("CHAIN.md and the packet rules: the last action of every turn is the builder's report message to L1", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /\*\*The standing order in every packet\.\*\* The last action of every turn is the builder's message to L1, `done\|question\|blocked: <report path or question>`, through the adapter's report call \(packet rule 10\)/);
+  const rules = packFile("rigor/templates/packet-rules.txt");
+  assert.match(rules, /The report is one message to L1, through the ADAPTER report call\s+in this packet's PROJECT RULES, shaped `done\|question\|blocked: <report path or question>`: it is\s+the last action of every turn, so L1 hears even when the finish notice fails/);
+  assert.match(rules, /5\. \{delegate\} Ask your L1 rather than guess[\s\S]*?hands a question to L1's agent \(\{l1\}\)/);
+});
+
+test("CHAIN.md: two heartbeats, the L0 one a status-only safety net over every agent and the L1 one reading its builder's log", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /\*\*L0's tick\*\* \(workflow\.md → `L0 heartbeat`, default 30 minutes, under the cache lifetime\) covers the builders, reviewers, planners, plan reviewers, takeovers and verify drivers of the lane, so none of them stalls unwatched/);
+  assert.match(chain, /It reads status, never a transcript: stuck means an agent's newest status is past the staleness window, or the same step repeats on the number of reads it names/);
+  assert.match(TPL("workflow.md"), /Covers every agent of the lane by status alone \(builders, reviewers, planners, plan reviewers, takeovers, verify drivers\)/);
+  assert.match(chain, /\*\*L1's tick\*\* \(workflow\.md → `L1 heartbeat`, default 30 minutes\)\. Per tick, per builder: \(1\) its status: idle or in error, act now, in that turn — an idle builder may be asking a question, and that answer belongs to the turn, not to the next tick\. \(2\) The tail of its log, 20 lines, against the previous tick: no new tool calls, the same failing command or error, or the same step on 2 ticks steers it with the exact fix, or interrupts and re-briefs it; progressing gets one line: step, next, `OK`\. A tick that acted \(steer, interrupt, re-brief, answer\) sends L0 one line; otherwise none/);
+  assert.match(chain, /Neither sends a periodic status report to L0|neither of them a status report to L0/);
+  assert.match(TPL("workflow.md"), /- L0 heartbeat: every 30 minutes <!-- default/);
+  assert.match(TPL("workflow.md"), /- L1 heartbeat: every 30 minutes <!-- default[\s\S]*?Read by L1 itself, never by a script/);
+  assert.match(TPL("workflow.md"), /\| L1 coordinator \| `<provider\/model>` \| `<level>` \|/);
+});
+
+test("CHAIN.md: an L1 handover happens at a fix-round boundary over the soft limit and adopts the running builder", () => {
+  const chain = packFile("rigor/CHAIN.md");
+  assert.match(chain, /\*\*L1 handover\.\*\* Each task has its own L1\. A handover happens only at a fix-round boundary, and only when L1's context is past its soft limit \(workflow\.md → Context ceilings: ~150k, hard ceiling ~200k\): L0 archives it and starts a fresh L1 for the same task, briefed from the task's state file, which names the running builder's agent id, so it adopts that builder\. A handover never starts a new builder/);
+  assert.match(TPL("workflow.md"), /coordinator `<n>k` soft and `<n>k` hard/);
+});
+
+test("the method files name no model id, and only the adapter names the delegation tool's calls", () => {
+  for (const f of ["rigor/CHAIN.md", "rigor/AFK.md", "rigor/SKILL.md", "rigor/templates/packet-rules.txt", "rigor/templates/self-review.txt", "rigor/templates/arch-pass.txt"]) {
+    const text = packFile(f);
+    assert.doesNotMatch(text, /\b(gpt|deepseek|sonnet|opus|glm|claude-\d|codex-cli|fast mode)\b/i, f);
+  }
+  assert.doesNotMatch(packFile("rigor/CHAIN.md"), /paseo/i, "the tool's name lives in the adapter and workflow.md only");
+  assert.match(packFile("rigor/delegation/paseo.md"), /`paseo send --no-wait <L1 agent id>/);
+});
+
+test("the renamed roles reach the adapter README, the Claude note, the settings and the packet builder", () => {
+  const readme = packFile("rigor/delegation/README.md");
+  assert.match(readme, /\| start a coordinator \| Start one L1 with its task block, its model and level, and no finish notice \|/);
+  assert.match(readme, /\| report or ask a question \| A message to the agent that launched the sender/);
+  assert.match(packFile("rigor/harness/claude.md"), /A coordinator asked to run one task never uses it: it starts that task's builder through the delegation adapter, ends its turn and is woken by the builder's message/);
+  assert.match(TPL("workflow.md"), /- L2\/L3 wait slice: 10 minutes max/);
+  assert.match(packFile("setup/SKILL.md"), /models per role with the L1 coordinator row[\s\S]*?the two heartbeat intervals/);
+  assert.match(packFile("rigor/templates/arch-pass.txt"), /one builder finishes the first build and its self-review/);
+  // Rules 5 and 10 name L1 now, never L0.
+  const rules = packFile("rigor/templates/packet-rules.txt").slice(packFile("rigor/templates/packet-rules.txt").indexOf("5. {delegate}"), packFile("rigor/templates/packet-rules.txt").indexOf("6. SELF-REVIEW"));
+  assert.doesNotMatch(rules, /L0/);
+  assert.doesNotMatch(packFile("rigor/templates/packet-rules.txt").split("10. REPORT:")[1].split("11. HISTORY")[0], /Ask L0|L0's agent/);
 });
