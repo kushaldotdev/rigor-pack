@@ -898,6 +898,7 @@ test("reset-at: the reset is the 429's own timestamp plus its value, never now",
 });
 
 const packFile = (rel) => readFileSync(fileURLToPath(new URL(`../.agents/skills/${rel}`, import.meta.url)), "utf8");
+const TPL_SELF = packFile("rigor/templates/self-review.txt");
 const TPL = (rel) => readFileSync(fileURLToPath(new URL(`../.agents/skills/setup/templates/${rel}`, import.meta.url)), "utf8");
 
 test("CHAIN.md: a ticket is gated on acceptance, and a gate stands only while main leaves its files alone", () => {
@@ -909,22 +910,26 @@ test("CHAIN.md: a ticket is gated on acceptance, and a gate stands only while ma
 
 test("CHAIN.md: the first build's self-review stops at the band's loop cap, and the mutant table rides every band", () => {
   const chain = packFile("rigor/CHAIN.md");
-  assert.match(chain, /The first build also keeps the full self-review, but stops at its loop cap: easy and medium 1 loop, hard and critical 3/);
-  assert.match(chain, /External review is the second pass, not another lens loop/);
-  assert.match(chain, /\*\*A mutant per rule and per ORACLE row, at every band\.\*\*[\s\S]*?one deliberate mutant per rule it moves or adds and per ORACLE row[\s\S]*?A refactor task runs one per moved guard[\s\S]*?`review-file\.mjs` fails a behaviour task's file with no table or a survivor with no reason/);
+  assert.match(TPL_SELF, /Loop cap: at most the loop cap the project's workflow settings set per band \(pack default: easy and\s+medium 1 loop, hard and critical 3\) per attempt, loop 1 included\. External review is the second\s+pass, not another lens loop/);
+  assert.match(TPL_SELF, /External review is the second\s+pass, not another lens loop/);
+  // The mutant rule lives in the self-review method (one owner); CHAIN.md points at it.
+  assert.match(chain, /\*\*Fix rounds follow packet rule 12\*\*[\s\S]*?which owns the class, the sweep over every reader, the mutant table and the loop cap/, "CHAIN.md points at the owner");
+  assert.match(TPL_SELF, /Mutants, at every band: one deliberate mutant per rule the task moves or adds and per ORACLE\s+row \(a refactor task: one per moved guard\)/);
+  assert.match(TPL_SELF, /`review-file\.mjs` fails the file without the table, and fails a survivor with no reason/);
   assert.match(TPL("workflow.md"), /- Self-review loop cap: easy and medium `1` loop, hard and critical `3`/);
 });
 
 test("CHAIN.md: rung 1 is a class-aimed round, not a full build packet", () => {
   const chain = packFile("rigor/CHAIN.md");
-  assert.match(chain, /then \(1\) \*\*rung 1\*\*,[\s\S]*?`mkpacket\.mjs --role rung1`: the structural brief the task file carries, its mutant table, and one self-review loop aimed at the repeated class over the task range, not a full build packet/);
+  assert.match(chain, /then \(1\) \*\*rung 1\*\*,[\s\S]*?`mkpacket\.mjs --role rung1`: the structural brief the task file carries, its mutant table, one self-review loop aimed at the repeated class over the task range, not a full build packet/);
   assert.match(chain, /`--role rung1` builds the structural brief the task file carries, requires its mutant table/);
 });
 
 test("CHAIN.md: the class sweep reaches consumers, and packet statements are claims to check", () => {
   const chain = packFile("rigor/CHAIN.md");
-  assert.match(chain, /\*\*The sweep reaches consumers, not only producers\.\*\*[\s\S]*?every reader of the value, type, default or rule the finding moves[\s\S]*?the callers, the field readers, the UI consumers, the serializer that copies it[\s\S]*?pinned by a test or ruled out in one line/);
-  assert.match(chain, /every statement a packet or a plan makes about the code \("X keeps its contract", "Y already locks first", "only Z reads it"\) is a claim for the implementer to check, not a fact/);
+  assert.match(chain, /\*\*Fix rounds follow packet rule 12\*\* \(`templates\/self-review\.txt` → A fix round after a review\), which owns the class, the sweep over every reader, the mutant table and the loop cap\. L0's own half: the re-brief names the class, planners grep their fence the same way, and the delta reviewer checks the list is complete first/);
+  // The claims rule keeps its owner: packet rule 14.
+  assert.match(packFile("rigor/templates/packet-rules.txt"), /14\. PROOF, NOT CONFIDENCE:[\s\S]*?is a claim to check, never a fact/);
   const method = packFile("rigor/templates/self-review.txt");
   assert.match(method, /That grep covers every reader of the value, type,\s+default or rule the finding moves, in whatever module it lives \(callers, field readers, UI\s+consumers, serializers\), each hit pinned by a test or ruled out in one line/);
 });

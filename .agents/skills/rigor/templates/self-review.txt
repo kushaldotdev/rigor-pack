@@ -2,18 +2,18 @@ SELF-REVIEW METHOD (packet rule 6 points here; the packet names your lenses, bri
 
 LOOPS, AND WHAT EACH ONE SEES
 - Loop 1: every lens the packet names, each over the whole range (task base..last commit, plus
-  every deliverable). The standards + spec child may start as soon as the task's code is
-  committed, while the worker still runs the targeted suite and coverage; the other lenses start
-  together, in one parallel call.
+  every deliverable). The standards + spec child may start once the task's code is committed,
+  while the worker still runs the targeted suite and coverage; the other lenses start together,
+  in one parallel call.
 - Loop 2 and later: only the fix commits since the previous loop (<the previous loop's last
   commit>..HEAD), with standards + spec plus each lens that raised a finding those commits fix.
   A lens with no finding fixed in the delta does not run again.
 - Coverage invariant: every line of the range is seen by every required lens once, and every line
-  changed afterwards is seen again. So a loop's range starts at the last commit the previous loop
-  reviewed, never later, and a commit made while a loop runs belongs to the next loop's delta.
-- The loops end when a loop's act-on list is empty and no commit landed after its range (a test
-  fix made while the early standards + spec child ran is such a commit: the next loop's delta).
-  Then comes the probe, if the task gets one.
+  changed afterwards is seen again. A loop's range therefore starts at the last commit the previous
+  loop reviewed, never later; a commit made while a loop runs belongs to the next loop's delta.
+- The loops end when a loop's act-on list is empty and no commit landed after its range (a test fix
+  made while the early standards + spec child ran is one: the next loop's delta). Then the probe,
+  if the task gets one.
 - Loop cap: at most the loop cap the project's workflow settings set per band (pack default: easy and
   medium 1 loop, hard and critical 3) per attempt, loop 1 included. External review is the second
   pass, not another lens loop. A loop at the cap whose act-on list is not empty ends the loops
@@ -24,15 +24,15 @@ LOOPS, AND WHAT EACH ONE SEES
 - Log every loop in the file's Loops section: range, lenses, act-on count.
 
 WHO RUNS A LENS
-- Every lens is a read-only reviewer child: it reads, and runs nothing that writes. It is started
-  with the file `lens-brief.mjs` writes for it (packet rule 6), verbatim, never with your own
-  account of the lens.
+- Every lens is a read-only reviewer child: it reads, and runs nothing that writes. Start it with
+  the file `lens-brief.mjs` writes for it (packet rule 6), verbatim, never with your own account of
+  the lens.
 - The same child across loops: send a later loop's delta brief to the child that ran that lens in
   the loop before, as a follow-up (your harness notes name the call and where its context size
-  shows), while its context is under the lens-child ceiling the project's workflow settings set
+  shows), while it is under the lens-child ceiling the project's workflow settings set
   (default ~150k tokens). Past it, or when the harness cannot send a child a follow-up, start a
-  fresh child with that lens's loop-1 brief file and then the delta brief, both verbatim. A lens
-  child is never the child that wrote the task's code.
+  fresh child with that lens's loop-1 brief file, then the delta brief, both verbatim. A lens child
+  is never the child that wrote the task's code.
 - The final loop (the read-only lenses came back with an empty act-on list): the packet says
   whether this task gets a probe. Only a hard or critical task that changes behaviour does. Then
   blast radius and interrogate run ONCE more, together, as one probe child: a child that can run

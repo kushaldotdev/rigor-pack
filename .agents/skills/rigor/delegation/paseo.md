@@ -1,6 +1,6 @@
 # Paseo adapter
 
-Maps each operation in [README.md](README.md) to Paseo's MCP tools or the `paseo` CLI. Paseo is the delegation tool when `docs/agents/workflow.md` → Chain efforts names it, and the file named there. Model ids and thinking levels are settings: take them from that section, never from here. The ids below are examples only.
+Maps each operation in [README.md](README.md) to Paseo's MCP tools or the `paseo` CLI. Paseo is the delegation tool when `docs/agents/workflow.md` → Chain efforts names it, and the file named there. Model ids and thinking levels are settings: take them from that section, never from here; the ids below are examples.
 
 | Operation | Call | Result |
 |---|---|---|
@@ -21,13 +21,13 @@ Maps each operation in [README.md](README.md) to Paseo's MCP tools or the `paseo
 
 ## Gotchas
 
-- **A worktree workspace leaves a project behind.** `create_workspace` on a worktree path also registers a Paseo project, and `archive_workspace` leaves that project in place. At landing, archive the workspace **and** run `paseo project delete <id>` for that worktree's project, after checking `paseo project ls` shows the worktree path.
-- **Never delete the main checkout's project.** `create_workspace` on the main path returns the main project id, and deleting it once killed the lead session. At session start and close, list workspaces and projects with `includeBackground: true` and clean only the ones whose ticket already landed.
-- **The successor must be top-level.** `env -u PASEO_AGENT_ID` before `paseo run` keeps the new session out of the closing session's parentage, so it survives that session being archived. `--no-wait` returns at once. Without `--new-workspace local`, `paseo run` from an agent-scoped caller lands in the caller's workspace, so the successor shares it; with it, the successor gets its own workspace on the same checkout. Rename that new workspace, never the caller's, immediately: `paseo run` names it after the branch.
-- **Plain `paseo ls` hides background agents.** Implementers and other children started in the background (a pi L1, for one) do not show without `-a` (or `--background`), so `paseo ls --label effort=<slug>` can print nothing while one still runs. List with `-a` and count the rows whose STATUS is `running`; `-a` also lists archived and closed agents, which do not count.
-- **`notifyOnFinish` means do not poll.** Finish your turn and wait for the notification. Poll only when a notification is already lost, and recover it from `get_agent_activity`.
-- **A rule change is a steer, not a new task.** Send it with the same `send_agent_prompt` (or `paseo send`) to every running agent it binds, with the rule text or its path, and say it binds their next report. Never a "leave in-flight work as it is" relay (CHAIN.md → Talking to the owner).
+- **A worktree workspace leaves a project behind.** `create_workspace` on a worktree path also registers a project, which `archive_workspace` leaves in place. At landing, archive the workspace **and** run `paseo project delete <id>` for it, once `paseo project ls` shows the worktree path.
+- **Never delete the main checkout's project.** `create_workspace` on the main path returns the main project id, and deleting it once killed the lead session. At session start and close, list workspaces and projects with `includeBackground: true`; clean only those whose ticket landed.
+- **The successor must be top-level.** `env -u PASEO_AGENT_ID` before `paseo run` keeps the new session out of the closing session's parentage, so it survives that session's archive; `--no-wait` returns at once. Without `--new-workspace local`, a `paseo run` from an agent-scoped caller lands in the caller's workspace; with it, the successor gets its own workspace on the same checkout. Rename that new workspace, never the caller's, at once: `paseo run` names it after the branch.
+- **Plain `paseo ls` hides background agents.** A child started in the background (a pi L1, say) shows only with `-a` (or `--background`), so `paseo ls --label effort=<slug>` can print nothing while one runs. List with `-a` and count the `running` STATUS rows; archived and closed agents do not count.
+- **`notifyOnFinish` means do not poll.** Finish the turn and wait for the notification; poll only when one is already lost, and recover it from `get_agent_activity`.
+- **A rule change is a steer, not a new task.** Send the rule text or its path through `send_agent_prompt` (or `paseo send`) to every running agent it binds, saying it binds their next report; never a "leave in-flight work as it is" relay (CHAIN.md → Talking to the owner).
   - **`send_agent_prompt` revives agents after a reboot.** The agent keeps its history; rerun any background suite that died with the host.
-- **Context size comes from `get_agent_status` → `lastUsage`.** Compare it with the ceiling workflow.md sets, and start a fresh agent past it.
+- **Context size is `get_agent_status` → `lastUsage`.** Compare it with workflow.md's ceiling and start a fresh agent past it.
 - **Heartbeats have no update.** `create_heartbeat` and `delete_heartbeat` only; change the cadence by deleting and recreating.
 - **`list_profiles` first.** When no model is named, read the profiles' notes before choosing a provider and thinking level.

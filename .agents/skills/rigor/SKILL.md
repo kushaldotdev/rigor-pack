@@ -7,20 +7,20 @@ disable-model-invocation: true
 
 # Rigor
 
-You are the conductor. Every task enters here; you decide which bodies run. The human answers questions once, at the start. After the interview the run is AFK: it never asks again.
+You are the conductor: every task enters here, and you pick the bodies that run. The human answers once, in the interview. After it the run is AFK and never asks again.
 
-Paths below are relative to this file's folder. When you hand a file to a child agent, give it the **absolute** path (resolve it from this file's location) plus the brief.
+Paths are relative to this folder. Hand a child the **absolute** path plus the brief.
 
 ## 0. Preconditions
 
 1. Read `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, `docs/agents/workflow.md` (and `triage-labels.md` if present).
-2. If any is missing, **stop before the run starts.** Tell the user setup has not run and ask them to invoke the `setup` skill (or offer to run it now). Assume no defaults. Start only after setup has written its answers.
-3. Read your harness notes: [harness/pi.md](harness/pi.md), [harness/claude.md](harness/claude.md), or [harness/codex.md](harness/codex.md). They say how to spawn children, wait, loop, and where transcripts live, and what to do when a feature is missing.
+2. If any is missing, **stop before the run starts**: setup has not run, so say so and ask them to invoke the `setup` skill (or offer to run it now). Assume no defaults; start only once setup wrote its answers.
+3. Read your harness notes ([harness/pi.md](harness/pi.md), [harness/claude.md](harness/claude.md) or [harness/codex.md](harness/codex.md)): how to spawn children, wait, loop, where transcripts live, and the fallback when a feature is missing.
 4. If the argument is `resume <slug>` or `continue <slug>`, or `.audit/<slug>.brief.md` exists for this task, go to §5 Resume.
 
 ## 1. Route
 
-Classify the task, pick a route, and say which one in one line. Orientation: Matt's [ask-matt](references/matt/ask-matt/ask-matt.md) map and pstack's [poteto-mode](references/pstack/poteto-mode/poteto-mode.md) Playbooks list. Read the playbook you pick in full before using it.
+Classify the task, pick a route, name it in one line. Orientation: Matt's [ask-matt](references/matt/ask-matt/ask-matt.md) map, pstack's [poteto-mode](references/pstack/poteto-mode/poteto-mode.md) Playbooks. Read the playbook in full before using it.
 
 | Task shape | Route |
 |---|---|
@@ -45,23 +45,23 @@ Upstream bodies name other skills by upstream name ("the **how** skill", `/swarm
 
 ## 2. Interview (human present)
 
-Run [INTERVIEW.md](INTERVIEW.md). It restates, sharpens, grills, models the domain, closes a fixed checklist, and writes the brief. For spec-and-tickets routes it also runs [to-spec](references/matt/to-spec/to-spec.md) and [to-tickets](references/matt/to-tickets/to-tickets.md), including the ticket quiz, while the human is still here. Keep grill → spec → tickets in one context window ([ask-matt](references/matt/ask-matt/ask-matt.md) §Context hygiene).
+Run [INTERVIEW.md](INTERVIEW.md): it restates, sharpens, grills, models the domain, closes a fixed checklist and writes the brief. Spec-and-tickets routes also run [to-spec](references/matt/to-spec/to-spec.md) and [to-tickets](references/matt/to-tickets/to-tickets.md), ticket quiz included, while the human is here. Keep grill → spec → tickets in one context window ([ask-matt](references/matt/ask-matt/ask-matt.md) §Context hygiene).
 
 The interview ends when the user confirms the brief. From that moment the run is AFK.
 
 ## 3. AFK run
 
-[AFK.md](AFK.md) governs everything from here: it maps every interactive line in every body to "answered in the brief" or "decide, log, surface at close", and fixes the outcome for every mid-run situation. Re-read it at each phase boundary.
+[AFK.md](AFK.md) governs from here: every interactive line maps to "answered in the brief" or "decide, log, surface at close", and every mid-run situation has its outcome. Re-read it at each phase boundary.
 
-Standing orders: `.audit/<slug>.preferences.md` (authority from `docs/agents/workflow.md`, plus run-specific lines). Paste them verbatim into every child brief and every resume: a directive that is not repeated decays, and each dropped one costs a turn. Every brief names these nine fields, sized to the unit: GOAL (the outcome in one sentence), SCOPE (paths it may and may not write, its worktree or branch), CONTEXT (files and PRs to read, upstream reports pasted in full), ACCEPTANCE (checkable criteria, one per line), VERIFY (the exact command or the control path), TIMEBOX (a rough cap, on expiry return partial findings and stop), FORBIDDEN (retargets, merges, rebases, force-pushes, edits outside scope), REPORT (status, branch, head SHA, PRs, verdict, what was run, deviations, follow-ups), STANDING (the standing orders pasted verbatim). A one-command unit collapses the shape to a paragraph that still names the goal, the scope, the verify command and the report shape.
+Standing orders: `.audit/<slug>.preferences.md` (authority from `docs/agents/workflow.md`, plus run-specific lines). Paste them verbatim into every brief and resume: an un-repeated directive decays, and each dropped one costs a turn. Every brief names nine fields, sized to the unit: GOAL (one sentence), SCOPE (paths it may and may not write, worktree or branch), CONTEXT (files and PRs to read, upstream reports pasted in full), ACCEPTANCE (checkable criteria, one per line), VERIFY (the exact command or control path), TIMEBOX (a rough cap; on expiry return partial findings and stop), FORBIDDEN (retargets, merges, rebases, force-pushes, edits outside scope), REPORT (status, branch, head SHA, PRs, verdict, what was run, deviations, follow-ups), STANDING (the orders verbatim). A one-command unit becomes a paragraph naming the goal, scope, verify command and report shape.
 
-Trail: one TSV per run at `.audit/<slug>.tsv` via [show-me-your-work](references/pstack/show-me-your-work/show-me-your-work.md) and its `scripts/log.sh`. Unit name in `phase`, result word in `result`. Every phase transition writes a row.
+Trail: one TSV per run at `.audit/<slug>.tsv`, via [show-me-your-work](references/pstack/show-me-your-work/show-me-your-work.md) and its `scripts/log.sh`; unit in `phase`, result word in `result`, one row per phase transition.
 
-Working style for all phases: [poteto-mode](references/pstack/poteto-mode/poteto-mode.md) Non-negotiables, Principles, Writing the reply and Comments. A structured question is never asked in an AFK run; see AFK.md. Principles not under this skill live in the hosts listed in INDEX.md.
+Working style, all phases: [poteto-mode](references/pstack/poteto-mode/poteto-mode.md) Non-negotiables, Principles, Writing the reply, Comments. Never ask a structured question in an AFK run (AFK.md). Principles outside this skill live in the hosts INDEX.md lists.
 
 ### Phases and gates
 
-A gate that cannot fail is documentation. Each phase names what enforces it.
+A gate that cannot fail is documentation, so each phase names what enforces it.
 
 | Phase | Do | Gate (enforced by) |
 |---|---|---|
@@ -73,7 +73,7 @@ A gate that cannot fail is documentation. Each phase names what enforces it.
 | review | [code-review](../code-review/SKILL.md) lenses: standards + spec always; interrogate for contested design; blast-radius for risky small diffs; no-comments | blocking findings = 0, or the brief's round limit reached (structured verdict block) |
 | close | done predicate re-checked; PR per workflow.md template via [writing](../writing/SKILL.md); unslop on every prose surface | predicate command or file check |
 
-Fix rounds after review go to a fresh child with consolidated scope (poteto-mode §Subagents). Sequence units per [principle-sequence-verifiable-units](references/pstack/principle-sequence-verifiable-units/principle-sequence-verifiable-units.md): verify each before starting the next.
+Fix rounds go to a fresh child with consolidated scope (poteto-mode §Subagents). Sequence units per [principle-sequence-verifiable-units](references/pstack/principle-sequence-verifiable-units/principle-sequence-verifiable-units.md): verify one before starting the next.
 
 ### Precedence where bodies disagree
 
@@ -89,13 +89,13 @@ Fix rounds after review go to a fresh child with consolidated scope (poteto-mode
 
 ## 4. Sessions
 
-Planning and building share one session by default: Continue is the first branch to rule out ([PHASE-BOUNDARIES](references/matt/ask-matt/PHASE-BOUNDARIES.md)). Start a fresh session when the context budget is short, per ticket on multi-session routes ([to-tickets](references/matt/to-tickets/to-tickets.md): one ticket fits one fresh window), or for a wayfinder effort.
+Planning and building share one session by default: rule out Continue first ([PHASE-BOUNDARIES](references/matt/ask-matt/PHASE-BOUNDARIES.md)). Start fresh when the context budget is short, per ticket on multi-session routes ([to-tickets](references/matt/to-tickets/to-tickets.md): one ticket per fresh window), or for a wayfinder effort.
 
-State lives only in: tracker tickets, `.audit/<slug>.brief.md`, `.audit/<slug>.preferences.md`, `.audit/<slug>.tsv`, `.audit/<slug>.gates.md`, `.audit/<slug>.handoff.md`, and the git branch. Never in chat history. Before ending a session mid-run, commit `.audit/` and write the next ready unit as the trail's last row. A fresh session reaches full working state from repo and tracker alone.
+State lives only in tracker tickets, `.audit/<slug>.{brief,preferences}.md`, `.audit/<slug>.{tsv,gates.md,handoff.md}` and the git branch, never in chat history. Before ending a session mid-run, commit `.audit/` and write the next ready unit as the trail's last row; a fresh session reaches full working state from repo and tracker alone.
 
 ## 5. Resume
 
-Read the brief, the preferences, the trail's last rows, `gates.md`, `git log` on the run branch, and the tracker's open tickets. If the brief pre-records the answers (a chain does), record them and skip the questions; a chain then follows [CHAIN.md](CHAIN.md). Otherwise ask exactly three questions, in one message, with a recommended answer each:
+Read the brief, preferences, the trail's last rows, `gates.md`, `git log` on the run branch and the tracker's open tickets. If the brief pre-records the answers (a chain does), record them and skip the questions, then follow [CHAIN.md](CHAIN.md). Otherwise ask exactly three questions in one message, each with a recommended answer:
 
 1. Has the premise changed since the brief?
 2. Any new one-way doors or approvals (including answers to open gates)?
@@ -105,4 +105,4 @@ Record the answers as a `start` row (show-me-your-work's rule) and in the brief,
 
 ## 6. Close
 
-Reply in the [ketchup](../wait-what/references/pstack/ketchup/ketchup.md) shape and per poteto-mode §Writing the reply: what changed for the user, what was verified and how (lead with any `unverified` unit), unit results (`verified` / `unverified` / `blocked` / `reverted` / `skipped`), open gates from `gates.md` (the only asks), the next ready unit, the trail path, and PR links. End with show-me-your-work's "Attention" section from a reviewer child (a different model family when the harness has one; say "single-family" when not).
+Reply in the [ketchup](../wait-what/references/pstack/ketchup/ketchup.md) shape, per poteto-mode §Writing the reply: what changed for the user, what was verified and how (lead with any `unverified` unit), unit results (`verified`/`unverified`/`blocked`/`reverted`/`skipped`), open gates from `gates.md` (the only asks), the next ready unit, the trail path, PR links. End with show-me-your-work's "Attention" section from a reviewer child (another model family when the harness has one; say "single-family" when not).

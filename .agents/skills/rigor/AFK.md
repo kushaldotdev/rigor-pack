@@ -1,6 +1,6 @@
 # AFK contract
 
-Applies from the moment the user confirms the brief until the close report. The referenced bodies stay verbatim; this file says what each of their interactive lines means during an AFK run. `scripts/check-pack.mjs` fails when a body in AFK scope gains an interactive line with no row here.
+Applies from the briefing confirmation to the close report. The bodies stay verbatim; this file says what each of their interactive lines means during an AFK run. `scripts/check-pack.mjs` fails when a body in AFK scope gains an interactive line with no row here.
 
 AFK scope: every body under `rigor`, `tdd`, `code-review`, `diagnosing-bugs`, `codebase-design`, `domain-modeling`, `verify`, `research`, `prototype`, `writing`. Out of scope, because a human is present by design: `setup`, `triage`, `teach`, `retro`, `wait-what`, `handoff`, `grilling` (the interview).
 
@@ -20,7 +20,7 @@ Unit results use only: `verified`, `unverified`, `blocked`, `reverted`, `skipped
 
 ## Precedence table
 
-Each row: the body (path relative to the skills root), a fragment of the interactive line, and what it means in an AFK run. **brief** = answered in the brief by the interview checklist item named. **log** = decide, log to the trail, surface at close. **interview** = the line runs during the interview, where the human is present. **n/a** = not a question to a human.
+Each row: the body (path from the skills root), a fragment of the interactive line, and its AFK meaning. **brief** = answered in the brief by the named interview checklist item. **log** = decide, log to the trail, surface at close. **interview** = runs during the interview, human present. **n/a** = not a question to a human.
 
 | Body | Line fragment | AFK meaning |
 |---|---|---|
